@@ -1,0 +1,13 @@
+---
+description: Mandatory protection of Oracle, integrations and confidential data.
+alwaysApply: true
+---
+# Data and production safety
+- Never connect to PRODUCTION Oracle, 1C, FTP/SFTP or other production integrations without explicit scoped permission. Default environment is local analysis or dedicated TEST Oracle with read-only credentials.
+- Never execute DML, DDL, PL/SQL with unknown side effects, migrations, repair scripts, scheduled jobs or test imports on any database without explicit approval and a rollback plan.
+- For diagnostic queries: limit rows, use metadata/stats first, obtain approval before expensive historical scans (approx. 158 million full-dislocation records per year at 18k wagons hourly).
+- Do not print, log, commit or send passwords, tokens, private keys, connection strings, or production/customer personal data. Use secret stores/environment variables; provide redacted examples only.
+- Never edit original EXE/DLL, original service sources or old schema in-place. Use authorized copies and version control.
+- Integration operations must be designed for idempotency, retry/backoff, reconciliation, traceability, and recoverability. Do not trigger real uploads/sends during exploration.
+- No public internet or external MCP tools with sensitive project data unless approved. Do not add telemetry or new external services silently.
+- No secrets in prompts, skills, rules, or architectural docs.

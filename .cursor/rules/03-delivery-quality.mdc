@@ -1,0 +1,12 @@
+---
+description: Scope control, tests, observable quality and end-of-task reports.
+alwaysApply: true
+---
+# Delivery protocol
+- One vertical feature at a time: agreed behavior, user-visible outcome, data contract, tests, and compatibility comparison.
+- Before coding provide: goal, in-scope, out-of-scope, files expected, acceptance criteria, test plan. If the requested change is ambiguous, ask ONE focused question.
+- Reuse existing patterns. Avoid broad refactoring, dependency upgrades, formatting unrelated files, massive generated boilerplate and speculative optimization.
+- Build and run focused tests when authorized; if not run, explicitly say so. Never claim verified behavior without test evidence.
+- On logic sourced from legacy apps, cite the source file/class/procedure and preserve confirmed semantics; mark unverified behavior as UNKNOWN.
+- For all Oracle reads use bind parameters, bounded pages, clear transaction boundaries and least privilege. For writes require explicit separate authorization and tests.
+- Finish with a compact status: files changed, behavior delivered, tests and results, legacy comparison, risks, next approval needed. Stop after completing the assigned slice.

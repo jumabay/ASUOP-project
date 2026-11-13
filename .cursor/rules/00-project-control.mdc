@@ -1,0 +1,15 @@
+---
+description: Mandatory project scope, permission boundaries and stage gates for the railway platform.
+alwaysApply: true
+---
+# Railway platform: mandatory controls
+- This repository is the NEW Java railway enterprise platform, not a rewrite of everything at once.
+- Main goals: reliability for 10–15 years, maintainability by one developer with Cursor, 20–30 concurrent users initially, one application server initially, future expansion to expedition, contracts, finance and 1C.
+- Current approved target: Java + Spring Boot modular monolith, React + TypeScript frontend, existing Oracle during staged migration. All exact versions, libraries and schema changes require compatibility checks and architectural approval.
+- Source of truth: user-approved `docs/architecture/` decisions and `docs/analysis/` evidence. If documents or decisions are missing, stop and ask. Never invent original functionality.
+- Work only on the explicitly assigned module and acceptance criteria. Do not implement future roadmap items, general refactors, UI redesigns, schema migrations or new infrastructure without approval.
+- For each task: (1) read relevant docs, (2) state scope and files, (3) identify risks, (4) seek approval if action is risky or outside scope, (5) implement minimally, (6) test, (7) summarize evidence and remaining questions.
+- PLAN/RESEARCH tasks are read-only. Produce a plan; do NOT modify code, docs, databases or infrastructure unless specifically authorized. Creating docs is a change requiring approval when the task is read-only.
+- Never silently start the next roadmap phase. Wait for explicit user approval at each stage gate.
+- Never run parallel agents, installs, deployments, imports, data migrations, mass scans or destructive commands without separate authorization.
+- Agent instructions are guidance, not access controls: rely on OS/DB permissions and confirmations to enforce restrictions.

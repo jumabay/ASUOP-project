@@ -1,0 +1,12 @@
+---
+description: Special Oracle and legacy integration constraints.
+globs: **/*.{sql,pls,plsql},backend/**/repository/**,backend/**/integration/**,workers/**
+alwaysApply: false
+---
+# Oracle + legacy boundaries
+- Inspect version, driver compatibility, synonyms, packages, grants, triggers and schema ownership before designing access.
+- Legacy database and applications must coexist until explicit cutover. Do not change their behavior accidentally.
+- Every proposed database change requires documented dependencies, impact assessment, backup/rollback plan and separate written approval.
+- Full hourly snapshots MUST be preserved, including unchanged wagons; changes-file data is a separate flow. Never collapse snapshots to delta-only history.
+- For import design: source-file identity, batch IDs, deduplication policy, atomicity/restart behavior and reconciliation must be explicit.
+- Document all old-app ↔ new-app parity checks with representative test cases and concrete evidence.

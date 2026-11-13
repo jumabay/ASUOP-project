@@ -1,0 +1,13 @@
+---
+description: Enforce modular Java architecture and long-term maintainability during design and coding.
+alwaysApply: true
+---
+# Architectural constraints
+- Default is ONE modular monolith (Spring Boot, module boundaries verified where practical), not microservices. Separate import worker only when justified by process isolation/reliability.
+- Business modules: нув, увп, нуд, expedition, contracts/partners, finance, reporting, integration, identity/admin. Future module names describe intended boundaries, not confirmed requirements.
+- Modules communicate through documented public contracts; no direct usage of another module's internal classes or table ownership assumptions.
+- Keep core domain/business rules separate from transport/UI, Oracle access, scheduled jobs, and 1C adapters. Keep dependencies one-way; avoid cyclic modules.
+- New read APIs default to pagination/filter limits; historical Oracle queries must avoid pulling entire data sets into memory.
+- The legacy Oracle schema remains authoritative until a separately approved migration. First implementation phase is read-only against TEST Oracle and side-by-side verification with old app.
+- For each architecture decision document: alternatives, why chosen, compatibility risks, costs, rollback plan, and testability (ADR).
+- Do not add Redis/Kafka/RabbitMQ/Kubernetes/Elasticsearch/another database, complex patterns, or new framework without measured need and approval.

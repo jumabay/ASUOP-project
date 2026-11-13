@@ -1,0 +1,2 @@
+# Railway Platform — agent entrypoint
+Read `.cursor/rules/00-project-control.mdc`, `01-security-data.mdc`, `02-architecture.mdc` and `03-delivery-quality.mdc` before acting. Cursor project rules are authoritative for this project. Use the relevant skill on-demand. For read-only planning, do not create or change files. Ask for approval at each stage gate. Default environment: TEST/read-only; production and integrations are off-limits without separate authorization.

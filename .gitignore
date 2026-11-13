@@ -1,0 +1,46 @@
+# Build / IDE
+**/build/
+**/.gradle/
+**/out/
+**/.idea/
+**/.vscode/
+*.iml
+*.class
+*.log
+*.tmp
+*.swp
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Secrets / local env (never commit)
+.env
+.env.*
+*.pem
+*.p12
+*.jks
+**/application-local.*
+**/secrets/
+**/credentials*
+
+# Legacy binaries and runtime configs — keep out of VCS
+/Старая программа/
+**/*.exe
+**/*.dll
+**/*.pdb
+**/*.config
+
+# Decompilation / reverse scratch (evidence stays local)
+docs/analysis/_nuff_tmp/
+docs/analysis/_nuud_tmp/
+docs/analysis/_oracle_tmp/
+docs/analysis/_report_tmp/
+docs/analysis/_vvp_tmp/
+docs/analysis/**/bin/
+docs/analysis/**/*.decompiled.cs
+
+# Optional local scratch
+/tmp/
+/C_Temp_copies/

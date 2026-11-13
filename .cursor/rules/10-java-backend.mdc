@@ -1,0 +1,13 @@
+---
+description: Java/Spring code conventions for backend and workers.
+globs: backend/**/*.{java,xml,gradle,kts,properties,yml,yaml},workers/**/*.{java,xml,gradle,kts,properties,yml,yaml}
+alwaysApply: false
+---
+# Backend conventions
+- Follow the approved Java/Spring versions and existing build system; do not upgrade them implicitly.
+- Keep controllers thin, application services explicit, domain logic testable, persistence adapters isolated.
+- Prefer Spring JDBC/explicit SQL for high-volume dislocation and complex legacy PL/SQL; JPA only where justified.
+- Always bind SQL parameters and set pagination/timeouts. Preserve Oracle transaction and timestamp semantics. Document timezone decisions.
+- Structured logs with correlation IDs; never log credentials or raw sensitive payloads.
+- External adapters and scheduled jobs must be idempotent, observable, retryable, and independently testable.
+- Include unit tests and TEST-Oracle integration tests where available; avoid mocked tests as sole evidence for critical SQL behavior.

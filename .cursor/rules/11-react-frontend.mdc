@@ -1,0 +1,12 @@
+---
+description: React/TypeScript conventions for complex operational screens.
+globs: frontend/**/*.{ts,tsx,js,jsx,css,scss}
+alwaysApply: false
+---
+# Frontend conventions
+- React + TypeScript under approved version/component choices. Strict typing; do not use `any` as an escape hatch.
+- Reuse the approved design system; do not redesign unrelated pages.
+- For wagon history and large registries use server-side filtering, sorting, pagination/virtualization; no eager loading of millions of records.
+- Show loading, empty, partial, offline/error and retry states. Do not imply a successful write before server confirmation.
+- Access control is checked by backend, not solely hidden buttons. Audit critical user actions.
+- Maintain keyboard usability, consistent validation, and debounced search where useful.
