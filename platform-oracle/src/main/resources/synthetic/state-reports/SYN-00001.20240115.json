@@ -1,0 +1,26 @@
+{
+  "wagonCode": "SYN-00001",
+  "lines": [
+    {
+      "reportId": 1001,
+      "wagonCode": "SYN-00001",
+      "dislocationTime": "2024-01-15T08:00:00",
+      "stationCode": "6900",
+      "operationCode": "01"
+    },
+    {
+      "reportId": 1002,
+      "wagonCode": "SYN-00001",
+      "dislocationTime": "2024-01-15T14:30:00",
+      "stationCode": "6901",
+      "operationCode": "03"
+    },
+    {
+      "reportId": 1003,
+      "wagonCode": "SYN-00001",
+      "dislocationTime": "2024-01-15T23:59:59.500",
+      "stationCode": "6902",
+      "operationCode": "01"
+    }
+  ]
+}

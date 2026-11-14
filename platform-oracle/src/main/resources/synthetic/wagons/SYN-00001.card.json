@@ -1,0 +1,9 @@
+{
+  "wagonCode": "SYN-00001",
+  "model": "12-132",
+  "wagonKind": "КРЫТЫЙ",
+  "ownerName": "SYN-OWNER",
+  "homeStationCode": "6900",
+  "homeStationName": "SYN-STATION",
+  "inventoryPark": true
+}
