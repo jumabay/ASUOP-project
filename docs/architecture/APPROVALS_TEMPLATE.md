@@ -32,6 +32,8 @@
 | P0 RAILDB documentation pack | APPROVED | Только документация P0 (ADR-0009 PROPOSED + DBA instruction + migration matrix + RWL analysis + эта строка). Код приложения, Oracle и P1+ — нет | 2026-11-16 |
 | P1 Java profile prep for RAILDB | APPROVED | `@Profile("synthetic")` на synthetic adapters; default `synthetic`; stub profile `raildb-test` без DataSource/URL; REST R1–R3 и `platform-disl-parser` без изменений; без JDBC/DDL/DML/RWL/connect. ADR-0009 остаётся PROPOSED | 2026-11-16 |
 | P2 RWL research + offline integration | APPROVED | Docs 13/26 + modules `intake`/`platform-rwl` offline only (fixtures). Live RWL/HTTP, Oracle, Flyway, REST changes, DBTC — запрещены. `tools/rwl-import-proto` не коммитить целиком без secret-review | 2026-11-16 |
+| P3A RAILDB ER + migration design (offline) | APPROVED | Docs 27–31 + draft DDL + DBA dictionary SQL + JDBC stub under `raildb-test` (fail-fast, no connect). **Не** P3B/P4; нет RAC/RAILDB/Flyway/DDL apply/RWL live | 2026-11-16 |
+| P3B DBTC dictionary probes (DBA SELECTs) | DENIED UNTIL APPROVED | Scripts ready: `docs/architecture/sql/dba/01_dictionary_probes.sql` | |
 | Create Oracle RAILDB (instance/PDB) | DENIED UNTIL APPROVED | Ждать DBA checklist и отдельную строку | |
 | RAILDB Flyway apply / business DDL | DENIED UNTIL APPROVED | Скрипты в репо позже; apply отдельно | |
 | DBTC read for migration | DENIED UNTIL APPROVED | | |
