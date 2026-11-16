@@ -1,6 +1,10 @@
--- DRAFT ONLY for RAILDB.RAIL_APP — DO NOT EXECUTE in P3A.
+-- DRAFT ONLY for RAILDB.RAIL_APP — DO NOT EXECUTE (P3A/P3B-0).
 -- Flyway disabled. Apply only after APPROVALS + P3B column confirmation.
--- Oracle 12.2 compatible. Objects below are logical core with PROVISIONAL UK where noted.
+-- Oracle 12.2 syntax OK for IDENTITY / RANGE partitions.
+-- LICENSING: PARTITION BY RANGE + LOCAL indexes require Oracle Partitioning option (EE).
+-- If Partitioning is not licensed, replace RAIL_DISL_EVENT with a non-partitioned table
+-- and keep (wagon_id, dislocation_ts) btree indexes (see 32_P3B0_DICTIONARY_PROBE_AUDIT.md §4).
+-- Objects below are logical core with PROVISIONAL UK where noted.
 
 -- References
 CREATE TABLE rail_station (
