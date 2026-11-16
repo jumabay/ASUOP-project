@@ -20,6 +20,7 @@
 | R1 synthetic scaffold code | APPROVED | Промпт №15: разрешена реализация A1+A2 на synthetic (Java + React) по плану 23. JDBC/Oracle/tc-asuvp-03 по-прежнему запрещены. JDBC parity `@Disabled` | 2026-11-14 |
 | R1 CODE IMPLEMENTATION (synthetic A1+A2) | APPROVED | Явное разрешение промпта №15 (2026-11-14): код R1 только synthetic, по ADR-0008 и плану 23. Не снимает запреты JDBC/Oracle/Production/legacy-parity | 2026-11-14 |
 | R2 CODE IMPLEMENTATION (synthetic wagon registry) | APPROVED | Явное разрешение (2026-11-16): реестр вагонов READ-ONLY synthetic; `WagonRegistryPort.findPage`; page/size/sort/search; без JDBC/Oracle; R1 контракты не менять | 2026-11-16 |
+| R3 CODE IMPLEMENTATION (synthetic watched wagon list) | APPROVED | Явное разрешение (2026-11-16): READ-ONLY «Вагоны на слежении»; `GET /api/v1/wagons/watched`; synthetic fixture 60 кодов; без JDBC/Oracle/FTP; R1/R2 контракты не менять; соответствие `GetActiveWagonList` не подтверждено | 2026-11-16 |
 | R1 JDBC against TEST Oracle | DENIED UNTIL APPROVED | TEST URL отсутствует; parity `@Disabled` | |
 | R1 implementation (full card+day vs legacy on copy) | DENIED UNTIL APPROVED | Сверка с legacy на копии Oracle — вне synthetic R1. [22_R1_PREPARATION_PLAN.md](22_R1_PREPARATION_PLAN.md), [23_R1_A1_A2_IMPLEMENTATION_PLAN.md](23_R1_A1_A2_IMPLEMENTATION_PLAN.md) | |
 | Test Oracle write permissions | DENIED UNTIL APPROVED | | |

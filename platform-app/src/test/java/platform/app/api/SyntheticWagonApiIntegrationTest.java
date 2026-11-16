@@ -53,4 +53,38 @@ class SyntheticWagonApiIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.wagonCode").value("SYN-00002"));
     }
+
+    @Test
+    void syntheticWatchedListAndCardPathUnchanged() throws Exception {
+        mockMvc.perform(get("/api/v1/wagons/watched").param("size", "50"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalElements").value(60))
+                .andExpect(jsonPath("$.totalPages").value(2))
+                .andExpect(jsonPath("$.content", hasSize(50)))
+                .andExpect(jsonPath("$.content[0].wagonCode").value("SYN-00001"))
+                .andExpect(jsonPath("$.content[0].model").exists());
+
+        mockMvc.perform(get("/api/v1/wagons/watched").param("page", "1").param("size", "50"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(10)))
+                .andExpect(jsonPath("$.content[0].wagonCode").value("SYN-00051"));
+
+        mockMvc.perform(get("/api/v1/wagons/watched").param("search", "NOMATCH"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalElements").value(0))
+                .andExpect(jsonPath("$.content", hasSize(0)));
+
+        mockMvc.perform(get("/api/v1/wagons/watched").param("search", "SYN-00250"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalElements").value(0));
+
+        mockMvc.perform(get("/api/v1/wagons/watched").param("page", "-1"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("INVALID_PAGE"));
+
+        mockMvc.perform(get("/api/v1/wagons/SYN-00001"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.wagonCode").value("SYN-00001"))
+                .andExpect(jsonPath("$.model").exists());
+    }
 }

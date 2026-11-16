@@ -1,4 +1,4 @@
-import type { StateReportDay, WagonCard, WagonRegistryPage } from '../types'
+import type { StateReportDay, WagonCard, WagonRegistryPage, WatchedWagonPage } from '../types'
 import { ApiError, type ApiErrorBody } from '../types'
 
 async function parseError(response: Response): Promise<never> {
@@ -36,6 +36,33 @@ export async function fetchWagonRegistry(params: {
     await parseError(response)
   }
   return (await response.json()) as WagonRegistryPage
+}
+
+export async function fetchWatchedWagons(params: {
+  page?: number
+  size?: number
+  sort?: 'code,asc' | 'code,desc'
+  search?: string
+}): Promise<WatchedWagonPage> {
+  const query = new URLSearchParams()
+  if (params.page !== undefined) {
+    query.set('page', String(params.page))
+  }
+  if (params.size !== undefined) {
+    query.set('size', String(params.size))
+  }
+  if (params.sort) {
+    query.set('sort', params.sort)
+  }
+  if (params.search !== undefined && params.search.trim() !== '') {
+    query.set('search', params.search.trim())
+  }
+  const qs = query.toString()
+  const response = await fetch(`/api/v1/wagons/watched${qs ? `?${qs}` : ''}`)
+  if (!response.ok) {
+    await parseError(response)
+  }
+  return (await response.json()) as WatchedWagonPage
 }
 
 export async function fetchWagonCard(wagonCode: string): Promise<WagonCard> {

@@ -8,6 +8,8 @@ import platform.fleet.WagonCardPort;
 import platform.fleet.WagonCardQuery;
 import platform.fleet.WagonRegistryPort;
 import platform.fleet.WagonRegistryQuery;
+import platform.fleet.WatchedWagonPort;
+import platform.fleet.WatchedWagonQuery;
 
 @Configuration
 public class ApplicationConfig {
@@ -20,6 +22,11 @@ public class ApplicationConfig {
     @Bean
     WagonRegistryQuery wagonRegistryQuery(WagonRegistryPort port) {
         return new WagonRegistryQuery(port);
+    }
+
+    @Bean
+    WatchedWagonQuery watchedWagonQuery(WatchedWagonPort port) {
+        return new WatchedWagonQuery(port);
     }
 
     @Bean

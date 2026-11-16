@@ -19,6 +19,7 @@
 | Текущая дислокация | `fleet` | поля `LOCATION*` как «карточка Oracle», вне сверки со срезом | писатель не доказан (G3, G4) |
 | История дислокации | `dislocation` | `GetWagonStateReports` за сутки | пакет и лента |
 | Подача, уборка, прибытие, списки слежения | `movement` | чтение после разделения `Get*` и `Save*` | запись у планировщика и импортёра |
+| R3 «Вагоны на слежении» (synthetic v1) | `fleet` | READ-ONLY `GET /api/v1/wagons/watched`; membership — fixture `watched.json` (коды ⊂ catalog R2); паспорт A2 из synthetic card | соответствие `WagonPackage.GetActiveWagonList` **не подтверждено**; публикация `wagons.txt` / FTP / запись списка — вне R3 |
 | Отправка на FTP, приём сторонней компании | `dislocation` / старый сервис | наблюдатель файла, без записи | `ImportPkg`, публикация `wagons.txt` |
 | Аналитика | `reports` | по одному готовому отчёту | ночные jobs витрин |
 

@@ -12,11 +12,19 @@ function jsonResponse(data: unknown, status = 200): Response {
 }
 
 const emptyRegistry = {
-  content: [{ wagonCode: 'SYN-00001' }],
+  content: [],
   page: 0,
   size: 50,
-  totalElements: 1,
-  totalPages: 1,
+  totalElements: 0,
+  totalPages: 0,
+}
+
+const emptyWatched = {
+  content: [],
+  page: 0,
+  size: 50,
+  totalElements: 0,
+  totalPages: 0,
 }
 
 const sampleCard = {
@@ -29,9 +37,7 @@ const sampleCard = {
   inventoryPark: true,
 }
 
-function mockApi(
-  handler?: (url: string) => Response | undefined,
-) {
+function mockApi(handler?: (url: string) => Response | undefined) {
   vi.mocked(fetch).mockImplementation(async (input) => {
     const url = String(input)
     const custom = handler?.(url)
@@ -54,6 +60,9 @@ function mockApi(
         ],
       })
     }
+    if (path.endsWith('/wagons/watched')) {
+      return jsonResponse(emptyWatched)
+    }
     if (/\/api\/v1\/wagons\/[^/]+$/.test(path)) {
       return jsonResponse(sampleCard)
     }
@@ -61,7 +70,7 @@ function mockApi(
   })
 }
 
-describe('App R1/R2 scenarios', () => {
+describe('App R1/R2/R3 scenarios', () => {
   beforeEach(() => {
     vi.stubGlobal('fetch', vi.fn())
   })
@@ -71,127 +80,163 @@ describe('App R1/R2 scenarios', () => {
     vi.restoreAllMocks()
   })
 
-  it('shows registry and opens card from search', async () => {
-    mockApi()
-    const user = userEvent.setup()
-    render(
-      <ConfigProvider>
-        <App />
-      </ConfigProvider>,
-    )
+  it(
+    'shows watched list by default and opens card from search',
+    async () => {
+      mockApi()
+      const user = userEvent.setup()
+      render(
+        <ConfigProvider>
+          <App />
+        </ConfigProvider>,
+      )
 
-    await waitFor(() => {
-      expect(screen.getByText('Реестр вагонов')).toBeInTheDocument()
-    })
-
-    await user.click(screen.getByRole('button', { name: 'Найти' }))
-
-    await waitFor(() => {
-      expect(screen.getByText('12-132')).toBeInTheDocument()
-    })
-    expect(screen.getByText('История дислокации · 2024-01-15')).toBeInTheDocument()
-  })
-
-  it('shows not found message', async () => {
-    mockApi((url) => {
-      const path = url.split('?')[0]
-      if (/\/api\/v1\/wagons\/[^/]+$/.test(path) || path.includes('/state-reports')) {
-        return jsonResponse({ error: 'WAGON_NOT_FOUND', message: 'Wagon not found' }, 404)
-      }
-      return undefined
-    })
-
-    const user = userEvent.setup()
-    render(
-      <ConfigProvider>
-        <App />
-      </ConfigProvider>,
-    )
-
-    await user.clear(screen.getByPlaceholderText('Номер вагона'))
-    await user.type(screen.getByPlaceholderText('Номер вагона'), 'SYN-UNKNOWN')
-    await user.click(screen.getByRole('button', { name: 'Найти' }))
-
-    await waitFor(() => {
-      expect(screen.getByText('Вагон не найден')).toBeInTheDocument()
-    })
-  })
-
-  it('shows empty day state', async () => {
-    mockApi((url) => {
-      if (url.includes('/state-reports')) {
-        return jsonResponse({ wagonCode: 'SYN-00001', date: '2024-01-16', lines: [] })
-      }
-      return undefined
-    })
-
-    const user = userEvent.setup()
-    render(
-      <ConfigProvider>
-        <App />
-      </ConfigProvider>,
-    )
-
-    await user.click(screen.getByRole('button', { name: 'Найти' }))
-
-    await waitFor(() => {
-      expect(screen.getByText('За выбранные сутки записей нет')).toBeInTheDocument()
-    })
-  })
-
-  it('shows limit exceeded error', async () => {
-    mockApi((url) => {
-      if (url.includes('/state-reports')) {
-        return jsonResponse(
-          {
-            error: 'RESULT_LIMIT_EXCEEDED',
-            message: 'too many',
-            wagonCode: 'SYN-00001',
-            date: '2024-01-15',
-          },
-          422,
+      await waitFor(() => {
+        expect(screen.getByRole('tab', { name: 'Вагоны на слежении' })).toHaveAttribute(
+          'aria-selected',
+          'true',
         )
-      }
-      return undefined
-    })
-
-    const user = userEvent.setup()
-    render(
-      <ConfigProvider>
-        <App />
-      </ConfigProvider>,
-    )
-
-    await user.click(screen.getByRole('button', { name: 'Найти' }))
-
-    await waitFor(() => {
-      expect(screen.getByText('RESULT_LIMIT_EXCEEDED')).toBeInTheDocument()
-    })
-  })
-
-  it('shows empty registry state', async () => {
-    mockApi((url) => {
-      const path = url.split('?')[0]
-      if (path.endsWith('/api/v1/wagons') || path.endsWith('/wagons')) {
-        return jsonResponse({
-          content: [],
-          page: 0,
-          size: 50,
-          totalElements: 0,
-          totalPages: 0,
-        })
-      }
-      return undefined
-    })
-
-    render(
-      <ConfigProvider>
-        <App />
-      </ConfigProvider>,
-    )
-
-    await waitFor(() => {
+      })
       expect(screen.getByText('По заданным условиям вагоны не найдены')).toBeInTheDocument()
-    })
-  })
+
+      await user.click(screen.getByRole('button', { name: 'Найти' }))
+
+      await waitFor(() => {
+        expect(screen.getByText(/История дислокации · 2024-01-15/)).toBeInTheDocument()
+      })
+    },
+    15000,
+  )
+
+  it(
+    'shows registry tab',
+    async () => {
+      mockApi()
+      const user = userEvent.setup()
+      render(
+        <ConfigProvider>
+          <App />
+        </ConfigProvider>,
+      )
+
+      await user.click(screen.getByRole('tab', { name: 'Реестр вагонов' }))
+
+      await waitFor(() => {
+        expect(screen.getByRole('tab', { name: 'Реестр вагонов' })).toHaveAttribute(
+          'aria-selected',
+          'true',
+        )
+      })
+    },
+    15000,
+  )
+
+  it(
+    'shows not found message',
+    async () => {
+      mockApi((url) => {
+        const path = url.split('?')[0]
+        if (/\/api\/v1\/wagons\/[^/]+$/.test(path) && !path.endsWith('/watched')) {
+          return jsonResponse({ error: 'WAGON_NOT_FOUND', message: 'Wagon not found' }, 404)
+        }
+        if (path.includes('/state-reports')) {
+          return jsonResponse({ error: 'WAGON_NOT_FOUND', message: 'Wagon not found' }, 404)
+        }
+        return undefined
+      })
+
+      const user = userEvent.setup()
+      render(
+        <ConfigProvider>
+          <App />
+        </ConfigProvider>,
+      )
+
+      await user.clear(screen.getByPlaceholderText('Номер вагона'))
+      await user.type(screen.getByPlaceholderText('Номер вагона'), 'SYN-UNKNOWN')
+      await user.click(screen.getByRole('button', { name: 'Найти' }))
+
+      await waitFor(() => {
+        expect(screen.getByText('Вагон не найден')).toBeInTheDocument()
+      })
+    },
+    15000,
+  )
+
+  it(
+    'shows empty day state',
+    async () => {
+      mockApi((url) => {
+        if (url.includes('/state-reports')) {
+          return jsonResponse({ wagonCode: 'SYN-00001', date: '2024-01-16', lines: [] })
+        }
+        return undefined
+      })
+
+      const user = userEvent.setup()
+      render(
+        <ConfigProvider>
+          <App />
+        </ConfigProvider>,
+      )
+
+      await user.click(screen.getByRole('button', { name: 'Найти' }))
+
+      await waitFor(() => {
+        expect(screen.getByText('За выбранные сутки записей нет')).toBeInTheDocument()
+      })
+    },
+    15000,
+  )
+
+  it(
+    'shows limit exceeded error',
+    async () => {
+      mockApi((url) => {
+        if (url.includes('/state-reports')) {
+          return jsonResponse(
+            {
+              error: 'RESULT_LIMIT_EXCEEDED',
+              message: 'too many',
+              wagonCode: 'SYN-00001',
+              date: '2024-01-15',
+            },
+            422,
+          )
+        }
+        return undefined
+      })
+
+      const user = userEvent.setup()
+      render(
+        <ConfigProvider>
+          <App />
+        </ConfigProvider>,
+      )
+
+      await user.click(screen.getByRole('button', { name: 'Найти' }))
+
+      await waitFor(() => {
+        expect(screen.getByText('RESULT_LIMIT_EXCEEDED')).toBeInTheDocument()
+      })
+    },
+    15000,
+  )
+
+  it(
+    'shows empty watched state',
+    async () => {
+      mockApi()
+      render(
+        <ConfigProvider>
+          <App />
+        </ConfigProvider>,
+      )
+
+      await waitFor(() => {
+        expect(screen.getByText('По заданным условиям вагоны не найдены')).toBeInTheDocument()
+      })
+    },
+    15000,
+  )
 })

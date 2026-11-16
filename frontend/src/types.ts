@@ -20,6 +20,24 @@ export interface WagonRegistryPage {
   totalPages: number
 }
 
+export interface WatchedWagonItem {
+  wagonCode: string
+  model: string
+  wagonKind: string
+  ownerName: string
+  homeStationCode: string
+  homeStationName: string
+  inventoryPark: boolean
+}
+
+export interface WatchedWagonPage {
+  content: WatchedWagonItem[]
+  page: number
+  size: number
+  totalElements: number
+  totalPages: number
+}
+
 export interface StateReportLine {
   reportId: number
   wagonCode: string

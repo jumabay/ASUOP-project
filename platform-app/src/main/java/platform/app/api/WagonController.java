@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 import platform.app.api.dto.StateReportDayDto;
 import platform.app.api.dto.WagonCardDto;
 import platform.app.api.dto.WagonRegistryPageDto;
+import platform.app.api.dto.WatchedWagonPageDto;
 import platform.dislocation.DayStateReportQuery;
 import platform.dislocation.InvalidDateException;
 import platform.fleet.WagonCardQuery;
 import platform.fleet.WagonRegistryQuery;
+import platform.fleet.WatchedWagonQuery;
 
 @RestController
 @RequestMapping("/api/v1/wagons")
@@ -23,14 +25,17 @@ public class WagonController {
     private final WagonCardQuery wagonCardQuery;
     private final DayStateReportQuery dayStateReportQuery;
     private final WagonRegistryQuery wagonRegistryQuery;
+    private final WatchedWagonQuery watchedWagonQuery;
 
     public WagonController(
             WagonCardQuery wagonCardQuery,
             DayStateReportQuery dayStateReportQuery,
-            WagonRegistryQuery wagonRegistryQuery) {
+            WagonRegistryQuery wagonRegistryQuery,
+            WatchedWagonQuery watchedWagonQuery) {
         this.wagonCardQuery = wagonCardQuery;
         this.dayStateReportQuery = dayStateReportQuery;
         this.wagonRegistryQuery = wagonRegistryQuery;
+        this.watchedWagonQuery = watchedWagonQuery;
     }
 
     @GetMapping
@@ -40,6 +45,16 @@ public class WagonController {
             @RequestParam(value = "sort", required = false) String sort,
             @RequestParam(value = "search", required = false) String search) {
         return ResponseEntity.ok(WagonApiMapper.toDto(wagonRegistryQuery.search(search, page, size, sort)));
+    }
+
+    /** Literal path before /{wagonCode} so "watched" is never treated as a wagon code. */
+    @GetMapping("/watched")
+    public ResponseEntity<WatchedWagonPageDto> getWatchedWagons(
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "size", required = false) Integer size,
+            @RequestParam(value = "sort", required = false) String sort,
+            @RequestParam(value = "search", required = false) String search) {
+        return ResponseEntity.ok(WagonApiMapper.toDto(watchedWagonQuery.search(search, page, size, sort)));
     }
 
     @GetMapping("/{wagonCode}")

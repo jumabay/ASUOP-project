@@ -6,10 +6,13 @@ import platform.app.api.dto.StateReportLineDto;
 import platform.app.api.dto.WagonCardDto;
 import platform.app.api.dto.WagonRegistryItemDto;
 import platform.app.api.dto.WagonRegistryPageDto;
+import platform.app.api.dto.WatchedWagonItemDto;
+import platform.app.api.dto.WatchedWagonPageDto;
 import platform.dislocation.StateReportDay;
 import platform.dislocation.StateReportLine;
 import platform.fleet.WagonCard;
 import platform.fleet.WagonRegistryPage;
+import platform.fleet.WatchedWagonPage;
 
 final class WagonApiMapper {
 
@@ -46,6 +49,25 @@ final class WagonApiMapper {
                 .map(item -> new WagonRegistryItemDto(item.wagonCode()))
                 .toList();
         return new WagonRegistryPageDto(
+                content,
+                page.page(),
+                page.size(),
+                page.totalElements(),
+                page.totalPages());
+    }
+
+    static WatchedWagonPageDto toDto(WatchedWagonPage page) {
+        List<WatchedWagonItemDto> content = page.content().stream()
+                .map(item -> new WatchedWagonItemDto(
+                        item.wagonCode(),
+                        item.model(),
+                        item.wagonKind(),
+                        item.ownerName(),
+                        item.homeStationCode(),
+                        item.homeStationName(),
+                        item.inventoryPark()))
+                .toList();
+        return new WatchedWagonPageDto(
                 content,
                 page.page(),
                 page.size(),

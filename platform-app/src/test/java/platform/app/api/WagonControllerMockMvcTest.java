@@ -26,6 +26,9 @@ import platform.fleet.WagonCardPort;
 import platform.fleet.WagonRegistryItem;
 import platform.fleet.WagonRegistryPage;
 import platform.fleet.WagonRegistryPort;
+import platform.fleet.WatchedWagonItem;
+import platform.fleet.WatchedWagonPage;
+import platform.fleet.WatchedWagonPort;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -42,6 +45,9 @@ class WagonControllerMockMvcTest {
 
     @MockitoBean
     WagonRegistryPort wagonRegistryPort;
+
+    @MockitoBean
+    WatchedWagonPort watchedWagonPort;
 
     @Test
     void getWagonCard_ok() throws Exception {
@@ -178,8 +184,57 @@ class WagonControllerMockMvcTest {
                 .andExpect(jsonPath("$.error").value("INVALID_SORT"));
     }
 
+    @Test
+    void getWatched_ok() throws Exception {
+        when(watchedWagonPort.findPage(any())).thenReturn(new WatchedWagonPage(
+                List.of(sampleWatched("SYN-00001"), sampleWatched("SYN-00002")),
+                0,
+                50,
+                2,
+                1));
+
+        mockMvc.perform(get("/api/v1/wagons/watched"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(2)))
+                .andExpect(jsonPath("$.content[0].wagonCode").value("SYN-00001"))
+                .andExpect(jsonPath("$.content[0].model").value("12-132"))
+                .andExpect(jsonPath("$.totalElements").value(2));
+    }
+
+    @Test
+    void getWatched_empty() throws Exception {
+        when(watchedWagonPort.findPage(any())).thenReturn(new WatchedWagonPage(List.of(), 0, 50, 0, 0));
+
+        mockMvc.perform(get("/api/v1/wagons/watched").param("search", "NOMATCH"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(0)))
+                .andExpect(jsonPath("$.totalElements").value(0))
+                .andExpect(jsonPath("$.totalPages").value(0));
+    }
+
+    @Test
+    void getWatched_invalidPage() throws Exception {
+        mockMvc.perform(get("/api/v1/wagons/watched").param("page", "-1"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("INVALID_PAGE"));
+    }
+
+    @Test
+    void watchedLiteralDoesNotShadowCard() throws Exception {
+        when(wagonCardPort.findByCode("SYN-00001")).thenReturn(Optional.of(sampleCard()));
+
+        mockMvc.perform(get("/api/v1/wagons/SYN-00001"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.wagonCode").value("SYN-00001"))
+                .andExpect(jsonPath("$.model").value("12-132"));
+    }
+
     private static WagonCard sampleCard() {
         return new WagonCard(
                 "SYN-00001", "12-132", "КРЫТЫЙ", "SYN-OWNER", "6900", "SYN-STATION", true);
+    }
+
+    private static WatchedWagonItem sampleWatched(String code) {
+        return new WatchedWagonItem(code, "12-132", "КРЫТЫЙ", "SYN-OWNER", "6900", "SYN-STATION", true);
     }
 }
