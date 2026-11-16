@@ -8,12 +8,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import platform.dislocation.DayInterval;
 import platform.dislocation.StateReportDayPort;
 import platform.dislocation.StateReportLine;
 
 @Component
+@Profile("synthetic")
 public class SyntheticStateReportDayAdapter implements StateReportDayPort {
 
     private final ObjectMapper mapper;

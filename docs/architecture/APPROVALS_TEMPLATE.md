@@ -2,7 +2,7 @@
 
 Журнал решений по утверждению плана «Java Architecture Plan» (промпт №11), 2026-11-13. Строка `APPROVED` разрешает указанное решение. Строка `DENIED UNTIL APPROVED` остаётся запретом. Код, схема Oracle, 1С и FTP этим журналом не меняются без отдельной строки.
 
-Источник истины целевой платформы: `docs/architecture/01`…`23` и `docs/architecture/decisions/ADR-0001`…`ADR-0008`. Черновик C# / Blazor (`docs/architecture/_archive_csharp/`, `docs/analysis/10-target-architecture-migration.md`) стеком не является. Матрица `docs/analysis/09-function-gap-matrix.md` для проектирования устарела; опора по фактам старого контура — `docs/analysis/08_CROSS_SYSTEM_MATRIX.md` и `docs/analysis/08_GAPS_AND_UNCERTAINTIES.md`.
+Источник истины целевой платформы: `docs/architecture/01`…`25` и `docs/architecture/decisions/ADR-0001`…`ADR-0009`. ADR-0009 пока **PROPOSED** (не Accepted): целевой store `RAILDB` не открывает JDBC/DDL/DML. Черновик C# / Blazor (`docs/architecture/_archive_csharp/`, `docs/analysis/10-target-architecture-migration.md`) стеком не является. Матрица `docs/analysis/09-function-gap-matrix.md` для проектирования устарела; опора по фактам старого контура — `docs/analysis/08_CROSS_SYSTEM_MATRIX.md` и `docs/analysis/08_GAPS_AND_UNCERTAINTIES.md`.
 
 | Decision | Status | Evidence / approver | Date |
 |---|---|---|---|
@@ -10,8 +10,8 @@
 | Oracle version + compatible JDBC driver | APPROVED | База 12.2.0.1.0, схема `DBTC`. Драйвер `com.oracle.database.jdbc:ojdbc10:19.33.0.0` + NLS `com.oracle.database.nls:orai18n:19.33.0.0`. `ojdbc11:23.x` к 12.2 не берётся. ADR-0003, [21_JDBC_SMOKE_CHECK.md](21_JDBC_SMOKE_CHECK.md) | 2026-11-13 / уточн. 2026-11-14 |
 | Backend/frontend UI libraries | APPROVED | Spring JDBC / `JdbcClient`, без JPA на ленте срезов. React, TypeScript, Vite, Ant Design, AG Grid Community. ADR-0002, ADR-0005 | 2026-11-13 |
 | Modular monolith, no broker | APPROVED | Один процесс. Kafka, RabbitMQ, Redis, Kubernetes на старте не вводятся. ADR-0004 | 2026-11-13 |
-| Single writer, read-first | APPROVED | Старый контур — единственный писатель среза, ремонта и склада до тестов группы B. ADR-0007 | 2026-11-13 |
-| Flyway scope | APPROVED | Flyway только для схемы метаданных приложения. DDL ленты `DBTC` не выполняется. ADR-0006 | 2026-11-13 |
+| Single writer, read-first | APPROVED | Старый контур — единственный писатель среза, ремонта и склада до тестов группы B. ADR-0007. **Напряжение с ADR-0009 PROPOSED:** после Accept cutover writer → RAILDB | 2026-11-13 |
+| Flyway scope | APPROVED | Flyway только для схемы метаданных приложения. DDL ленты `DBTC` не выполняется. ADR-0006. **Натяжение с ADR-0009 PROPOSED:** после Accept Flyway на `RAILDB.RAIL_APP` (бизнес-схема), не на DBTC | 2026-11-13 |
 | Expedition, finance, contracts rules | DENIED UNTIL APPROVED | Требований в исследовании нет. Модули остаются границами без правил | |
 | First feature to implement (R0) | APPROVED / DONE | Библиотека `platform-disl-parser`, без JDBC в самом модуле. [20_FIRST_IMPLEMENTATION_PLAN.md](20_FIRST_IMPLEMENTATION_PLAN.md) | 2026-11-13 |
 | JDBC smoke (one-time diagnostic) | COMPLETED | Разовые scoped-разрешения на диагностику к потенциально промышленному `tc-asuvp-03:1521/RAC.WORLD` под `RAILWAY_READONLY`. Только DUAL / системные представления. Постоянный allow-list **не** создан. Доказательства: [21_JDBC_SMOKE_CHECK.md](21_JDBC_SMOKE_CHECK.md). Повтор без новой строки журнала запрещён | 2026-11-14 |
@@ -28,3 +28,12 @@
 | Production access | DENIED UNTIL APPROVED | Разовое диагностическое подключение **не** считается постоянным Production access. Промышленный JDBC для разработки и R1 по умолчанию закрыт | |
 | 1C integration endpoint | DENIED UNTIL APPROVED | Конфигурации 1С нет. Формат обмена не задаётся | |
 | Live import cutover | DENIED UNTIL APPROVED | | |
+| ADR-0009 RAILDB primary store (variant 2) | PROPOSED / DOCS ONLY | Заказчик утвердил направление: основная БД `RAILDB`, схема `RAIL_APP` внутри неё; `DBTC` — миграция + архив; окно истории 12 месяцев. Документы: [ADR-0009](decisions/ADR-0009-raildb-primary-store.md), [24_RAILDB_DBA_INSTRUCTION.md](24_RAILDB_DBA_INSTRUCTION.md), [25_DBTC_TO_RAILDB_MIGRATION_MATRIX.md](25_DBTC_TO_RAILDB_MIGRATION_MATRIX.md), [12-rwl-api-intake.md](../analysis/12-rwl-api-intake.md). **Не** разрешает: JDBC, DDL/DML, создание `RAILDB`, Flyway apply, connect к рабочей RAC, изменение R0–R3/REST | 2026-11-16 |
+| P0 RAILDB documentation pack | APPROVED | Только документация P0 (ADR-0009 PROPOSED + DBA instruction + migration matrix + RWL analysis + эта строка). Код приложения, Oracle и P1+ — нет | 2026-11-16 |
+| P1 Java profile prep for RAILDB | APPROVED | `@Profile("synthetic")` на synthetic adapters; default `synthetic`; stub profile `raildb-test` без DataSource/URL; REST R1–R3 и `platform-disl-parser` без изменений; без JDBC/DDL/DML/RWL/connect. ADR-0009 остаётся PROPOSED | 2026-11-16 |
+| Create Oracle RAILDB (instance/PDB) | DENIED UNTIL APPROVED | Ждать DBA checklist и отдельную строку | |
+| RAILDB Flyway apply / business DDL | DENIED UNTIL APPROVED | Скрипты в репо позже; apply отдельно | |
+| DBTC read for migration | DENIED UNTIL APPROVED | | |
+| RAILDB write (app or migrator) | DENIED UNTIL APPROVED | | |
+| RWL live calls / FTP as RAILDB primary intake | DENIED UNTIL APPROVED | RWL не замена FTP без B1 | |
+| Accept ADR-0009 (supersede sole-DBTC store) | DENIED UNTIL APPROVED | PROPOSED ≠ Accepted; после Accept обновить 05/06/15 | |

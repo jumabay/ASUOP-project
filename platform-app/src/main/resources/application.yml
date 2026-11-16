@@ -14,6 +14,22 @@ spring:
       on-profile: synthetic
 
 # Synthetic profile: no DataSource, no Oracle JDBC URL, no credentials.
+# DataSourceAutoConfiguration remains excluded on RailwayPlatformApplication.
+logging:
+  level:
+    root: INFO
+    platform: INFO
+
+---
+spring:
+  config:
+    activate:
+      on-profile: raildb-test
+
+# P1 placeholder only — do NOT activate for normal development.
+# No datasource URL/username/password here: connection is DENIED until APPROVALS.
+# Future (separate approve): JDBC to RAILDB service (not RAC.WORLD / not RAC RAIL_APP schema),
+# password from ${RAIL_DB_PASSWORD}, Flyway disabled by default.
 logging:
   level:
     root: INFO

@@ -5,11 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import platform.fleet.WagonCard;
 import platform.fleet.WagonCardPort;
 
 @Component
+@Profile("synthetic")
 public class SyntheticWagonCardAdapter implements WagonCardPort {
 
     private final ObjectMapper mapper;

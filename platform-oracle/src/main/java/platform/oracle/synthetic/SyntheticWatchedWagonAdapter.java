@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import platform.fleet.WagonCardPort;
 import platform.fleet.WagonRegistryCriteria;
@@ -13,6 +14,7 @@ import platform.fleet.WatchedWagonPage;
 import platform.fleet.WatchedWagonPort;
 
 @Component
+@Profile("synthetic")
 public class SyntheticWatchedWagonAdapter implements WatchedWagonPort {
 
     private final SyntheticWatchedList watched;
