@@ -39,7 +39,7 @@ FTP disl_*  →  ApplicationService (разбор файла в C#)
 
 | Потребность | Объект Oracle | Запись? |
 |---|---|---|
-| Список и карточка | `WagonPackage.GetWagonList`, `GetWagonByCode`, `GetActiveWagonList` | чтение. `SaveWagon` — запись карточки, не отчёт |
+| Список и карточка | обозреватель: `GetWagonList`; карточка: `GetWagonByCode`; `GetActiveWagonList` — Remoting API, UI НУВ не подтверждён (R4) | чтение. `SaveWagon` — запись карточки, не отчёт. Evidence: [11-nuff-active-wagon-list.md](11-nuff-active-wagon-list.md) |
 | Инвентарный парк / OLAP | `GetWagonsInventoryData`, `GetWagonsInventoryDataOLAP` | чтение |
 | История дислокации | `StateReportPackage.GetWagonStateReports` и `LoadStateReports*` | чтение |
 | Простой | `DownTimePkg.GetWagonDownTime` | чтение. `FillWagonDownTime` и `JobPkg.FillAllWagonDownTime` — запись |
