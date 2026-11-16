@@ -10,23 +10,26 @@
 --   PL/SQL blocks, DBMS_*, dynamic SQL, COUNT(*) on business tables,
 --   unbounded SELECT from STATEREPORTRECORDS / archives.
 --
+-- PREFERRED for manual runs: split worksheets in sql/dba/p3b/G0_*.sql … G5_*.sql
+--   Sequence: docs/architecture/34_P3B_MANUAL_EXECUTION_SEQUENCE.md
 -- Run blocks ONE AT A TIME. Export results to CSV (no passwords in exports).
--- After P3B-0 audit: execution still requires APPROVALS row for P3B.
+-- Execution on RAC still requires owner/DBA scoped approve (P3B execute ≠ prep).
 -- =============================================================================
 
 /* ---------------------------------------------------------------------------
    BLOCK A — Session identity (sanity)
-   Goal: confirm DB/service/host/user before any further probes.
+   Goal: confirm DB/service/host/user/con_name before any further probes.
    Privs: CREATE SESSION; SELECT on DUAL (public).
    Load: negligible.
    Expected: one row; CURRENT_SCHEMA may be user schema (do not ALTER SESSION).
 --------------------------------------------------------------------------- */
-SELECT SYS_CONTEXT('USERENV', 'DB_NAME') AS db_name,
-       SYS_CONTEXT('USERENV', 'SERVICE_NAME') AS service_name,
-       SYS_CONTEXT('USERENV', 'SERVER_HOST') AS server_host,
+SELECT SYS_CONTEXT('USERENV', 'SESSION_USER') AS session_user,
+       USER AS user_name,
        SYS_CONTEXT('USERENV', 'CURRENT_SCHEMA') AS current_schema,
-       SYS_CONTEXT('USERENV', 'SESSION_USER') AS session_user,
-       USER AS user_name
+       SYS_CONTEXT('USERENV', 'DB_NAME') AS db_name,
+       SYS_CONTEXT('USERENV', 'CON_NAME') AS con_name,
+       SYS_CONTEXT('USERENV', 'SERVICE_NAME') AS service_name,
+       SYS_CONTEXT('USERENV', 'SERVER_HOST') AS server_host
 FROM dual;
 
 /* ---------------------------------------------------------------------------

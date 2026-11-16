@@ -34,7 +34,8 @@
 | P2 RWL research + offline integration | APPROVED | Docs 13/26 + modules `intake`/`platform-rwl` offline only (fixtures). Live RWL/HTTP, Oracle, Flyway, REST changes, DBTC — запрещены. `tools/rwl-import-proto` не коммитить целиком без secret-review | 2026-11-16 |
 | P3A RAILDB ER + migration design (offline) | APPROVED | Docs 27–31 + draft DDL + DBA dictionary SQL + JDBC stub under `raildb-test` (fail-fast, no connect). **Не** P3B/P4; нет RAC/RAILDB/Flyway/DDL apply/RWL live | 2026-11-16 |
 | P3B-0 Dictionary SQL audit (offline) | APPROVED | Аудит/санитизация `01_dictionary_probes.sql`; runbook SQL Developer; Partitioning license note. Docs 32–33. **Не** разрешает выполнение SQL на RAC | 2026-11-16 |
-| P3B DBTC dictionary probes (DBA SELECTs) | DENIED UNTIL APPROVED | Скрипт готов после P3B-0: `docs/architecture/sql/dba/01_dictionary_probes.sql` + [33_P3B0_SQLDEVELOPER_RUNBOOK.md](33_P3B0_SQLDEVELOPER_RUNBOOK.md). Нужна read-only учётка ≠ RAIL_APP admin | |
+| P3B prep (SQL Developer worksheets G0–G5) | APPROVED | Разбиение A–M на G0–G5; sequence 34; offline CSV 35. Cursor **не** коннектится. Выполнение SELECT на prod RAC — отдельно | 2026-11-16 |
+| P3B DBTC dictionary probes (execute SELECTs) | DENIED UNTIL APPROVED | Нужно согласие владельца БД/DBA на ручной прогон G0–G5 в SQL Developer. Скрипты: `sql/dba/p3b/G*.sql`. Учётка read-only ≠ RAIL_APP admin | |
 | Create Oracle RAILDB (instance/PDB) | DENIED UNTIL APPROVED | Ждать DBA checklist и отдельную строку | |
 | RAILDB Flyway apply / business DDL | DENIED UNTIL APPROVED | Скрипты в репо позже; apply отдельно | |
 | DBTC read for migration | DENIED UNTIL APPROVED | | |

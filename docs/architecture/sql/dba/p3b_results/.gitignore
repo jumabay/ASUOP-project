@@ -1,0 +1,4 @@
+*.csv
+NOTES.md
+!.gitignore
+!README.md
