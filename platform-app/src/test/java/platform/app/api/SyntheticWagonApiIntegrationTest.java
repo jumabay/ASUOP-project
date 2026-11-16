@@ -35,4 +35,22 @@ class SyntheticWagonApiIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.lines", hasSize(0)));
     }
+
+    @Test
+    void syntheticRegistryAndDrillDownCard() throws Exception {
+        mockMvc.perform(get("/api/v1/wagons").param("size", "50"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalElements").value(250))
+                .andExpect(jsonPath("$.totalPages").value(5))
+                .andExpect(jsonPath("$.content", hasSize(50)))
+                .andExpect(jsonPath("$.content[0].wagonCode").value("SYN-00001"));
+
+        mockMvc.perform(get("/api/v1/wagons").param("search", "SYN-0025").param("sort", "code,desc"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].wagonCode").value("SYN-00250"));
+
+        mockMvc.perform(get("/api/v1/wagons/SYN-00002"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.wagonCode").value("SYN-00002"));
+    }
 }

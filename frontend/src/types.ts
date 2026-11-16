@@ -8,6 +8,18 @@ export interface WagonCard {
   inventoryPark: boolean
 }
 
+export interface WagonRegistryItem {
+  wagonCode: string
+}
+
+export interface WagonRegistryPage {
+  content: WagonRegistryItem[]
+  page: number
+  size: number
+  totalElements: number
+  totalPages: number
+}
+
 export interface StateReportLine {
   reportId: number
   wagonCode: string

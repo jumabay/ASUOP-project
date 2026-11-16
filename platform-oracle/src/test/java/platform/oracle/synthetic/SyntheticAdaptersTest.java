@@ -37,6 +37,13 @@ class SyntheticAdaptersTest {
     }
 
     @Test
+    void stubCardForCatalogCodeWithoutFile() {
+        WagonCard card = cardAdapter.findByCode("SYN-00002").orElseThrow();
+        assertEquals("SYN-00002", card.wagonCode());
+        assertEquals("12-132", card.model());
+    }
+
+    @Test
     void loadsDayHistory() {
         List<StateReportLine> lines = dayAdapter.findLinesForDay("SYN-00001", LocalDate.of(2024, 1, 15));
         assertEquals(3, lines.size());

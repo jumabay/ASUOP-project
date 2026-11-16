@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import platform.app.api.dto.ErrorResponse;
 import platform.dislocation.InvalidDateException;
 import platform.dislocation.ResultLimitExceededException;
+import platform.fleet.InvalidPageException;
+import platform.fleet.InvalidPageSizeException;
+import platform.fleet.InvalidSortException;
 import platform.fleet.InvalidWagonCodeException;
 import platform.fleet.WagonNotFoundException;
 
@@ -45,5 +48,23 @@ public class ApiExceptionHandler {
                         ex.getMessage(),
                         ex.wagonCode(),
                         ex.date().toString()));
+    }
+
+    @ExceptionHandler(InvalidPageException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidPage(InvalidPageException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.of("INVALID_PAGE", ex.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidPageSizeException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidSize(InvalidPageSizeException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.of("INVALID_SIZE", ex.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidSortException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidSort(InvalidSortException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.of("INVALID_SORT", ex.getMessage()));
     }
 }

@@ -23,6 +23,9 @@ import platform.dislocation.StateReportDayPort;
 import platform.dislocation.StateReportLine;
 import platform.fleet.WagonCard;
 import platform.fleet.WagonCardPort;
+import platform.fleet.WagonRegistryItem;
+import platform.fleet.WagonRegistryPage;
+import platform.fleet.WagonRegistryPort;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -36,6 +39,9 @@ class WagonControllerMockMvcTest {
 
     @MockitoBean
     StateReportDayPort stateReportDayPort;
+
+    @MockitoBean
+    WagonRegistryPort wagonRegistryPort;
 
     @Test
     void getWagonCard_ok() throws Exception {
@@ -119,6 +125,57 @@ class WagonControllerMockMvcTest {
         mockMvc.perform(get("/api/v1/wagons/SYN-00001/state-reports").param("date", "2024-01-15"))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.error").value("RESULT_LIMIT_EXCEEDED"));
+    }
+
+    @Test
+    void getRegistry_ok() throws Exception {
+        when(wagonRegistryPort.findPage(any())).thenReturn(new WagonRegistryPage(
+                List.of(new WagonRegistryItem("SYN-00001"), new WagonRegistryItem("SYN-00002")),
+                0,
+                50,
+                2,
+                1));
+
+        mockMvc.perform(get("/api/v1/wagons"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(2)))
+                .andExpect(jsonPath("$.page").value(0))
+                .andExpect(jsonPath("$.size").value(50))
+                .andExpect(jsonPath("$.totalElements").value(2))
+                .andExpect(jsonPath("$.totalPages").value(1))
+                .andExpect(jsonPath("$.content[0].wagonCode").value("SYN-00001"));
+    }
+
+    @Test
+    void getRegistry_empty() throws Exception {
+        when(wagonRegistryPort.findPage(any())).thenReturn(new WagonRegistryPage(List.of(), 0, 50, 0, 0));
+
+        mockMvc.perform(get("/api/v1/wagons").param("search", "NOMATCH"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(0)))
+                .andExpect(jsonPath("$.totalElements").value(0))
+                .andExpect(jsonPath("$.totalPages").value(0));
+    }
+
+    @Test
+    void getRegistry_invalidPage() throws Exception {
+        mockMvc.perform(get("/api/v1/wagons").param("page", "-1"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("INVALID_PAGE"));
+    }
+
+    @Test
+    void getRegistry_invalidSize() throws Exception {
+        mockMvc.perform(get("/api/v1/wagons").param("size", "201"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("INVALID_SIZE"));
+    }
+
+    @Test
+    void getRegistry_invalidSort() throws Exception {
+        mockMvc.perform(get("/api/v1/wagons").param("sort", "model,asc"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("INVALID_SORT"));
     }
 
     private static WagonCard sampleCard() {

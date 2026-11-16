@@ -7,17 +7,25 @@ import {
   Flex,
   Input,
   Layout,
+  Pagination,
   Row,
+  Select,
   Space,
   Spin,
   Typography,
 } from 'antd'
 import dayjs, { type Dayjs } from 'dayjs'
-import { useState } from 'react'
-import { fetchStateReports, fetchWagonCard } from './api/wagonsApi'
+import { useCallback, useEffect, useState } from 'react'
+import { fetchStateReports, fetchWagonCard, fetchWagonRegistry } from './api/wagonsApi'
 import { StateReportGrid } from './components/StateReportGrid'
 import { WagonCardPanel } from './components/WagonCardPanel'
-import { ApiError, type StateReportDay, type WagonCard } from './types'
+import { WagonRegistryGrid } from './components/WagonRegistryGrid'
+import {
+  ApiError,
+  type StateReportDay,
+  type WagonCard,
+  type WagonRegistryItem,
+} from './types'
 import './App.css'
 
 const { Header, Content } = Layout
@@ -33,9 +41,47 @@ export default function App() {
   const [notFound, setNotFound] = useState(false)
   const [limitExceeded, setLimitExceeded] = useState(false)
 
-  async function onSearch() {
-    const code = wagonCode.trim()
-    if (!code || !date) {
+  const [registrySearch, setRegistrySearch] = useState('')
+  const [registrySort, setRegistrySort] = useState<'code,asc' | 'code,desc'>('code,asc')
+  const [registryPage, setRegistryPage] = useState(0)
+  const [registrySize, setRegistrySize] = useState(50)
+  const [registryRows, setRegistryRows] = useState<WagonRegistryItem[]>([])
+  const [registryTotal, setRegistryTotal] = useState(0)
+  const [registryLoading, setRegistryLoading] = useState(false)
+  const [registryError, setRegistryError] = useState<string | null>(null)
+
+  const loadRegistry = useCallback(async () => {
+    setRegistryLoading(true)
+    setRegistryError(null)
+    try {
+      const page = await fetchWagonRegistry({
+        page: registryPage,
+        size: registrySize,
+        sort: registrySort,
+        search: registrySearch,
+      })
+      setRegistryRows(page.content)
+      setRegistryTotal(page.totalElements)
+    } catch (err) {
+      setRegistryRows([])
+      setRegistryTotal(0)
+      if (err instanceof ApiError) {
+        setRegistryError(err.message)
+      } else {
+        setRegistryError(err instanceof Error ? err.message : 'Ошибка загрузки реестра')
+      }
+    } finally {
+      setRegistryLoading(false)
+    }
+  }, [registryPage, registrySize, registrySort, registrySearch])
+
+  useEffect(() => {
+    void loadRegistry()
+  }, [loadRegistry])
+
+  async function loadWagonDetails(code: string) {
+    const trimmed = code.trim()
+    if (!trimmed || !date) {
       setError('Укажите номер вагона и дату')
       return
     }
@@ -46,11 +92,12 @@ export default function App() {
     setLimitExceeded(false)
     setCard(null)
     setDay(null)
+    setWagonCode(trimmed)
 
     try {
-      const wagonCard = await fetchWagonCard(code)
+      const wagonCard = await fetchWagonCard(trimmed)
       setCard(wagonCard)
-      const stateDay = await fetchStateReports(code, date.format('YYYY-MM-DD'))
+      const stateDay = await fetchStateReports(trimmed, date.format('YYYY-MM-DD'))
       setDay(stateDay)
     } catch (err) {
       if (err instanceof ApiError) {
@@ -72,6 +119,7 @@ export default function App() {
   }
 
   const emptyDay = Boolean(day && day.lines.length === 0 && !error)
+  const registryEmpty = !registryLoading && registryRows.length === 0 && !registryError
 
   return (
     <Layout className="app-shell">
@@ -80,16 +128,86 @@ export default function App() {
           <div>
             <Text className="brand">АСУВП</Text>
             <Title level={4} className="header-title">
-              Карточка и дислокация вагона
+              Реестр, карточка и дислокация вагона
             </Title>
           </div>
-          <Text type="secondary">R1 · synthetic</Text>
+          <Text type="secondary">R2 · synthetic</Text>
         </Flex>
       </Header>
       <Content className="app-content">
-        <Card className="search-card">
+        <Card className="search-card" title="Реестр вагонов">
           <Paragraph type="secondary" style={{ marginBottom: 16 }}>
-            Поиск по синтетическому коду (например SYN-00001) и дате суток.
+            Серверная пагинация (до 200), поиск contains по номеру, сортировка по коду. Клик по строке
+            открывает карточку R1.
+          </Paragraph>
+          <Row gutter={[12, 12]} align="middle">
+            <Col xs={24} md={10}>
+              <Input
+                size="large"
+                placeholder="Поиск по номеру (contains)"
+                value={registrySearch}
+                onChange={(e) => {
+                  setRegistryPage(0)
+                  setRegistrySearch(e.target.value)
+                }}
+                allowClear
+              />
+            </Col>
+            <Col xs={24} md={6}>
+              <Select
+                size="large"
+                style={{ width: '100%' }}
+                value={registrySort}
+                onChange={(value: 'code,asc' | 'code,desc') => {
+                  setRegistryPage(0)
+                  setRegistrySort(value)
+                }}
+                options={[
+                  { value: 'code,asc', label: 'Код ↑' },
+                  { value: 'code,desc', label: 'Код ↓' },
+                ]}
+              />
+            </Col>
+            <Col xs={24} md={8}>
+              <Button size="large" block loading={registryLoading} onClick={() => void loadRegistry()}>
+                Обновить реестр
+              </Button>
+            </Col>
+          </Row>
+
+          <div style={{ marginTop: 16 }}>
+            {registryLoading && (
+              <Flex justify="center" style={{ padding: 24 }}>
+                <Spin size="large" description="Загрузка реестра…" />
+              </Flex>
+            )}
+            {registryError && <Alert type="error" showIcon title={registryError} />}
+            {!registryLoading && (
+              <WagonRegistryGrid
+                rows={registryRows}
+                empty={registryEmpty}
+                onSelect={(code) => void loadWagonDetails(code)}
+              />
+            )}
+            <Flex justify="end" style={{ marginTop: 12 }}>
+              <Pagination
+                current={registryPage + 1}
+                pageSize={registrySize}
+                total={registryTotal}
+                showSizeChanger
+                pageSizeOptions={['50', '100', '200']}
+                onChange={(page, pageSize) => {
+                  setRegistryPage(page - 1)
+                  setRegistrySize(pageSize)
+                }}
+              />
+            </Flex>
+          </div>
+        </Card>
+
+        <Card className="search-card" style={{ marginTop: 24 }} title="Карточка и история">
+          <Paragraph type="secondary" style={{ marginBottom: 16 }}>
+            Поиск по синтетическому коду и дате суток (R1).
           </Paragraph>
           <Row gutter={[12, 12]} align="middle">
             <Col xs={24} md={10}>
@@ -98,7 +216,7 @@ export default function App() {
                 placeholder="Номер вагона"
                 value={wagonCode}
                 onChange={(e) => setWagonCode(e.target.value)}
-                onPressEnter={() => void onSearch()}
+                onPressEnter={() => void loadWagonDetails(wagonCode)}
                 allowClear
               />
             </Col>
@@ -112,7 +230,13 @@ export default function App() {
               />
             </Col>
             <Col xs={24} md={6}>
-              <Button type="primary" size="large" block loading={loading} onClick={() => void onSearch()}>
+              <Button
+                type="primary"
+                size="large"
+                block
+                loading={loading}
+                onClick={() => void loadWagonDetails(wagonCode)}
+              >
                 Найти
               </Button>
             </Col>
@@ -135,9 +259,7 @@ export default function App() {
               description="Строк больше 500. Сервер вернул HTTP 422 без обрезки данных."
             />
           )}
-          {error && !notFound && !limitExceeded && (
-            <Alert type="error" showIcon title={error} />
-          )}
+          {error && !notFound && !limitExceeded && <Alert type="error" showIcon title={error} />}
 
           {!loading && card && (
             <Card>

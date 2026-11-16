@@ -6,6 +6,8 @@ import platform.dislocation.DayStateReportQuery;
 import platform.dislocation.StateReportDayPort;
 import platform.fleet.WagonCardPort;
 import platform.fleet.WagonCardQuery;
+import platform.fleet.WagonRegistryPort;
+import platform.fleet.WagonRegistryQuery;
 
 @Configuration
 public class ApplicationConfig {
@@ -13,6 +15,11 @@ public class ApplicationConfig {
     @Bean
     WagonCardQuery wagonCardQuery(WagonCardPort port) {
         return new WagonCardQuery(port);
+    }
+
+    @Bean
+    WagonRegistryQuery wagonRegistryQuery(WagonRegistryPort port) {
+        return new WagonRegistryQuery(port);
     }
 
     @Bean
