@@ -1,0 +1,21 @@
+{
+  "vagons": [
+    {
+      "vagon_no": "12345678",
+      "from_code": "707701",
+      "to_code": "230600",
+      "utc_datetime": "2025-11-15 10:15:00",
+      "current_position": "Bekasovo",
+      "current_position_code": "180006",
+      "operation": "ARRIVAL",
+      "operation_code": "PRIB",
+      "operation_asoup_code": "08",
+      "train_index": "1700-339-1800",
+      "train_number": "2201",
+      "loaded": "y",
+      "cargo_name": "Coal",
+      "etsng_code": "16105",
+      "weight": "68"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data>
+  <vagon>
+    <vagon_info type="vagon">
+      <vagon_no>12345678</vagon_no>
+      <from_code>707701</from_code>
+      <to_code>230600</to_code>
+    </vagon_info>
+    <position>
+      <utc_datetime>2025-11-15 10:15:00</utc_datetime>
+      <current_position>Bekasovo</current_position>
+      <current_position_code>180006</current_position_code>
+      <operation>ARRIVAL</operation>
+      <operation_code>PRIB</operation_code>
+      <operation_asoup_code>08</operation_asoup_code>
+      <train_index>1700-339-1800</train_index>
+      <train_number>2201</train_number>
+      <loaded>y</loaded>
+      <cargo_name>Coal</cargo_name>
+      <etsng_code>16105</etsng_code>
+      <weight>68</weight>
+    </position>
+  </vagon>
+  <vagon>
+    <vagon_info type="vagon">
+      <vagon_no>87654321</vagon_no>
+      <from_code>675008</from_code>
+      <to_code>198501</to_code>
+    </vagon_info>
+    <position>
+      <utc_datetime>2025-11-15 11:00:00</utc_datetime>
+      <current_position>Petropavlovsk</current_position>
+      <current_position_code>687608</current_position_code>
+      <operation>DEPARTURE</operation>
+      <operation_code>OTPR</operation_code>
+      <operation_asoup_code>04</operation_asoup_code>
+      <train_index>6876-012-1800</train_index>
+      <train_number/>
+      <loaded>n</loaded>
+      <cargo_name/>
+      <etsng_code/>
+      <weight>0</weight>
+    </position>
+  </vagon>
+</data>

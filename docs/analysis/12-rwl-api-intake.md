@@ -122,13 +122,17 @@ Proto нормализует подмножество в `RwlOperation` и сч�
 
 FTP/`FtpIntake` остаётся параллельным адаптером до доказательства замены.
 
-## 9. Рекомендуемые следующие шаги (нужен отдельный approve)
+## 9. Продолжение исследования
 
-1. Offline: полная матрица полей docx ↔ KZ line ↔ synthetic DTO.  
-2. Scoped live: `view_vagon` / `get_user_vagons` на **тестовых** номерах, сохранить redacted fixtures.  
-3. Замерить время/объём ответа на N=100/1000/all.  
-4. Сравнить один час FTP sample с RWL snapshot (B1).  
-5. Только затем решать, может ли RWL быть primary intake.
+Полевая матрица и FTP-вывод: [13-rwl-kz-field-matrix.md](13-rwl-kz-field-matrix.md).  
+Java offline pipeline: [26_RWL_JAVA_INTEGRATION.md](../architecture/26_RWL_JAVA_INTEGRATION.md), модули `modules/intake`, `platform-rwl`.
+
+Следующие шаги (нужен отдельный approve / не P2):
+
+1. Scoped live: `view_vagon` / `get_user_vagons` на тестовых номерах, redacted fixtures.  
+2. Замерить время/объём ответа на N=100/1000/all.  
+3. Сравнить один час FTP sample с RWL snapshot (B1).  
+4. Только затем решать, может ли RWL быть primary intake.
 
 ## 10. Связь с ADR-0009
 
