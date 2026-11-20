@@ -44,6 +44,7 @@ docs/architecture|analysis
 | P4-1 | docs-only (this wave) | Scale ~18k + migration L0 verification model: [ASUOP_P4_1_SCALE_MIGRATION_PLAN.md](ASUOP_P4_1_SCALE_MIGRATION_PLAN.md), [44](../architecture/44_MIGRATION_VERIFICATION_MODEL_OFFLINE.md)–[47](../architecture/47_SCALE_MIGRATION_TEST_STRATEGY.md). CODE fixtures/UX — отдельный APPROVED |
 | JDBC parity | Disabled | Нет APPROVED TEST Oracle URL |
 | Live import / RAILDB create / Flyway apply | DENIED | Ждут отдельных строк APPROVALS |
+| P5 NUFF functional planning | DONE (docs) | [ASUOP_P5_NUFF_FUNCTIONAL_PLAN.md](ASUOP_P5_NUFF_FUNCTIONAL_PLAN.md); CODE-срезы — DENIED UNTIL APPROVED |
 
 ## 2. Реально работающие модули (synthetic)
 
@@ -133,6 +134,8 @@ flowchart TD
 | P2-1 | Accept ADR-0009 | **DONE (direction only)** 2026-11-20; [42](../architecture/42_ADR0009_DECISION_READINESS.md), [43](../architecture/43_ADR0009_DBA_CREATE_CHECKLIST.md) | lead, database |
 | P4-0 | Storage contracts R1–R3 offline | **DONE** (PR #6); [40](../architecture/40_P4_0_RAILDB_STORAGE_CONTRACTS.md), [41](../architecture/41_P4_0_R1_R3_FIELD_MAPPING.md) | backend, database |
 | P4-1 | Scale (~18k) + migration L0 verification offline | Plan [ASUOP_P4_1_SCALE_MIGRATION_PLAN.md](ASUOP_P4_1_SCALE_MIGRATION_PLAN.md); docs [44](../architecture/44_MIGRATION_VERIFICATION_MODEL_OFFLINE.md)–[47](../architecture/47_SCALE_MIGRATION_TEST_STRATEGY.md) | all |
+| P4-2 | DBA readiness + NK1/DT1/G31 offline | **DONE** (docs); Create/JDBC — DENIED; [ASUOP_P4_2_DBA_READINESS_PLAN.md](ASUOP_P4_2_DBA_READINESS_PLAN.md), [50](../architecture/50_P4_2_GO_NOGO_CREATE_RAILDB_TEST.md) | database, lead, qa |
+| P5 | NUFF functional (synthetic-first slices) | Plan **docs-only**: [ASUOP_P5_NUFF_FUNCTIONAL_PLAN.md](ASUOP_P5_NUFF_FUNCTIONAL_PLAN.md), matrix [53](../architecture/53_P5_NUFF_TEST_MATRIX.md). CODE — после APPROVED строк P5-A… | all |
 | P2-2 | Create RAILDB + Flyway `RAIL_APP` | DBA checklist 43 + **отдельные** APPROVED Create, затем Flyway | database, backend |
 | P2-3 | Offline→controlled RWL/FTP intake design + B-tests | P2-2 / B1 | backend, database, qa |
 | P2-4 | Ремонты / склад read-only screens | research G6+ | backend, frontend |
