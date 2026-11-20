@@ -200,19 +200,14 @@ flowchart LR
 
 ---
 
-## 8. Stop line (этот PR)
+## 8. Stop line / Wave 1 gate
 
-**Разрешено сейчас:** merge docs-only плана + черновика APPROVALS после human review.  
-**Запрещено до решения владельца по срезам:** любой функциональный CODE NUFF, Oracle, Flyway, Create RAILDB, auto-merge.
+**Planning (PR #20):** MERGED в `main` @ `8e490c4`.
 
-**Решение владельца (нужно выбрать):**
-
-1. Утвердить **P5 planning** (этот документ) — docs done.  
-2. Какие срезы волны 1: рекомендуем **P5-A + P5-B + P5-D** (FE + watched honesty, без DTO break).  
-3. Отложить **P5-C/G** (DTO/filters) до явного product field list.  
-4. **P5-E** — только после TEST Oracle.  
-5. **P5-F** — только после prefs policy.  
-6. Create RAILDB TEST — параллельный gate по [50](../architecture/50_P4_2_GO_NOGO_CREATE_RAILDB_TEST.md), не часть функциональной волны 1.
+**Owner decision (2026-11-20):** волна 1 = **P5-A + P5-B + P5-D** → строки `APPROVED WITH CONSTRAINTS` в [APPROVALS_TEMPLATE.md](../architecture/APPROVALS_TEMPLATE.md) (отдельный docs-only approval PR).  
+**CODE A/B/D** — только после **ручного merge** того approval PR; каждый срез = своя ветка/worktree + PR + Independent QA Test Runner.  
+**По-прежнему DENIED:** P5-C/E/F/G/H; Create RAILDB TEST; Oracle JDBC/Flyway/live migrate; FTP/RWL live; writes/bulk/concurrency; auto-merge; самовольное изменение APPROVALS.  
+NK1/DT1 **BLOCKED**; G31 **OPEN**; watched в реальном/RAIL режиме **пуст**.
 
 ---
 
