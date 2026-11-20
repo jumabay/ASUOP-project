@@ -4,6 +4,8 @@
 
 **PROPOSED** (2026-11-16). Не Accepted. Не открывает JDBC, DDL, DML, создание `RAILDB`, Flyway apply или Production access.
 
+Пакет готовности к решению (без Accept): [42_ADR0009_DECISION_READINESS.md](../42_ADR0009_DECISION_READINESS.md) (2026-11-20).
+
 ## Контекст
 
 Утверждённые ранее документы фиксируют схему `DBTC` как единственное бизнес-хранилище на всём переносе («второй базы нет»): [05_ORACLE_INTEGRATION.md](../05_ORACLE_INTEGRATION.md), [06_DATA_STORAGE_STRATEGY.md](../06_DATA_STORAGE_STRATEGY.md), [ADR-0006](ADR-0006-flyway-app-schema-only.md), [ADR-0007](ADR-0007-single-writer-read-first.md).
