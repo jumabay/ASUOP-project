@@ -1,0 +1,12 @@
+---
+description: Multi-agent workflow, GitHub branching, PR and merge policy for ASUOP.
+alwaysApply: true
+---
+# Multi-agent + GitHub
+- Lead agent delegates to `/backend`, `/frontend`, `/database`, `/qa` under `.cursor/agents/`. Do not invent parallel roles that bypass APPROVALS.
+- `main` is protected. Every task lands on `feature/<short-name>` (or `fix/` / `docs/`). Never push force to `main`. Never auto-merge.
+- Parallel agents need isolation: separate Git worktrees or cloud agents; avoid two writers on the same files.
+- Finished work → Pull Request to `main` with summary, test evidence, APPROVALS reference, residual risks. Human approval required to merge.
+- Before claiming done: run available tests (Gradle with JDK 21, frontend Vitest/build) or state BLOCKED with reason. Prefer `/qa` verdict.
+- Do not commit secrets, production dumps, or `tools/*` artifacts that fail secret-review. Respect `.gitignore`.
+- Config-only / docs-only PRs must still avoid touching Oracle, production configs, and business code unless the task explicitly includes them.

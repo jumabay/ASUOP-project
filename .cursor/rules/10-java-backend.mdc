@@ -1,6 +1,6 @@
 ---
 description: Java/Spring code conventions for backend and workers.
-globs: backend/**/*.{java,xml,gradle,kts,properties,yml,yaml},workers/**/*.{java,xml,gradle,kts,properties,yml,yaml}
+globs: platform-app/**/*.{java,xml,gradle,kts,properties,yml,yaml},platform-oracle/**/*.{java,xml,gradle,kts,properties,yml,yaml},platform-rwl/**/*.{java,xml,gradle,kts,properties,yml,yaml},platform-disl-parser/**/*.{java,xml,gradle,kts,properties,yml,yaml},modules/**/*.{java,xml,gradle,kts,properties,yml,yaml},tools/**/*.{java,xml,gradle,kts,properties,yml,yaml},**/*.{gradle.kts,toml}
 alwaysApply: false
 ---
 # Backend conventions
