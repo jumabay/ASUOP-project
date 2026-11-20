@@ -1,0 +1,1310 @@
+{
+    "schema_version":  "migration-l0-v1",
+    "pack_id":  "migration-l0-v1",
+    "cutover_ts":  "2026-11-16T00:00:00",
+    "cutoff_ts":  "2025-11-16T00:00:00",
+    "axis":  "GETTING_DATE",
+    "gaps_open":  [
+                      "NK1",
+                      "DT1",
+                      "G31",
+                      "R1-Q-TZ"
+                  ],
+    "notes":  [
+                  "cutoff = cutover_ts - 12 calendar months",
+                  "Tape axis = getting_ts until DT1 closes",
+                  "Duplicates retained; no DISTINCT collapse (NK1 OPEN)",
+                  "BOOTSTRAP = max getting_ts strictly \u003c cutoff per wagon that has pre-cutoff events",
+                  "Watched M8 BLOCKED / empty (G31)",
+                  "NK1 DT1 G31 R1-Q-TZ remain OPEN — do not claim closed"
+              ],
+    "refs":  {
+                 "stations":  [
+                                  {
+                                      "id":  1001,
+                                      "code":  "6900",
+                                      "tag":  "REF_FULL"
+                                  },
+                                  {
+                                      "id":  1002,
+                                      "code":  "6901",
+                                      "tag":  "REF_FULL"
+                                  },
+                                  {
+                                      "id":  1003,
+                                      "code":  "6902",
+                                      "tag":  "REF_FULL"
+                                  },
+                                  {
+                                      "id":  1004,
+                                      "code":  "7100",
+                                      "tag":  "REF_FULL"
+                                  },
+                                  {
+                                      "id":  1005,
+                                      "code":  "7200",
+                                      "tag":  "REF_FULL"
+                                  }
+                              ],
+                 "wagon_types":  [
+                                     {
+                                         "id":  1,
+                                         "code":  "KR",
+                                         "tag":  "REF_FULL"
+                                     },
+                                     {
+                                         "id":  2,
+                                         "code":  "PL",
+                                         "tag":  "REF_FULL"
+                                     },
+                                     {
+                                         "id":  3,
+                                         "code":  "HV",
+                                         "tag":  "REF_FULL"
+                                     }
+                                 ],
+                 "operations":  [
+                                    {
+                                        "id":  1,
+                                        "code":  "01",
+                                        "tag":  "REF_FULL"
+                                    },
+                                    {
+                                        "id":  2,
+                                        "code":  "03",
+                                        "tag":  "REF_FULL"
+                                    },
+                                    {
+                                        "id":  3,
+                                        "code":  "10",
+                                        "tag":  "REF_FULL"
+                                    }
+                                ],
+                 "repair_types":  [
+                                      {
+                                          "id":  0,
+                                          "code":  "DR",
+                                          "tag":  "REF_FULL"
+                                      },
+                                      {
+                                          "id":  1,
+                                          "code":  "KR",
+                                          "tag":  "REF_FULL"
+                                      },
+                                      {
+                                          "id":  7,
+                                          "code":  "TR1",
+                                          "tag":  "REF_FULL"
+                                      }
+                                  ],
+                 "warehouses":  [
+                                    {
+                                        "id":  501,
+                                        "code":  "WH-A",
+                                        "tag":  "REF_FULL"
+                                    },
+                                    {
+                                        "id":  502,
+                                        "code":  "WH-B",
+                                        "tag":  "REF_FULL"
+                                    }
+                                ],
+                 "part_types":  [
+                                    {
+                                        "id":  11,
+                                        "code":  "AXLE",
+                                        "tag":  "REF_FULL"
+                                    },
+                                    {
+                                        "id":  12,
+                                        "code":  "WHEEL",
+                                        "tag":  "REF_FULL"
+                                    }
+                                ]
+             },
+    "wagons":  [
+                   {
+                       "code":  "W000001",
+                       "wagon_id":  1,
+                       "tag":  "FULL",
+                       "exclusion_reason":  null
+                   },
+                   {
+                       "code":  "W000002",
+                       "wagon_id":  2,
+                       "tag":  "FULL",
+                       "exclusion_reason":  null
+                   },
+                   {
+                       "code":  "W000003",
+                       "wagon_id":  3,
+                       "tag":  "FULL",
+                       "exclusion_reason":  null
+                   },
+                   {
+                       "code":  "W000004",
+                       "wagon_id":  4,
+                       "tag":  "FULL",
+                       "exclusion_reason":  null
+                   },
+                   {
+                       "code":  "W000005",
+                       "wagon_id":  5,
+                       "tag":  "FULL",
+                       "exclusion_reason":  null
+                   },
+                   {
+                       "code":  "W000006",
+                       "wagon_id":  6,
+                       "tag":  "FULL",
+                       "exclusion_reason":  null
+                   },
+                   {
+                       "code":  "W000007",
+                       "wagon_id":  7,
+                       "tag":  "FULL",
+                       "exclusion_reason":  null
+                   },
+                   {
+                       "code":  "W000008",
+                       "wagon_id":  8,
+                       "tag":  "FULL",
+                       "exclusion_reason":  null
+                   },
+                   {
+                       "code":  "W000009",
+                       "wagon_id":  9,
+                       "tag":  "FULL",
+                       "exclusion_reason":  null
+                   },
+                   {
+                       "code":  "W000010",
+                       "wagon_id":  10,
+                       "tag":  "FULL",
+                       "exclusion_reason":  null
+                   },
+                   {
+                       "code":  "W000011",
+                       "wagon_id":  11,
+                       "tag":  "FULL",
+                       "exclusion_reason":  null
+                   },
+                   {
+                       "code":  "W000012",
+                       "wagon_id":  12,
+                       "tag":  "FULL",
+                       "exclusion_reason":  null
+                   },
+                   {
+                       "code":  "W000013",
+                       "wagon_id":  13,
+                       "tag":  "FULL",
+                       "exclusion_reason":  null
+                   },
+                   {
+                       "code":  "W000014",
+                       "wagon_id":  14,
+                       "tag":  "FULL",
+                       "exclusion_reason":  null
+                   },
+                   {
+                       "code":  "W000015",
+                       "wagon_id":  15,
+                       "tag":  "FULL",
+                       "exclusion_reason":  null
+                   },
+                   {
+                       "code":  "W000016",
+                       "wagon_id":  16,
+                       "tag":  "FULL",
+                       "exclusion_reason":  null
+                   },
+                   {
+                       "code":  "W000017",
+                       "wagon_id":  17,
+                       "tag":  "FULL",
+                       "exclusion_reason":  null
+                   },
+                   {
+                       "code":  "W000018",
+                       "wagon_id":  18,
+                       "tag":  "FULL",
+                       "exclusion_reason":  null
+                   },
+                   {
+                       "code":  "W000019",
+                       "wagon_id":  19,
+                       "tag":  "FULL",
+                       "exclusion_reason":  null
+                   },
+                   {
+                       "code":  "W000020",
+                       "wagon_id":  20,
+                       "tag":  "FULL",
+                       "exclusion_reason":  null
+                   }
+               ],
+    "current":  [
+                    {
+                        "code":  "W000001",
+                        "wagon_id":  1,
+                        "tag":  "FULL",
+                        "exclusion_reason":  null
+                    },
+                    {
+                        "code":  "W000002",
+                        "wagon_id":  2,
+                        "tag":  "FULL",
+                        "exclusion_reason":  null
+                    },
+                    {
+                        "code":  "W000003",
+                        "wagon_id":  3,
+                        "tag":  "FULL",
+                        "exclusion_reason":  null
+                    },
+                    {
+                        "code":  "W000004",
+                        "wagon_id":  4,
+                        "tag":  "FULL",
+                        "exclusion_reason":  null
+                    },
+                    {
+                        "code":  "W000005",
+                        "wagon_id":  5,
+                        "tag":  "FULL",
+                        "exclusion_reason":  null
+                    },
+                    {
+                        "code":  "W000006",
+                        "wagon_id":  6,
+                        "tag":  "FULL",
+                        "exclusion_reason":  null
+                    },
+                    {
+                        "code":  "W000007",
+                        "wagon_id":  7,
+                        "tag":  "FULL",
+                        "exclusion_reason":  null
+                    },
+                    {
+                        "code":  "W000008",
+                        "wagon_id":  8,
+                        "tag":  "FULL",
+                        "exclusion_reason":  null
+                    },
+                    {
+                        "code":  "W000009",
+                        "wagon_id":  9,
+                        "tag":  "FULL",
+                        "exclusion_reason":  null
+                    },
+                    {
+                        "code":  "W000010",
+                        "wagon_id":  10,
+                        "tag":  "FULL",
+                        "exclusion_reason":  null
+                    },
+                    {
+                        "code":  "W000011",
+                        "wagon_id":  11,
+                        "tag":  "FULL",
+                        "exclusion_reason":  null
+                    },
+                    {
+                        "code":  "W000012",
+                        "wagon_id":  12,
+                        "tag":  "FULL",
+                        "exclusion_reason":  null
+                    },
+                    {
+                        "code":  "W000013",
+                        "wagon_id":  13,
+                        "tag":  "FULL",
+                        "exclusion_reason":  null
+                    },
+                    {
+                        "code":  "W000014",
+                        "wagon_id":  14,
+                        "tag":  "FULL",
+                        "exclusion_reason":  null
+                    },
+                    {
+                        "code":  "W000015",
+                        "wagon_id":  15,
+                        "tag":  "FULL",
+                        "exclusion_reason":  null
+                    },
+                    {
+                        "code":  "W000016",
+                        "wagon_id":  16,
+                        "tag":  "FULL",
+                        "exclusion_reason":  null
+                    },
+                    {
+                        "code":  "W000017",
+                        "wagon_id":  17,
+                        "tag":  "FULL",
+                        "exclusion_reason":  null
+                    },
+                    {
+                        "code":  "W000018",
+                        "wagon_id":  18,
+                        "tag":  "FULL",
+                        "exclusion_reason":  null
+                    },
+                    {
+                        "code":  "W000019",
+                        "wagon_id":  19,
+                        "tag":  "FULL",
+                        "exclusion_reason":  null
+                    },
+                    {
+                        "code":  "W000020",
+                        "wagon_id":  20,
+                        "tag":  "FULL",
+                        "exclusion_reason":  null
+                    }
+                ],
+    "repairs":  [
+                    {
+                        "repair_id":  7001,
+                        "code":  "W000007",
+                        "tag":  "OPEN",
+                        "exclusion_reason":  null
+                    },
+                    {
+                        "repair_id":  7002,
+                        "code":  "W000007",
+                        "tag":  "ARCHIVE_DBTC",
+                        "exclusion_reason":  "out_of_window_pre_cutoff"
+                    },
+                    {
+                        "repair_id":  8001,
+                        "code":  "W000008",
+                        "tag":  "12M",
+                        "exclusion_reason":  null
+                    },
+                    {
+                        "repair_id":  8002,
+                        "code":  "W000008",
+                        "tag":  "ARCHIVE_DBTC",
+                        "exclusion_reason":  "out_of_window_pre_cutoff"
+                    },
+                    {
+                        "repair_id":  9001,
+                        "code":  "W000009",
+                        "tag":  "ARCHIVE_DBTC",
+                        "exclusion_reason":  "out_of_window_pre_cutoff"
+                    },
+                    {
+                        "repair_id":  10001,
+                        "code":  "W000010",
+                        "tag":  "12M",
+                        "exclusion_reason":  null
+                    },
+                    {
+                        "repair_id":  15001,
+                        "code":  "W000015",
+                        "tag":  "SKIP",
+                        "exclusion_reason":  "ending_null_without_current_pointer"
+                    }
+                ],
+    "stock":  [
+                  {
+                      "stock_id":  1,
+                      "tag":  "FULL",
+                      "exclusion_reason":  null
+                  },
+                  {
+                      "stock_id":  2,
+                      "tag":  "FULL",
+                      "exclusion_reason":  null
+                  },
+                  {
+                      "stock_id":  3,
+                      "tag":  "FULL",
+                      "exclusion_reason":  null
+                  },
+                  {
+                      "stock_id":  4,
+                      "tag":  "FULL",
+                      "exclusion_reason":  null
+                  },
+                  {
+                      "stock_id":  5,
+                      "tag":  "FULL",
+                      "exclusion_reason":  null
+                  }
+              ],
+    "kits":  [
+                 {
+                     "kit_id":  301,
+                     "filename":  "syn_kit_12m_001.dat",
+                     "type":  0,
+                     "tag":  "12M",
+                     "exclusion_reason":  null
+                 },
+                 {
+                     "kit_id":  302,
+                     "filename":  "syn_kit_12m_002.dat",
+                     "type":  1,
+                     "tag":  "12M",
+                     "exclusion_reason":  null
+                 },
+                 {
+                     "kit_id":  303,
+                     "filename":  "syn_kit_arch_001.dat",
+                     "type":  0,
+                     "tag":  "ARCHIVE_DBTC",
+                     "exclusion_reason":  "out_of_window_pre_cutoff"
+                 },
+                 {
+                     "kit_id":  304,
+                     "filename":  "syn_kit_arch_002.dat",
+                     "type":  0,
+                     "tag":  "ARCHIVE_DBTC",
+                     "exclusion_reason":  "out_of_window_pre_cutoff"
+                 },
+                 {
+                     "kit_id":  305,
+                     "filename":  "syn_kit_12m_003.dat",
+                     "type":  0,
+                     "tag":  "12M",
+                     "exclusion_reason":  null
+                 },
+                 {
+                     "kit_id":  306,
+                     "filename":  "syn_kit_12m_001.dat",
+                     "type":  0,
+                     "tag":  "12M",
+                     "exclusion_reason":  null
+                 },
+                 {
+                     "kit_id":  307,
+                     "filename":  "syn_kit_boot_edge.dat",
+                     "type":  1,
+                     "tag":  "ARCHIVE_DBTC",
+                     "exclusion_reason":  "out_of_window_pre_cutoff"
+                 },
+                 {
+                     "kit_id":  308,
+                     "filename":  "syn_kit_orphan.dat",
+                     "type":  0,
+                     "tag":  "12M",
+                     "exclusion_reason":  null
+                 }
+             ],
+    "tape":  [
+                 {
+                     "event_id":  10001,
+                     "code":  "W000001",
+                     "getting_ts":  "2024-06-01T10:00:00",
+                     "tag":  "ARCHIVE_DBTC",
+                     "exclusion_reason":  "out_of_window_pre_cutoff",
+                     "provenance_key":  "SYN|TAPE|W000001|2024-06-01T10:00:00|10001"
+                 },
+                 {
+                     "event_id":  10002,
+                     "code":  "W000001",
+                     "getting_ts":  "2025-10-01T10:00:00",
+                     "tag":  "BOOTSTRAP",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000001|2025-10-01T10:00:00|10002"
+                 },
+                 {
+                     "event_id":  10003,
+                     "code":  "W000001",
+                     "getting_ts":  "2025-11-16T00:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000001|2025-11-16T00:00:00|10003"
+                 },
+                 {
+                     "event_id":  10004,
+                     "code":  "W000001",
+                     "getting_ts":  "2026-05-01T08:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000001|2026-05-01T08:00:00|10004"
+                 },
+                 {
+                     "event_id":  10005,
+                     "code":  "W000002",
+                     "getting_ts":  "2026-01-20T08:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000002|2026-01-20T08:00:00|10005"
+                 },
+                 {
+                     "event_id":  10006,
+                     "code":  "W000002",
+                     "getting_ts":  "2026-08-01T12:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000002|2026-08-01T12:00:00|10006"
+                 },
+                 {
+                     "event_id":  10007,
+                     "code":  "W000003",
+                     "getting_ts":  "2023-01-01T00:00:00",
+                     "tag":  "ARCHIVE_DBTC",
+                     "exclusion_reason":  "out_of_window_pre_cutoff",
+                     "provenance_key":  "SYN|TAPE|W000003|2023-01-01T00:00:00|10007"
+                 },
+                 {
+                     "event_id":  10008,
+                     "code":  "W000003",
+                     "getting_ts":  "2025-06-15T12:00:00",
+                     "tag":  "ARCHIVE_DBTC",
+                     "exclusion_reason":  "out_of_window_pre_cutoff",
+                     "provenance_key":  "SYN|TAPE|W000003|2025-06-15T12:00:00|10008"
+                 },
+                 {
+                     "event_id":  10009,
+                     "code":  "W000003",
+                     "getting_ts":  "2025-09-01T09:00:00",
+                     "tag":  "BOOTSTRAP",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000003|2025-09-01T09:00:00|10009"
+                 },
+                 {
+                     "event_id":  10010,
+                     "code":  "W000003",
+                     "getting_ts":  "2025-11-20T10:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000003|2025-11-20T10:00:00|10010"
+                 },
+                 {
+                     "event_id":  10011,
+                     "code":  "W000003",
+                     "getting_ts":  "2026-03-03T03:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000003|2026-03-03T03:00:00|10011"
+                 },
+                 {
+                     "event_id":  10012,
+                     "code":  "W000004",
+                     "getting_ts":  "2022-04-04T04:00:00",
+                     "tag":  "ARCHIVE_DBTC",
+                     "exclusion_reason":  "out_of_window_pre_cutoff",
+                     "provenance_key":  "SYN|TAPE|W000004|2022-04-04T04:00:00|10012"
+                 },
+                 {
+                     "event_id":  10013,
+                     "code":  "W000004",
+                     "getting_ts":  "2025-01-01T00:00:00",
+                     "tag":  "BOOTSTRAP",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000004|2025-01-01T00:00:00|10013"
+                 },
+                 {
+                     "event_id":  10014,
+                     "code":  "W000005",
+                     "getting_ts":  "2026-02-10T06:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000005|2026-02-10T06:00:00|10014"
+                 },
+                 {
+                     "event_id":  10015,
+                     "code":  "W000005",
+                     "getting_ts":  "2025-08-01T06:00:00",
+                     "tag":  "BOOTSTRAP",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000005|2025-08-01T06:00:00|10015"
+                 },
+                 {
+                     "event_id":  10016,
+                     "code":  "W000006",
+                     "getting_ts":  "2026-04-01T10:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000006|2026-04-01T10:00:00|10016-A"
+                 },
+                 {
+                     "event_id":  10017,
+                     "code":  "W000006",
+                     "getting_ts":  "2026-04-01T10:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000006|2026-04-01T10:00:00|10017-B"
+                 },
+                 {
+                     "event_id":  10018,
+                     "code":  "W000006",
+                     "getting_ts":  "2026-04-01T10:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000006|2026-04-01T10:00:00|10018-C"
+                 },
+                 {
+                     "event_id":  10019,
+                     "code":  "W000006",
+                     "getting_ts":  "2025-07-01T10:00:00",
+                     "tag":  "BOOTSTRAP",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000006|2025-07-01T10:00:00|10019"
+                 },
+                 {
+                     "event_id":  10020,
+                     "code":  "W000007",
+                     "getting_ts":  "2025-11-17T00:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000007|2025-11-17T00:00:00|10020"
+                 },
+                 {
+                     "event_id":  10021,
+                     "code":  "W000007",
+                     "getting_ts":  "2025-05-05T05:00:00",
+                     "tag":  "BOOTSTRAP",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000007|2025-05-05T05:00:00|10021"
+                 },
+                 {
+                     "event_id":  10022,
+                     "code":  "W000008",
+                     "getting_ts":  "2026-02-15T00:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000008|2026-02-15T00:00:00|10022"
+                 },
+                 {
+                     "event_id":  10023,
+                     "code":  "W000008",
+                     "getting_ts":  "2025-02-15T00:00:00",
+                     "tag":  "BOOTSTRAP",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000008|2025-02-15T00:00:00|10023"
+                 },
+                 {
+                     "event_id":  10024,
+                     "code":  "W000009",
+                     "getting_ts":  "2024-04-01T00:00:00",
+                     "tag":  "BOOTSTRAP",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000009|2024-04-01T00:00:00|10024"
+                 },
+                 {
+                     "event_id":  10025,
+                     "code":  "W000009",
+                     "getting_ts":  "2026-01-01T00:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000009|2026-01-01T00:00:00|10025"
+                 },
+                 {
+                     "event_id":  10026,
+                     "code":  "W000010",
+                     "getting_ts":  "2026-07-01T00:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000010|2026-07-01T00:00:00|10026"
+                 },
+                 {
+                     "event_id":  10027,
+                     "code":  "W000010",
+                     "getting_ts":  "2026-07-01T23:59:59",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000010|2026-07-01T23:59:59|10027"
+                 },
+                 {
+                     "event_id":  10028,
+                     "code":  "W000010",
+                     "getting_ts":  "2026-07-02T00:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000010|2026-07-02T00:00:00|10028"
+                 },
+                 {
+                     "event_id":  10029,
+                     "code":  "W000010",
+                     "getting_ts":  "2025-11-15T23:59:59",
+                     "tag":  "BOOTSTRAP",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000010|2025-11-15T23:59:59|10029"
+                 },
+                 {
+                     "event_id":  10030,
+                     "code":  "W000011",
+                     "getting_ts":  "2025-11-16T00:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000011|2025-11-16T00:00:00|10030"
+                 },
+                 {
+                     "event_id":  10031,
+                     "code":  "W000011",
+                     "getting_ts":  "2025-11-15T12:00:00",
+                     "tag":  "BOOTSTRAP",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000011|2025-11-15T12:00:00|10031"
+                 },
+                 {
+                     "event_id":  10032,
+                     "code":  "W000012",
+                     "getting_ts":  "2026-06-15T12:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000012|2026-06-15T12:00:00|10032"
+                 },
+                 {
+                     "event_id":  10033,
+                     "code":  "W000012",
+                     "getting_ts":  "2025-05-01T00:00:00",
+                     "tag":  "BOOTSTRAP",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000012|2025-05-01T00:00:00|10033"
+                 },
+                 {
+                     "event_id":  10034,
+                     "code":  "W000013",
+                     "getting_ts":  "2026-09-01T09:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000013|2026-09-01T09:00:00|10034"
+                 },
+                 {
+                     "event_id":  10035,
+                     "code":  "W000014",
+                     "getting_ts":  "2020-01-01T00:00:00",
+                     "tag":  "ARCHIVE_DBTC",
+                     "exclusion_reason":  "out_of_window_pre_cutoff",
+                     "provenance_key":  "SYN|TAPE|W000014|2020-01-01T00:00:00|10035"
+                 },
+                 {
+                     "event_id":  10036,
+                     "code":  "W000014",
+                     "getting_ts":  "2024-06-01T00:00:00",
+                     "tag":  "ARCHIVE_DBTC",
+                     "exclusion_reason":  "out_of_window_pre_cutoff",
+                     "provenance_key":  "SYN|TAPE|W000014|2024-06-01T00:00:00|10036"
+                 },
+                 {
+                     "event_id":  10037,
+                     "code":  "W000014",
+                     "getting_ts":  "2025-11-01T00:00:00",
+                     "tag":  "BOOTSTRAP",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000014|2025-11-01T00:00:00|10037"
+                 },
+                 {
+                     "event_id":  10038,
+                     "code":  "W000014",
+                     "getting_ts":  "2025-10-01T00:00:00",
+                     "tag":  "ARCHIVE_DBTC",
+                     "exclusion_reason":  "out_of_window_pre_cutoff",
+                     "provenance_key":  "SYN|TAPE|W000014|2025-10-01T00:00:00|10038"
+                 },
+                 {
+                     "event_id":  10039,
+                     "code":  "W000014",
+                     "getting_ts":  "2026-10-01T00:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000014|2026-10-01T00:00:00|10039"
+                 },
+                 {
+                     "event_id":  10040,
+                     "code":  "W000015",
+                     "getting_ts":  "2026-04-04T04:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000015|2026-04-04T04:00:00|10040"
+                 },
+                 {
+                     "event_id":  10041,
+                     "code":  "W000015",
+                     "getting_ts":  "2025-03-03T03:00:00",
+                     "tag":  "BOOTSTRAP",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000015|2025-03-03T03:00:00|10041"
+                 },
+                 {
+                     "event_id":  10042,
+                     "code":  "W000016",
+                     "getting_ts":  "2025-11-16T12:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000016|2025-11-16T12:00:00|10042"
+                 },
+                 {
+                     "event_id":  10043,
+                     "code":  "W000016",
+                     "getting_ts":  "2026-11-01T00:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000016|2026-11-01T00:00:00|10043"
+                 },
+                 {
+                     "event_id":  10044,
+                     "code":  "W000017",
+                     "getting_ts":  "2026-11-16T01:00:00",
+                     "tag":  "SKIP",
+                     "exclusion_reason":  "future_after_cutover",
+                     "provenance_key":  "SYN|TAPE|W000017|2026-11-16T01:00:00|10044"
+                 },
+                 {
+                     "event_id":  10045,
+                     "code":  "W000017",
+                     "getting_ts":  "2026-10-10T10:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000017|2026-10-10T10:00:00|10045"
+                 },
+                 {
+                     "event_id":  10046,
+                     "code":  "W000017",
+                     "getting_ts":  "2025-06-01T00:00:00",
+                     "tag":  "BOOTSTRAP",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000017|2025-06-01T00:00:00|10046"
+                 },
+                 {
+                     "event_id":  10047,
+                     "code":  "W000018",
+                     "getting_ts":  "2026-03-01T00:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000018|2026-03-01T00:00:00|10047"
+                 },
+                 {
+                     "event_id":  10048,
+                     "code":  "W000018",
+                     "getting_ts":  "2026-03-02T00:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000018|2026-03-02T00:00:00|10048"
+                 },
+                 {
+                     "event_id":  10049,
+                     "code":  "W000018",
+                     "getting_ts":  "2025-04-01T00:00:00",
+                     "tag":  "BOOTSTRAP",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000018|2025-04-01T00:00:00|10049"
+                 },
+                 {
+                     "event_id":  10050,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-01T00:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-01T00:00:00|10050"
+                 },
+                 {
+                     "event_id":  10051,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-01T01:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-01T01:00:00|10051"
+                 },
+                 {
+                     "event_id":  10052,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-01T02:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-01T02:00:00|10052"
+                 },
+                 {
+                     "event_id":  10053,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-01T03:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-01T03:00:00|10053"
+                 },
+                 {
+                     "event_id":  10054,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-01T04:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-01T04:00:00|10054"
+                 },
+                 {
+                     "event_id":  10055,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-01T05:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-01T05:00:00|10055"
+                 },
+                 {
+                     "event_id":  10056,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-01T06:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-01T06:00:00|10056"
+                 },
+                 {
+                     "event_id":  10057,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-01T07:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-01T07:00:00|10057"
+                 },
+                 {
+                     "event_id":  10058,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-01T08:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-01T08:00:00|10058"
+                 },
+                 {
+                     "event_id":  10059,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-01T09:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-01T09:00:00|10059"
+                 },
+                 {
+                     "event_id":  10060,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-01T10:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-01T10:00:00|10060"
+                 },
+                 {
+                     "event_id":  10061,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-01T11:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-01T11:00:00|10061"
+                 },
+                 {
+                     "event_id":  10062,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-01T12:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-01T12:00:00|10062"
+                 },
+                 {
+                     "event_id":  10063,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-01T13:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-01T13:00:00|10063"
+                 },
+                 {
+                     "event_id":  10064,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-01T14:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-01T14:00:00|10064"
+                 },
+                 {
+                     "event_id":  10065,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-01T15:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-01T15:00:00|10065"
+                 },
+                 {
+                     "event_id":  10066,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-01T16:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-01T16:00:00|10066"
+                 },
+                 {
+                     "event_id":  10067,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-01T17:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-01T17:00:00|10067"
+                 },
+                 {
+                     "event_id":  10068,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-01T18:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-01T18:00:00|10068"
+                 },
+                 {
+                     "event_id":  10069,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-01T19:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-01T19:00:00|10069"
+                 },
+                 {
+                     "event_id":  10070,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-01T20:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-01T20:00:00|10070"
+                 },
+                 {
+                     "event_id":  10071,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-01T21:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-01T21:00:00|10071"
+                 },
+                 {
+                     "event_id":  10072,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-01T22:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-01T22:00:00|10072"
+                 },
+                 {
+                     "event_id":  10073,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-01T23:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-01T23:00:00|10073"
+                 },
+                 {
+                     "event_id":  10074,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-02T00:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-02T00:00:00|10074"
+                 },
+                 {
+                     "event_id":  10075,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-02T01:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-02T01:00:00|10075"
+                 },
+                 {
+                     "event_id":  10076,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-02T02:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-02T02:00:00|10076"
+                 },
+                 {
+                     "event_id":  10077,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-02T03:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-02T03:00:00|10077"
+                 },
+                 {
+                     "event_id":  10078,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-02T04:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-02T04:00:00|10078"
+                 },
+                 {
+                     "event_id":  10079,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-02T05:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-02T05:00:00|10079"
+                 },
+                 {
+                     "event_id":  10080,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-02T06:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-02T06:00:00|10080"
+                 },
+                 {
+                     "event_id":  10081,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-02T07:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-02T07:00:00|10081"
+                 },
+                 {
+                     "event_id":  10082,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-02T08:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-02T08:00:00|10082"
+                 },
+                 {
+                     "event_id":  10083,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-02T09:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-02T09:00:00|10083"
+                 },
+                 {
+                     "event_id":  10084,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-02T10:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-02T10:00:00|10084"
+                 },
+                 {
+                     "event_id":  10085,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-02T11:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-02T11:00:00|10085"
+                 },
+                 {
+                     "event_id":  10086,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-02T12:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-02T12:00:00|10086"
+                 },
+                 {
+                     "event_id":  10087,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-02T13:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-02T13:00:00|10087"
+                 },
+                 {
+                     "event_id":  10088,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-02T14:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-02T14:00:00|10088"
+                 },
+                 {
+                     "event_id":  10089,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-02T15:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-02T15:00:00|10089"
+                 },
+                 {
+                     "event_id":  10090,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-02T16:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-02T16:00:00|10090"
+                 },
+                 {
+                     "event_id":  10091,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-02T17:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-02T17:00:00|10091"
+                 },
+                 {
+                     "event_id":  10092,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-02T18:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-02T18:00:00|10092"
+                 },
+                 {
+                     "event_id":  10093,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-02T19:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-02T19:00:00|10093"
+                 },
+                 {
+                     "event_id":  10094,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-02T20:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-02T20:00:00|10094"
+                 },
+                 {
+                     "event_id":  10095,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-02T21:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-02T21:00:00|10095"
+                 },
+                 {
+                     "event_id":  10096,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-02T22:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-02T22:00:00|10096"
+                 },
+                 {
+                     "event_id":  10097,
+                     "code":  "W000019",
+                     "getting_ts":  "2026-05-02T23:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2026-05-02T23:00:00|10097"
+                 },
+                 {
+                     "event_id":  10098,
+                     "code":  "W000019",
+                     "getting_ts":  "2025-08-15T00:00:00",
+                     "tag":  "BOOTSTRAP",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000019|2025-08-15T00:00:00|10098"
+                 },
+                 {
+                     "event_id":  10099,
+                     "code":  "W000020",
+                     "getting_ts":  "2026-01-01T00:00:00",
+                     "tag":  "12M",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000020|2026-01-01T00:00:00|10099"
+                 },
+                 {
+                     "event_id":  10100,
+                     "code":  "W000020",
+                     "getting_ts":  "2025-01-01T00:00:00",
+                     "tag":  "BOOTSTRAP",
+                     "exclusion_reason":  null,
+                     "provenance_key":  "SYN|TAPE|W000020|2025-01-01T00:00:00|10100"
+                 }
+             ],
+    "watched":  {
+                    "migration_phase":  "M8",
+                    "status":  "BLOCKED",
+                    "tag":  "SKIP",
+                    "reason":  "G31_source_unapproved",
+                    "note":  "Do not use R3 synthetic watched.json as M8 source",
+                    "items":  [
+
+                              ]
+                }
+}

@@ -1,0 +1,165 @@
+{
+    "schema_version":  "migration-l0-v1",
+    "current":  [
+                    {
+                        "wagon_id":  1,
+                        "code":  "W000001",
+                        "station_id":  1001,
+                        "operation_id":  1,
+                        "location_ts":  "2026-11-15T18:00:00",
+                        "current_repair_id":  null
+                    },
+                    {
+                        "wagon_id":  2,
+                        "code":  "W000002",
+                        "station_id":  1002,
+                        "operation_id":  2,
+                        "location_ts":  "2026-11-15T18:00:00",
+                        "current_repair_id":  null
+                    },
+                    {
+                        "wagon_id":  3,
+                        "code":  "W000003",
+                        "station_id":  1003,
+                        "operation_id":  3,
+                        "location_ts":  "2026-11-15T18:00:00",
+                        "current_repair_id":  null
+                    },
+                    {
+                        "wagon_id":  4,
+                        "code":  "W000004",
+                        "station_id":  1004,
+                        "operation_id":  1,
+                        "location_ts":  "2026-11-15T18:00:00",
+                        "current_repair_id":  null
+                    },
+                    {
+                        "wagon_id":  5,
+                        "code":  "W000005",
+                        "station_id":  1005,
+                        "operation_id":  2,
+                        "location_ts":  "2026-11-15T18:00:00",
+                        "current_repair_id":  null
+                    },
+                    {
+                        "wagon_id":  6,
+                        "code":  "W000006",
+                        "station_id":  1001,
+                        "operation_id":  3,
+                        "location_ts":  "2026-11-15T18:00:00",
+                        "current_repair_id":  null
+                    },
+                    {
+                        "wagon_id":  7,
+                        "code":  "W000007",
+                        "station_id":  1002,
+                        "operation_id":  1,
+                        "location_ts":  "2026-11-15T18:00:00",
+                        "current_repair_id":  7001
+                    },
+                    {
+                        "wagon_id":  8,
+                        "code":  "W000008",
+                        "station_id":  1003,
+                        "operation_id":  2,
+                        "location_ts":  "2026-11-15T18:00:00",
+                        "current_repair_id":  null
+                    },
+                    {
+                        "wagon_id":  9,
+                        "code":  "W000009",
+                        "station_id":  1004,
+                        "operation_id":  3,
+                        "location_ts":  "2026-11-15T18:00:00",
+                        "current_repair_id":  null
+                    },
+                    {
+                        "wagon_id":  10,
+                        "code":  "W000010",
+                        "station_id":  1005,
+                        "operation_id":  1,
+                        "location_ts":  "2026-11-15T18:00:00",
+                        "current_repair_id":  null
+                    },
+                    {
+                        "wagon_id":  11,
+                        "code":  "W000011",
+                        "station_id":  1001,
+                        "operation_id":  2,
+                        "location_ts":  "2026-11-15T18:00:00",
+                        "current_repair_id":  null
+                    },
+                    {
+                        "wagon_id":  12,
+                        "code":  "W000012",
+                        "station_id":  1002,
+                        "operation_id":  3,
+                        "location_ts":  "2026-11-15T18:00:00",
+                        "current_repair_id":  null
+                    },
+                    {
+                        "wagon_id":  13,
+                        "code":  "W000013",
+                        "station_id":  1003,
+                        "operation_id":  1,
+                        "location_ts":  "2026-11-15T18:00:00",
+                        "current_repair_id":  null
+                    },
+                    {
+                        "wagon_id":  14,
+                        "code":  "W000014",
+                        "station_id":  1004,
+                        "operation_id":  2,
+                        "location_ts":  "2026-11-15T18:00:00",
+                        "current_repair_id":  null
+                    },
+                    {
+                        "wagon_id":  15,
+                        "code":  "W000015",
+                        "station_id":  1005,
+                        "operation_id":  3,
+                        "location_ts":  "2026-11-15T18:00:00",
+                        "current_repair_id":  null
+                    },
+                    {
+                        "wagon_id":  16,
+                        "code":  "W000016",
+                        "station_id":  1001,
+                        "operation_id":  1,
+                        "location_ts":  "2026-11-15T18:00:00",
+                        "current_repair_id":  null
+                    },
+                    {
+                        "wagon_id":  17,
+                        "code":  "W000017",
+                        "station_id":  1002,
+                        "operation_id":  2,
+                        "location_ts":  "2026-11-15T18:00:00",
+                        "current_repair_id":  null
+                    },
+                    {
+                        "wagon_id":  18,
+                        "code":  "W000018",
+                        "station_id":  1003,
+                        "operation_id":  3,
+                        "location_ts":  "2026-11-15T18:00:00",
+                        "current_repair_id":  null
+                    },
+                    {
+                        "wagon_id":  19,
+                        "code":  "W000019",
+                        "station_id":  1004,
+                        "operation_id":  1,
+                        "location_ts":  "2026-11-15T18:00:00",
+                        "current_repair_id":  null
+                    },
+                    {
+                        "wagon_id":  20,
+                        "code":  "W000020",
+                        "station_id":  1005,
+                        "operation_id":  2,
+                        "location_ts":  "2026-11-15T18:00:00",
+                        "current_repair_id":  null
+                    }
+                ]
+}

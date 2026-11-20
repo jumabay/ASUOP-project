@@ -1,0 +1,69 @@
+{
+    "schema_version":  "migration-l0-v1",
+    "kits":  [
+                 {
+                     "kit_id":  301,
+                     "filename":  "syn_kit_12m_001.dat",
+                     "type":  0,
+                     "import_ts":  "2026-01-10T01:00:00",
+                     "getting_ts":  "2026-01-10T00:00:00",
+                     "scenario":  "kit_in_12m"
+                 },
+                 {
+                     "kit_id":  302,
+                     "filename":  "syn_kit_12m_002.dat",
+                     "type":  1,
+                     "import_ts":  "2025-11-16T00:00:00",
+                     "getting_ts":  "2025-11-16T00:00:00",
+                     "scenario":  "kit_on_cutoff_included_12m"
+                 },
+                 {
+                     "kit_id":  303,
+                     "filename":  "syn_kit_arch_001.dat",
+                     "type":  0,
+                     "import_ts":  "2025-05-01T00:00:00",
+                     "getting_ts":  "2025-05-01T00:00:00",
+                     "scenario":  "kit_pre_cutoff_archive"
+                 },
+                 {
+                     "kit_id":  304,
+                     "filename":  "syn_kit_arch_002.dat",
+                     "type":  0,
+                     "import_ts":  "2024-01-01T00:00:00",
+                     "getting_ts":  "2024-01-01T00:00:00",
+                     "scenario":  "kit_deep_archive"
+                 },
+                 {
+                     "kit_id":  305,
+                     "filename":  "syn_kit_12m_003.dat",
+                     "type":  0,
+                     "import_ts":  "2026-06-15T12:00:00",
+                     "getting_ts":  "2026-06-15T12:00:00",
+                     "scenario":  "kit_12m_mid"
+                 },
+                 {
+                     "kit_id":  306,
+                     "filename":  "syn_kit_12m_001.dat",
+                     "type":  0,
+                     "import_ts":  "2026-01-10T01:05:00",
+                     "getting_ts":  "2026-01-10T00:00:00",
+                     "scenario":  "kit_uk_replay_same_filename_type"
+                 },
+                 {
+                     "kit_id":  307,
+                     "filename":  "syn_kit_boot_edge.dat",
+                     "type":  1,
+                     "import_ts":  "2025-11-15T23:00:00",
+                     "getting_ts":  "2025-11-15T23:00:00",
+                     "scenario":  "kit_just_before_cutoff_archive"
+                 },
+                 {
+                     "kit_id":  308,
+                     "filename":  "syn_kit_orphan.dat",
+                     "type":  0,
+                     "import_ts":  "2026-03-01T00:00:00",
+                     "getting_ts":  "2026-03-01T00:00:00",
+                     "scenario":  "kit_12m_for_orphan_tape"
+                 }
+             ]
+}

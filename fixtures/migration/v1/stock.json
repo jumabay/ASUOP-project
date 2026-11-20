@@ -1,0 +1,45 @@
+{
+    "schema_version":  "migration-l0-v1",
+    "stock":  [
+                  {
+                      "stock_id":  1,
+                      "warehouse_id":  501,
+                      "part_type_id":  11,
+                      "object_wagon_id":  15,
+                      "qty":  2,
+                      "scenario":  "stock_on_old_wagon"
+                  },
+                  {
+                      "stock_id":  2,
+                      "warehouse_id":  501,
+                      "part_type_id":  12,
+                      "object_wagon_id":  1,
+                      "qty":  4,
+                      "scenario":  "stock_on_active"
+                  },
+                  {
+                      "stock_id":  3,
+                      "warehouse_id":  502,
+                      "part_type_id":  11,
+                      "object_wagon_id":  7,
+                      "qty":  1,
+                      "scenario":  "stock_open_repair_wagon"
+                  },
+                  {
+                      "stock_id":  4,
+                      "warehouse_id":  502,
+                      "part_type_id":  12,
+                      "object_wagon_id":  null,
+                      "qty":  10,
+                      "scenario":  "stock_no_wagon_fk"
+                  },
+                  {
+                      "stock_id":  5,
+                      "warehouse_id":  501,
+                      "part_type_id":  11,
+                      "object_wagon_id":  20,
+                      "qty":  3,
+                      "scenario":  "stock_spare"
+                  }
+              ]
+}

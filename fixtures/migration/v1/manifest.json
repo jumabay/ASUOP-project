@@ -1,0 +1,38 @@
+{
+    "pack_id":  "migration-l0-v1",
+    "schema_version":  "migration-l0-v1",
+    "cutover_ts":  "2026-11-16T00:00:00",
+    "cutoff_ts":  "2025-11-16T00:00:00",
+    "axis":  "GETTING_DATE",
+    "synthetic":  true,
+    "source":  "hand-crafted-generator",
+    "files":  [
+                  "manifest.json",
+                  "refs.json",
+                  "wagons.json",
+                  "current.json",
+                  "repairs.json",
+                  "stock.json",
+                  "kits.json",
+                  "tape.json",
+                  "expected_selection.json",
+                  "expected_reconcile.json",
+                  "schema/selection_result.schema.json",
+                  "schema/reconcile_report.schema.json",
+                  "README.md"
+              ],
+    "gaps_open":  [
+                      "NK1",
+                      "DT1",
+                      "G31",
+                      "R1-Q-TZ"
+                  ],
+    "denied":  [
+                   "Create RAILDB",
+                   "Flyway",
+                   "DBTC read",
+                   "RAILDB write",
+                   "JDBC",
+                   "live migrate"
+               ]
+}
