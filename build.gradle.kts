@@ -20,7 +20,24 @@ subprojects {
         }
     }
 
-    tasks.withType<Test> {
-        useJUnitPlatform()
+    tasks.named<Test>("test") {
+        useJUnitPlatform {
+            // T0 CI: exclude opt-in scale suite (P4-1 A). Run via testScale.
+            excludeTags("scale")
+        }
+    }
+
+    val javaExtension = extensions.getByType(JavaPluginExtension::class.java)
+    val testSourceSet = javaExtension.sourceSets.getByName("test")
+    tasks.register<Test>("testScale") {
+        description = "Run @Tag(\"scale\") tests only (P4-1 synthetic 18k/30k; not Oracle proof)"
+        group = "verification"
+        dependsOn("testClasses")
+        testClassesDirs = testSourceSet.output.classesDirs
+        classpath = testSourceSet.runtimeClasspath
+        useJUnitPlatform {
+            includeTags("scale")
+        }
+        shouldRunAfter("test")
     }
 }
