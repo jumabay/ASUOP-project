@@ -16,9 +16,10 @@
 | Backend Developer | `/backend` | API, сервисы, Modulith-модули, synthetic/offline adapters |
 | Frontend Developer | `/frontend` | React UI, таблицы, формы, клиент API |
 | Oracle Database Engineer | `/database` | Схемы, SQL-черновики, миграции (дизайн), целостность |
-| QA Engineer | `/qa` | Тесты, регрессии, safety/security gate перед «готово» |
+| QA Engineer (audit) | `/qa` | Read-only audit / safety review (`readonly: true`; Shell может быть недоступен) |
+| QA Test Runner | `/qa-test-runner` | Offline/synthetic прогон тестов с evidence (`readonly: false` + Hard bans; без правок бизнес-кода и без Oracle) |
 
-Главный агент распределяет задачи, проверяет границы APPROVALS и **не** объявляет работу завершённой без отчёта `/qa` (или собственного эквивалентного прогона тестов с доказательствами).
+Главный агент распределяет задачи, проверяет границы APPROVALS и **не** объявляет работу завершённой без отчёта `/qa-test-runner` или `/qa` с реальными доказательствами (либо собственного эквивалентного прогона Lead/CI — с явной меткой канала). См. [QA_TEST_RUNNER_ROLE.md](docs/agents/QA_TEST_RUNNER_ROLE.md).
 
 ## Обязательные запреты
 
