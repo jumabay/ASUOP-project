@@ -33,6 +33,13 @@
 
 Java 21 + Spring Boot 3.5.x + Modulith 1.4.x + Spring JDBC; React/TS/Vite + Ant Design + AG Grid; Oracle 12.2 через `ojdbc10:19.x` только после разрешения. Default profile: `synthetic`.
 
+## JDK 21 / Gradle на Windows
+
+- PATH `java` на машине разработки может быть **25** — для агентов всегда `JAVA_HOME` → JDK **21** (не 25, не 17).
+- `~/.gradle/gradle.properties` с `org.gradle.java.home=.../jdk-17` перебивает `JAVA_HOME`; не править глобальный файл без просьбы человека.
+- Кириллический путь репозитория ломает `gradlew test` (`ClassNotFoundException`). Обход: `subst` на ASCII-диск.
+- Предпочтительный запуск: `.\scripts\gradle-jdk21.ps1 test` — см. `docs/agents/BUILD_JDK21_WINDOWS.md`.
+
 ## Рабочий цикл одной задачи
 
 1. Уточнить scope и критерий приёмки; сверить APPROVALS.

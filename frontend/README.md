@@ -8,11 +8,13 @@ React + TypeScript + Vite, Ant Design, AG Grid Community.
 
 ## Локальный запуск
 
-1. Поднять backend: из корня репозитория (на Windows с кириллическим путём удобнее `subst Z: <repo>` и работать из `Z:\`):
+1. Поднять backend: из корня репозитория. На Windows с кириллическим путём используйте ASCII `subst` или скрипт (см. `docs/agents/BUILD_JDK21_WINDOWS.md`):
 
-```bat
-gradlew.bat :platform-app:bootRun
+```powershell
+.\scripts\gradle-jdk21.ps1 :platform-app:bootRun
 ```
+
+Эквивалент вручную: `subst Z: <repo>`, `cd /d Z:\`, затем `gradlew.bat :platform-app:bootRun` при `JAVA_HOME` = JDK 21.
 
 2. В каталоге `frontend`:
 

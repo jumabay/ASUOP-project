@@ -70,10 +70,11 @@ docs/architecture|analysis
 - Закрытие G1–G8, G31 и связанных package body (см. `08_GAPS_AND_UNCERTAINTIES.md`).
 - Expedition / finance / 1С — DENIED UNTIL APPROVED (требования не заданы).
 
-### Технический долг / среда (снимок 2026-11-20)
+### Технический долг / среда (снимок 2026-11-20, уточн. P0-2)
 
 - На машине разработки `java` в PATH = **25**; утверждён **21**. Агенты обязаны выставлять `JAVA_HOME` на JDK 21.
-- Полный `gradlew test` в каталоге с кириллическим путём давал `ClassNotFoundException` на ряде test-классов — известный риск Windows-пути; обход: `subst` на ASCII-диск (см. `frontend/README.md`). P0 для `/qa`: стабилизировать локальный/CI прогон.
+- `~/.gradle/gradle.properties` может держать `org.gradle.java.home` на JDK 17 (выше приоритета, чем project `gradle.properties`) — daemon тогда не на 21. Обход агентов: `scripts/gradle-jdk21.ps1` (изолированный ASCII `GRADLE_USER_HOME`).
+- Полный `gradlew test` в каталоге с кириллическим путём даёт `ClassNotFoundException` на test-классах (подтверждено P0-2). Обход: `subst` / `scripts/gradle-jdk21.ps1`. Документация: `docs/agents/BUILD_JDK21_WINDOWS.md`. CI: `.github/workflows/gradle-jdk21-test.yml`.
 - `JdbcParityIT` отключён до TEST Oracle.
 - `tools/rwl-import-proto` — не коммитить целиком без secret-review.
 
@@ -158,9 +159,9 @@ flowchart TD
 
 Цель цикла: **закрыть P0-2 и P0-3**, не открывая Oracle.
 
-1. Lead создаёт `feature/stabilize-test-env` (отдельный PR от конфигурации агентов).
-2. `/qa` воспроизводит `gradlew test` на JDK 21 через ASCII `subst` (или чинит конфигурацию тестов, если дефект в build).
-3. `/backend` устраняет только то, что ломает classpath/сборку (минимальный дифф).
+1. Lead создаёт `feature/p0-build-test-stability` (отдельный PR от конфигурации агентов).
+2. `/qa` воспроизводит `gradlew test` на JDK 21 через ASCII `subst` / `scripts/gradle-jdk21.ps1` (или чинит конфигурацию тестов, если дефект в build).
+3. `/backend` устраняет только то, что ломает classpath/сборку (минимальный дифф) — docs/scripts/CI для JDK 21 + Windows path.
 4. `/frontend` подтверждает `npm test` + `npm run build`.
 5. `/qa` пишет короткий regression sheet R1–R3 (карточка, сутки, реестр, слежение).
 6. PR → review человека → merge в `main`.
