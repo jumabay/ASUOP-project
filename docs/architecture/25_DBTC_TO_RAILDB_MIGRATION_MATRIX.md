@@ -61,7 +61,7 @@
 | `GIVING` | FULL | N/A | current giving | ~9k |
 | `WAGONAPPROACH` | FULL | N/A | current approach | ~27k |
 | `CURRENTPARTS` | FULL | N/A | installed parts | ~168k |
-| `WAREHOUSEDETAILS` | FULL stock | N/A | `RAIL_STOCK_BALANCE` | grain UNKNOWN |
+| `WAREHOUSEDETAILS` | FULL stock | N/A | `RAIL_STOCK_BALANCE` | **P3C-1:** `OBJECT_ID`→`WAGONPARTS`; `OBJECT_TYPE=0`; UK intact |
 | `STATEREPORTS` where `LAST` | FULL markers | — | kit/current flags | body UpdateLast UNKNOWN |
 
 ### 3.3. История дислокации / комплекты — `12M` + `BOOTSTRAP`
@@ -71,7 +71,7 @@
 | `STATEREPORTRECORDS` | 12M | **`GETTING_DATE`** (CONFIRMED index axis) | `RAIL_DISL_EVENT` | ~157,7M rows/year order; **no PK** |
 | same | BOOTSTRAP | last row per wagon with `GETTING_DATE` ≤ cutoff | seed current/history edge | обязательно |
 | `STATEREPORTS` | 12M parents | **`GETTING_DATE`** / `OPERATING_DATE` | `RAIL_IMPORT_KIT` (header part) | PK `ID` |
-| `IMPORTFILES` | 12M | **`IMPORTDATE`** | kit identity | UK business `(FILENAME, TYPE)` via client rule |
+| `IMPORTFILES` | 12M | **`IMPORTDATE`** | kit identity | UK business `(FILENAME, TYPE)`; soft link from reports **OK in 7d P3C-1 sample** |
 | `STATEREPORTRECORDS_TMP` | SKIP | — | — | ephemeral |
 | `IMPORTFILESCONTENT_TMP` | SKIP | — | — | ephemeral |
 | Hour calendar | NEW | — | `RAIL_HOUR_EXPECTATION` | в DBTC таблицы нет |
@@ -82,7 +82,7 @@
 
 | DBTC | Критерий | Date field | → RAILDB | Notes |
 | --- | --- | --- | --- | --- |
-| `REPAIRS` | 12M closed ∪ OPEN | `beginingdate` / `endingdate` (trigger cols CONFIRMED) | `RAIL_REPAIR` | open predicate (null end / `CURRENTREPAIR_ID`) **UNKNOWN** |
+| `REPAIRS` | 12M closed ∪ OPEN | `endingdate` for closed 12M; OPEN via `WAGON.CURRENTREPAIR_ID` | `RAIL_REPAIR` | **P3C-1:** `is_open` ⇔ CURRENT pointer (not `ENDINGDATE IS NULL` alone) |
 | Types linked to TR/KR/DR | REF | — | via `REPAIRTYPES` | types 0 ДР … 7 ТР1 … CONFIRMED in pkg docs |
 
 ### 3.5. Склад / документы — `FULL` остатки + `12M` документы
@@ -142,10 +142,11 @@
 
 ## 7. OPEN вопросы (блокируют финальный DDL/SQL)
 
-1. Утверждение источника watched (G31).  
-2. Natural key `STATEREPORTRECORDS`.  
-3. `GETTING_DATE` vs `LOCATION_DATE` как ось часа.  
-4. Open-repair predicate.  
-5. Полный column dump REPAIRS / warehouse / mileage.  
+1. Утверждение источника watched (G31) — package SPEC всё ещё не виден RO.  
+2. Natural key / частота дублей `STATEREPORTRECORDS` — **NK1 BLOCKED** (нужен DBA access plan).  
+3. `GETTING_DATE` vs `LOCATION_DATE` — **DT1 BLOCKED**; ось миграции остаётся GETTING.  
+4. ~~Open-repair predicate~~ — **CLOSED P3C-1** (`CURRENTREPAIR_ID`).  
+5. Имена `BUYINGTYPES` / полный enum `OBJECT_TYPE` (сейчас только `0`).  
 6. Нужен ли перенос `STATEREPORTSWAGON` (derived, job broken).  
-7. Права SELECT migration user: tables vs packages only.
+7. Доля orphan `IMPORTFILES_ID` за полные 12м (7d sample = 0).  
+8. Права migration user: packages / `BUYINGTYPES` SELECT.

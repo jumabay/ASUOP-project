@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data>
+  <vagon>
+    <vagon_info type="vagon">
+      <vagon_no>12345678</vagon_no>
+      <from_name>Алтынколь, КЗХ</from_name>
+      <from_code>707701</from_code>
+      <to_name>Электроугли, МСК</to_name>
+      <to_code>230600</to_code>
+    </vagon_info>
+    <position>
+      <utc_datetime>2025-11-15 10:15:00</utc_datetime>
+      <current_position>Бекасово-Сортировочное, МОС</current_position>
+      <current_position_code>180006</current_position_code>
+      <operation_id>733</operation_id>
+      <operation>ПРИБЫТИЕ ПОЕЗДА</operation>
+      <operation_code>ПРИБ</operation_code>
+      <operation_asoup_code>08</operation_asoup_code>
+      <train_index>1700-339-1800</train_index>
+      <train_number>2201</train_number>
+      <loaded>y</loaded>
+      <cargo_name>Уголь каменный</cargo_name>
+      <etsng_code>16105</etsng_code>
+      <weight>70</weight>
+      <current_position_latitude>55.4199</current_position_latitude>
+      <current_position_longitude>36.8718</current_position_longitude>
+    </position>
+  </vagon>
+</data>

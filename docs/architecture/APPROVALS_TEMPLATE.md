@@ -35,7 +35,9 @@
 | P3A RAILDB ER + migration design (offline) | APPROVED | Docs 27–31 + draft DDL + DBA dictionary SQL + JDBC stub under `raildb-test` (fail-fast, no connect). **Не** P3B/P4; нет RAC/RAILDB/Flyway/DDL apply/RWL live | 2026-11-16 |
 | P3B-0 Dictionary SQL audit (offline) | APPROVED | Аудит/санитизация `01_dictionary_probes.sql`; runbook SQL Developer; Partitioning license note. Docs 32–33. **Не** разрешает выполнение SQL на RAC | 2026-11-16 |
 | P3B prep (SQL Developer worksheets G0–G5) | APPROVED | Разбиение A–M на G0–G5; sequence 34; offline CSV 35. Cursor **не** коннектится. Выполнение SELECT на prod RAC — отдельно | 2026-11-16 |
-| P3B DBTC dictionary probes (execute SELECTs) | DENIED UNTIL APPROVED | Нужно согласие владельца БД/DBA на ручной прогон G0–G5 в SQL Developer. Скрипты: `sql/dba/p3b/G*.sql`. Учётка read-only ≠ RAIL_APP admin | |
+| P3B DBTC dictionary probes (execute SELECTs) | APPROVED / **DONE (tables)** | Прогон-2 `20261116_054752`: G0 OK; core tape/import+warehouse видны; G1–G5 без EXECUTE; packages empty → G31 OPEN. Docs 27/28/29/31/36. P4/RAILDB/Flyway — нет | 2026-11-16 |
+| P3C-0 Semantics research (offline) | APPROVED / **DONE** | Docs 37–38; SQL drafts `sql/dba/p3c/*`; ER/migration/V0 draft provenance; synthetic `DislEventProvenance` tests. **Не** Oracle business SELECT; **не** P3C-1/P4 | 2026-11-16 |
+| P3C-1 Run diagnostic SELECTs on Oracle | APPROVED / **PARTIAL DONE** | Прогон `20261116_062146`: G0 OK; RP1/WH1/KIT_FK executed; NK1/DT1 **BLOCKED** (no DBA tape plan; no EXPLAIN PLAN); G31 package text empty. Docs 27/25/29/39. **Не** P4/RAILDB/Flyway | 2026-11-16 |
 | Create Oracle RAILDB (instance/PDB) | DENIED UNTIL APPROVED | Ждать DBA checklist и отдельную строку | |
 | RAILDB Flyway apply / business DDL | DENIED UNTIL APPROVED | Скрипты в репо позже; apply отдельно | |
 | DBTC read for migration | DENIED UNTIL APPROVED | | |

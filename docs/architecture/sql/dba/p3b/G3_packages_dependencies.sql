@@ -15,21 +15,23 @@ ORDER BY object_name, object_type;
 -- Empty PACKAGE BODY row ≠ visibility/hidden — not "package missing" if PACKAGE exists.
 
 -- G3.2 Arguments (signatures only — does not run packages)
-SELECT package_name, object_name, procedure_name, overload,
+-- Re-audit 2026-11-16: Oracle 12.2 ALL_ARGUMENTS has OBJECT_NAME (subprogram),
+-- not PROCEDURE_NAME (ORA-00904 on first P3B run). Filter uses OBJECT_NAME.
+SELECT package_name, object_name AS procedure_name, overload,
        argument_name, position, data_type, in_out
 FROM all_arguments
 WHERE owner = 'DBTC'
   AND package_name IN ('WAGONPACKAGE', 'STATEREPORTPACKAGE', 'IMPORTPKG', 'REPAIRSPKG', 'WAREHOUSEPKG')
   AND (
-        UPPER(procedure_name) IN (
+        UPPER(object_name) IN (
           'GETACTIVEWAGONLIST', 'GETWAGONLIST', 'GETWAGONBYCODE',
           'GETWAGONSTATEREPORTS', 'ISIMPORTEDFILE', 'SAVEIMPORTFILE',
           'SAVESTATEREPORT', 'SAVESTATEREPORTLINEKZ'
         )
-     OR UPPER(procedure_name) LIKE '%REPAIR%'
-     OR UPPER(procedure_name) LIKE '%ACTIVE%'
+     OR UPPER(object_name) LIKE '%REPAIR%'
+     OR UPPER(object_name) LIKE '%ACTIVE%'
       )
-ORDER BY package_name, procedure_name, overload, position;
+ORDER BY package_name, object_name, overload, position;
 -- Export: p3b_G3_arguments_<date>.csv
 -- G31: confirm GETACTIVEWAGONLIST exists; membership data still BLOCKED (needs EXECUTE later).
 

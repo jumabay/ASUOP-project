@@ -15,12 +15,13 @@ ORDER BY object_type, object_name;
 -- Empty ≠ no matching names visible — still not "Active does not exist" if G3 showed GETACTIVEWAGONLIST.
 
 -- G5.2 WagonPackage Active arguments
-SELECT package_name, procedure_name, argument_name, position, data_type, in_out
+-- Re-audit 2026-11-16: use OBJECT_NAME (12.2), alias as procedure_name for CSV stability.
+SELECT package_name, object_name AS procedure_name, argument_name, position, data_type, in_out
 FROM all_arguments
 WHERE owner = 'DBTC'
   AND package_name = 'WAGONPACKAGE'
-  AND UPPER(procedure_name) LIKE '%ACTIVE%'
-ORDER BY procedure_name, position;
+  AND UPPER(object_name) LIKE '%ACTIVE%'
+ORDER BY object_name, position;
 -- Export: p3b_G5_active_args_<date>.csv
 
 -- G5.3 PACKAGE SPEC text snippets (SPEC only; BODY often hidden)

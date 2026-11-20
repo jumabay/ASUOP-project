@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data>
+  <vagon>
+    <vagon_info type="vagon">
+      <vagon_no>12345678</vagon_no>
+      <from_code>707701</from_code>
+      <to_code>230600</to_code>
+    </vagon_info>
+    <position>
+      <current_position>Бекасово-Сортировочное, МОС</current_position>
+      <current_position_code>180006</current_position_code>
+      <operation_code>ПРИБ</operation_code>
+      <operation_asoup_code>08</operation_asoup_code>
+      <train_index>1700-339-1800</train_index>
+    </position>
+  </vagon>
+</data>

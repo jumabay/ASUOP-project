@@ -1,101 +1,72 @@
-# 27. Логическая ER-модель RAILDB (P3A)
+# 27. Логическая ER-модель RAILDB (P3C-1)
 
-Статус: **черновик**. Поля/UK помечены **PROVISIONAL**, пока P3B не подтвердит словарь DBTC.  
-Целевая БД: `RAILDB`, схема `RAIL_APP`. Не применять DDL.
+Статус: уточнено после P3C-1 прогона `20261116_062146`.  
+Целевая БД: `RAILDB` / `RAIL_APP`. **Не применять DDL.**  
+Evidence: [36](36_P3B_PARTIAL_DICTIONARY_FINDINGS.md), [37](37_P3C0_SEMANTICS_RESEARCH.md), [39](39_P3C1_SEMANTICS_FINDINGS.md).
 
-## 1. Обзор доменов
+## 1. Обзор
 
 ```mermaid
 erDiagram
-  RAIL_STATION ||--o{ RAIL_WAGON : home_or_location
+  RAIL_STATION ||--o{ RAIL_WAGON : refs
   RAIL_WAGON ||--o| RAIL_WAGON_CURRENT : has
   RAIL_WAGON ||--o{ RAIL_WAGON_WATCHED : membership
   RAIL_WAGON ||--o{ RAIL_DISL_EVENT : history
   RAIL_IMPORT_KIT ||--o{ RAIL_DISL_EVENT : contains
   RAIL_INTAKE_EVENT ||--o{ RAIL_IMPORT_KIT : produces
   RAIL_WAGON ||--o{ RAIL_REPAIR : repairs
-  RAIL_WAGON ||--o{ RAIL_PART_INSTALL : current_parts
+  RAIL_WAGON ||--o{ RAIL_PART_INSTALL : installs
+  RAIL_PART ||--o{ RAIL_PART_INSTALL : part
   RAIL_WAREHOUSE ||--o{ RAIL_STOCK_BALANCE : stock
-  RAIL_APP_USER ||--o{ RAIL_UI_AUDIT : audits
-  RAIL_IMPORT_KIT ||--o{ RAIL_IMPORT_ERROR : errors
+  RAIL_WAREHOUSE ||--o{ RAIL_WH_DOCUMENT : docs
+  RAIL_PART ||--o{ RAIL_STOCK_BALANCE : stocked_as
 ```
 
-## 2. Подсистемы и таблицы (logical)
+## 2. Лента: PK, дубликаты, kit
 
-| # | Подсистема | Tables (prefix `RAIL_`) | Notes |
-| --- | --- | --- | --- |
-| 1 | Реестр | `WAGON`, refs `WAGON_TYPE`… | from `WAGON` FULL; code UK PROVISIONAL |
-| 2 | Слежение | `WAGON_WATCHED` | source G31 **BLOCKED** |
-| 3 | Текущая дислокация | `WAGON_CURRENT` | separate from history |
-| 4 | История | `DISL_EVENT` | 12м + bootstrap; **full hours** |
-| 5 | Срезы | `IMPORT_KIT`, `HOUR_EXPECTATION`, `KIT_CHANNEL` | kit UK `(file_name, kit_type)` CONFIRMED semantics R0 |
-| 6 | Ремонты | `REPAIR`, `REPAIR_TYPE` | TR/KR/DR via type codes |
-| 7 | Детали | `PART`, `PART_INSTALL` | from `WAGONPARTS`/`CURRENTPARTS` |
-| 8 | Склад | `WAREHOUSE`, `STOCK_BALANCE`, `WH_DOCUMENT`, `WH_DOCUMENT_LINE` | grain P3B |
-| 9 | Станции/refs | `STATION`, `CUSTOMER`, `OPERATION`, `CARGO` | REF_FULL |
-| 10 | Intake FTP/RWL | `INTAKE_EVENT` | source FTP\|RWL\|FILE |
-| 11 | Users/audit | `APP_USER`, `APP_ROLE`, `UI_AUDIT` | new; legacy USERS mapping UNKNOWN |
-| 12 | Journals | `IMPORT_ERROR`, `QUARANTINE_FILE`, `MIGRATION_RUN`, `MIGRATION_WATERMARK` | ops |
+| Concept | Decision | Evidence |
+| --- | --- | --- |
+| Technical PK | `RAIL_DISL_EVENT.event_id` (always) | P3B no PK on tape |
+| Natural UK from DBTC | **none trusted** | NK1 still **BLOCKED** (no hour dup probe) |
+| Duplicates | **retain all** source rows | P3C-0 policy unchanged |
+| Provenance / idempotency | `provenance_key=report:wagon:ordinal` + `content_hash` | batch replay safe |
+| Kit link | `kit_id` nullable; always store legacy report/file ids | KIT_FK: 701/701 OK in 7d sample |
+| Time axis | `getting_ts` partition/migrate; `location_ts` attr | DT1 **BLOCKED**; 12м axis unchanged |
+| Bootstrap | last event per wagon `getting_ts <= cutoff` | unchanged |
 
-## 3. Каноническая дислокация (FTP + RWL)
+## 3. Ключи
 
-Единая сущность `RAIL_DISL_EVENT` (+ optional extension JSON/`ATTR_*` для RWL-only):
+| Table | PK | Unique / notes |
+| --- | --- | --- |
+| `RAIL_WAGON` | `wagon_id` | `wagon_code` ← DBTC UK |
+| `RAIL_WAGON_WATCHED` | `wagon_id` | source G31 still OPEN |
+| `RAIL_WAGON_CURRENT` | `wagon_id` | |
+| `RAIL_IMPORT_KIT` | `kit_id` | `(file_name, kit_type)`; `legacy_importfiles_id`; `link_status` |
+| `RAIL_DISL_EVENT` | `event_id` (+ partition) | **no** UK (kit,wagon); index `(wagon_id, getting_ts)` |
+| `RAIL_REPAIR` | `repair_id` | `legacy_repair_id`; `is_open` **from CURRENT pointer** |
+| `RAIL_PART` | `part_id` | instance-level (← `WAGONPARTS`) |
+| `RAIL_STOCK_BALANCE` | surrogate | UK `(warehouse_id, object_id, object_state)`; `object_type` observed `0` |
+| `RAIL_STATION` | `station_id` | code |
 
-| Canonical field | KZ 20/21 | RWL | Required for hour kit |
-| --- | --- | --- | --- |
-| `wagon_code` | 0 | `vagon_no` | yes |
-| `station_code` | 1 | `current_position_code` | yes |
-| `train_index` | 2 | `train_index` | no |
-| `dislocation_ts` | 3 PARTIAL | `utc_datetime` | yes (normalize TZ) |
-| `operation_code` | 4 | asoup/code PARTIAL | yes |
-| `dest_station_code` | 5 | `to_code` PARTIAL | keep nullable |
-| `depart_station_code` | 6 | `from_code` PARTIAL | keep nullable |
-| `receiver_code` | 7 | KZ_ONLY | **keep** |
-| `sender_code` | 8 | KZ_ONLY | **keep** |
-| `wagon_type` | 9 | UNKNOWN | keep |
-| `wagon_owner` | 10 | KZ_ONLY | keep |
-| `nod_code` | 11 | KZ_ONLY | keep |
-| `weight_state` | 12 | `loaded` PARTIAL | keep |
-| `work_state` | 13 | KZ_ONLY | keep |
-| `doc_number` | 14 | KZ_ONLY | keep |
-| `cargo_code` | 15 | `etsng_code` PARTIAL | keep |
-| `cargo_weight` | 16 | `weight` PARTIAL | keep |
-| `capacity` | 17 | KZ_ONLY | keep |
-| `message_code` | 18 | KZ_ONLY | keep |
-| `operation_ts` | 19 | often = utc | keep |
-| `containers` | 20 | PARTIAL | keep |
-| `source_system` | FTP/RWL | | yes |
-| `kit_id` | FTP kit | nullable for RWL point-in-time | |
-| `event_key` / `content_hash` | derived | RWL hypothesis | idempotency |
+## 4. Ремонты (RP1 CONFIRMED)
 
-RWL **не** замена FTP для ~18k hour kit (**UNKNOWN** capability) — [13-rwl-kz-field-matrix.md](../analysis/13-rwl-kz-field-matrix.md).
+- Open: **все** `WAGON.CURRENTREPAIR_ID` → `is_open='Y'` (возраст begin не режет; есть CURRENT старше 12м).
+- Не использовать `ENDINGDATE IS NULL` как единственный критерий (24 CURRENT с ENDINGDATE set).
+- Closed 12м: `ENDINGDATE` в окне (~25094 на ориентир cutover 2026-11-16).
+- Orphan `ENDINGDATE IS NULL` вне CURRENT в окне begin≥2025-10-12: **0**.
 
-## 4. Ключи и индексы (PROVISIONAL)
+## 5. Склад (WH1 CONFIRMED)
 
-| Table | PK | Unique | Indexes |
-| --- | --- | --- | --- |
-| `RAIL_WAGON` | `wagon_id` | `wagon_code` | code |
-| `RAIL_WAGON_WATCHED` | (`wagon_id`) or surrogate | `wagon_id` | |
-| `RAIL_WAGON_CURRENT` | `wagon_id` | — | station, updated_at |
-| `RAIL_IMPORT_KIT` | `kit_id` | `(file_name, kit_type)` | `(channel, hour_slot)` |
-| `RAIL_DISL_EVENT` | `event_id` | **PROVISIONAL** `(kit_id, wagon_id)` for full-hour lines; alt `(event_key)` for RWL | `(wagon_id, dislocation_ts)`, `(dislocation_ts)` local on partition |
-| `RAIL_INTAKE_EVENT` | `intake_id` | `idempotency_key` | |
-| `RAIL_REPAIR` | `repair_id` | PROVISIONAL legacy id map | `(wagon_id, begin_ts)` |
+- Stock FULL: `WAREHOUSEDETAILS` (+ `WAREHOUSES`) на cutover.
+- `OBJECT_ID` → `WAGONPARTS.ID` (8877/8880), не `PARTTYPES`.
+- `OBJECT_TYPE`: только `0` в текущем снимке — не финализировать enum шире.
+- `OBJECT_STATE`: ids 1/2/21/NULL; имена `BUYINGTYPES` недоступны RO (ORA-00942).
+- Docs 12м by `DELIVERYDATE` — отдельно.
 
-Natural key `STATEREPORTRECORDS` в DBTC **отсутствует** → UK в RAILDB утверждать только после P3B/B1.
+## 6. Слежение (G31 OPEN)
 
-## 5. Партиционирование истории
-
-- `RAIL_DISL_EVENT`: **RANGE** по `dislocation_ts` (месяц), Oracle 12.2 compatible.
-- Align with filter axis preference: default **`GETTING_DATE`-equivalent** stored as `dislocation_ts` until P3B chooses otherwise.
-- Keep full-hour rows (unchanged wagons included) when source is FTP kit.
-
-## 6. Историческое состояние на дату
-
-1. `RAIL_WAGON_CURRENT` — сейчас.  
-2. As-of query: last `RAIL_DISL_EVENT` per wagon with `dislocation_ts <= :asOf` (partition prune).  
-3. Bootstrap at cutoff seeds continuity for 12м window.
+`RAIL_WAGON_WATCHED` пуст до DBA SPEC / approved snapshot. Не путать с реестром `WAGON` / document `WAGONSTATEREPORTS`.
 
 ## 7. Draft DDL
 
-Только каркас подтверждённых объектов: [sql/raildb/V0__draft_confirmed_core.sql](sql/raildb/V0__draft_confirmed_core.sql). **Не выполнять.**
+[sql/raildb/V0__draft_confirmed_core.sql](sql/raildb/V0__draft_confirmed_core.sql) — draft only; **не выполнять**.
