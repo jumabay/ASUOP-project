@@ -25,7 +25,11 @@ export function WagonCardPanel({ card, fromWatched = false }: Props) {
             <span>
               Карточка вагона <Text code>{card.wagonCode}</Text>
             </span>
-            {fromWatched && <Tag color="blue">На слежении</Tag>}
+            {fromWatched && (
+              <Tag color="blue" data-testid="wagon-card-watched-tag">
+                На слежении
+              </Tag>
+            )}
           </Flex>
         }
       >

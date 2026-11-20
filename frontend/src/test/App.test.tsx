@@ -316,7 +316,7 @@ describe('App R1/R2/R3 scenarios', () => {
 
       await user.click(cardFindButton())
       await waitFor(() => {
-        expect(screen.getByText('На слежении')).toBeInTheDocument()
+        expect(screen.getByTestId('wagon-card-watched-tag')).toHaveTextContent('На слежении')
       })
       expect(screen.getByRole('button', { name: 'Ремонты' })).toBeDisabled()
       expect(screen.getByRole('button', { name: 'Склад' })).toBeDisabled()
