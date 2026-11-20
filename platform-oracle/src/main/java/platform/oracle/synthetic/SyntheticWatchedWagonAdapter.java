@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import platform.fleet.WagonCardPort;
@@ -20,10 +21,16 @@ public class SyntheticWatchedWagonAdapter implements WatchedWagonPort {
     private final SyntheticWatchedList watched;
     private final WagonCardPort wagonCardPort;
 
-    public SyntheticWatchedWagonAdapter(ObjectMapper mapper, WagonCardPort wagonCardPort) {
-        SyntheticCatalog catalog = new SyntheticCatalog(mapper);
+    @Autowired
+    public SyntheticWatchedWagonAdapter(
+            ObjectMapper mapper, SyntheticCatalog catalog, WagonCardPort wagonCardPort) {
         this.watched = new SyntheticWatchedList(mapper, catalog);
         this.wagonCardPort = wagonCardPort;
+    }
+
+    /** Test / non-Spring helper: builds T0 classpath catalog. */
+    SyntheticWatchedWagonAdapter(ObjectMapper mapper, WagonCardPort wagonCardPort) {
+        this(mapper, SyntheticCatalog.classpath(mapper), wagonCardPort);
     }
 
     @Override

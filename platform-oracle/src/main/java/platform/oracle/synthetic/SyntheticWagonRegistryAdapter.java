@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import platform.fleet.WagonRegistryCriteria;
@@ -18,8 +19,14 @@ public class SyntheticWagonRegistryAdapter implements WagonRegistryPort {
 
     private final SyntheticCatalog catalog;
 
-    public SyntheticWagonRegistryAdapter(ObjectMapper mapper) {
-        this.catalog = new SyntheticCatalog(mapper);
+    @Autowired
+    public SyntheticWagonRegistryAdapter(SyntheticCatalog catalog) {
+        this.catalog = catalog;
+    }
+
+    /** Test / non-Spring helper: builds T0 classpath catalog. */
+    SyntheticWagonRegistryAdapter(ObjectMapper mapper) {
+        this(SyntheticCatalog.classpath(mapper));
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import platform.fleet.WagonCard;
@@ -18,10 +19,16 @@ public class SyntheticWagonCardAdapter implements WagonCardPort {
     private final ClassLoader classLoader;
     private final SyntheticCatalog catalog;
 
-    public SyntheticWagonCardAdapter(ObjectMapper mapper) {
+    @Autowired
+    public SyntheticWagonCardAdapter(ObjectMapper mapper, SyntheticCatalog catalog) {
         this.mapper = mapper;
         this.classLoader = SyntheticWagonCardAdapter.class.getClassLoader();
-        this.catalog = new SyntheticCatalog(mapper);
+        this.catalog = catalog;
+    }
+
+    /** Test / non-Spring helper: builds T0 classpath catalog. */
+    SyntheticWagonCardAdapter(ObjectMapper mapper) {
+        this(mapper, SyntheticCatalog.classpath(mapper));
     }
 
     @Override
