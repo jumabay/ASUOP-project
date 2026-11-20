@@ -1,6 +1,8 @@
 # 05. Интеграция с Oracle
 
-Хранилище на всём переносе — схема `DBTC`, Oracle 12.2.0.1.0, сессия словаря снималась на `tc-asuvp-03:1521/RAC.WORLD`. Второй базы у платформы нет. Промышленные строки из config старых EXE не используются.
+> **Target store superseded by [ADR-0009](decisions/ADR-0009-raildb-primary-store.md) (Accepted direction, 2026-11-20):** целевое основное хранилище платформы — `RAILDB` / `RAIL_APP`. Схема `DBTC` остаётся источником миграции, сверки и архивом после cutover. Текст ниже описывает **legacy/переносный** контур на `DBTC` до материализации RAILDB; Create/JDBC/migrate по-прежнему только по отдельным APPROVALS.
+
+Хранилище **legacy на переносе** — схема `DBTC`, Oracle 12.2.0.1.0, сессия словаря снималась на `tc-asuvp-03:1521/RAC.WORLD`. Промышленные строки из config старых EXE не используются.
 
 Источник словаря: [02-oracle-schema.md](../analysis/02-oracle-schema.md), [02_ORACLE_TABLES.md](../analysis/02_ORACLE_TABLES.md). Физика ленты — [06_DATA_STORAGE_STRATEGY.md](06_DATA_STORAGE_STRATEGY.md).
 

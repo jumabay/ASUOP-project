@@ -1,7 +1,7 @@
 # 40. P4-0 — контракты хранения RAILDB (read path)
 
-Статус: **docs-only / DRAFT**. APPROVALS: **P4-0 Storage Contracts (offline)** = APPROVED (2026-11-20).  
-**ADR-0009 остаётся PROPOSED** — этот пакет **не** Accept, **не** Create RAILDB, **не** Flyway apply, **не** JDBC connect.
+Статус: **docs-only / DRAFT**. APPROVALS: **P4-0 Storage Contracts (offline)** = APPROVED / DONE (PR #6).  
+**ADR-0009 = ACCEPTED (architecture direction only, 2026-11-20)** — этот пакет по-прежнему **не** Create RAILDB, **не** Flyway apply, **не** JDBC connect. Open: NK1/DT1/G31/R1-Q-TZ.
 
 Цель: зафиксировать логический контракт таблиц `RAILDB.RAIL_APP` для чтения **реестра / карточки / текущего состояния / суточной истории / слежения**, согласованный с REST R1–R3, без исполнения DDL/DML.
 

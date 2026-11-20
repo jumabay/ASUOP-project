@@ -1,11 +1,11 @@
 # 42. ADR-0009 Decision Readiness Pack
 
-Дата: **2026-11-20**. Gate: PR #6 (P4-0) merged to `main` @ `328c294`; CI на PR и post-merge `main` — **success**.  
-Статус ADR-0009: **PROPOSED** (этот документ **не** меняет статус на Accepted).  
-Источники: [ADR-0009](decisions/ADR-0009-raildb-primary-store.md), [24](24_RAILDB_DBA_INSTRUCTION.md)–[31](31_P3A_FIELD_MAPPING_MATRIX.md), [39](39_P3C1_SEMANTICS_FINDINGS.md)–[41](41_P4_0_R1_R3_FIELD_MAPPING.md), V0/V0b, `sql/raildb/read/*`, [APPROVALS_TEMPLATE.md](APPROVALS_TEMPLATE.md).  
+Дата: **2026-11-20**. Gate: PR #6 (P4-0) merged; Decision Readiness PR #7 merged.  
+Статус ADR-0009: **ACCEPTED — architecture direction only** (владелец, 2026-11-20). Create/Flyway/JDBC/migrate по-прежнему **DENIED**.  
+Источники: [ADR-0009](decisions/ADR-0009-raildb-primary-store.md), [24](24_RAILDB_DBA_INSTRUCTION.md)–[31](31_P3A_FIELD_MAPPING_MATRIX.md), [39](39_P3C1_SEMANTICS_FINDINGS.md)–[41](41_P4_0_R1_R3_FIELD_MAPPING.md), [43](43_ADR0009_DBA_CREATE_CHECKLIST.md), V0/V0b, [APPROVALS_TEMPLATE.md](APPROVALS_TEMPLATE.md).  
 Аудиты: Backend / Database / QA (чат ASUOP Manager, 2026-11-20).
 
-**Запрещено этим пакетом:** Accept в журнале ADR; Create RAILDB; JDBC; Flyway apply; миграция данных; Production/TEST connect.
+**После Accept direction по-прежнему запрещено без новых строк:** Create RAILDB; JDBC; Flyway apply; миграция данных; Production/TEST connect; закрытие NK1/DT1/G31/R1-Q-TZ без evidence.
 
 ---
 
@@ -13,9 +13,9 @@
 
 | Вопрос | Ответ |
 | --- | --- |
-| Готов ли пакет для **человеческого** решения Accept / defer? | **Да** (QA: PASS for decision readiness) |
-| Готовы ли Create / Flyway / JDBC / migrate? | **Нет** — **BLOCKED** (DENIED + DBA gaps) |
-| Рекомендуемый вариант | Accept ADR-0009 с топологией **A** (или B по DBA), DDL **V0 если Partitioning licensed иначе V0b**, миграция 12м + FULL/OPEN/REF, watched пуст до G31 |
+| Готов ли пакет для **человеческого** решения Accept / defer? | **Да** — Accept direction **зафиксирован** владельцем 2026-11-20 |
+| Готовы ли Create / Flyway / JDBC / migrate? | **Нет** — **BLOCKED** (DENIED + DBA checklist [43](43_ADR0009_DBA_CREATE_CHECKLIST.md)) |
+| Принятый вариант | Accept direction; topology **A** preferred; charset **AL32UTF8** preferred; DDL **V0∥V0b**; 12м+FULL plan; watched empty until G31; rollback ≤72h policy |
 
 ---
 
@@ -197,6 +197,6 @@ Suggested sequence after Accept: DBA D1–D5 → Create (B1) → Flyway V0/V0b (
 
 ## 11. Stop line
 
-Этот PR — **docs-only Decision Readiness**.  
-ADR-0009 остаётся **PROPOSED** до явного Accept владельцем + строки в APPROVALS.  
-Никакой Oracle/DDL/JDBC/миграции из этого пакета.
+Decision Readiness выполнен; Accept **direction** зафиксирован в ADR-0009 + APPROVALS.  
+**Следующий gate:** DBA заполняет [43](43_ADR0009_DBA_CREATE_CHECKLIST.md) → владелец APPROVED Create (отдельно).  
+Никакой Oracle/DDL/JDBC/миграции из пакета Accept direction.
