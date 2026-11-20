@@ -1,0 +1,87 @@
+-- =============================================================================
+-- P4-2 DRAFT — DO NOT EXECUTE under P4-2 gate.
+-- =============================================================================
+-- Gap: NK1 — natural key / duplicate frequency on DBTC.STATEREPORTRECORDS
+-- Prerequisite: written DBA tape access plan + 00_explain_plan_gates.sql PASS.
+-- NEVER: full-table COUNT/GROUP BY on tape (~1.2B rows).
+-- Timeout suggest: 60s/statement. Caps: 200 groups / 50 content rows.
+-- Expected access: INDEX RANGE one hour on GETTING_DATE.
+-- Policy until closed: retain ALL rows; tech event_id + provenance_key; no UK.
+-- Ancestor: ../p3c/NK1_natural_key_probes.sql
+-- =============================================================================
+
+-- -----------------------------------------------------------------------------
+-- NK1.1 Candidate collision: (REPORT_ID, WAGON_ID) within one hour
+-- -----------------------------------------------------------------------------
+-- SELECT *
+-- FROM (
+--   SELECT srr.report_id,
+--          srr.wagon_id,
+--          COUNT(*) AS row_cnt,
+--          COUNT(DISTINCT srr.location_date) AS distinct_location_dates,
+--          COUNT(DISTINCT srr.operation_id) AS distinct_operations,
+--          COUNT(DISTINCT srr.location_station_id) AS distinct_loc_stations
+--   FROM dbtc.statereportrecords srr
+--   WHERE srr.getting_date >= :d_from
+--     AND srr.getting_date <  :d_to
+--   GROUP BY srr.report_id, srr.wagon_id
+--   HAVING COUNT(*) > 1
+--   ORDER BY COUNT(*) DESC
+-- )
+-- WHERE ROWNUM <= 200;
+-- Export: p4_2_NK1_report_wagon_dups_<yyyymmdd>.csv
+-- 0 rows in THIS hour ≠ global proof of uniqueness.
+
+-- -----------------------------------------------------------------------------
+-- NK1.2 Candidate collision: (WAGON_ID, GETTING_DATE) — must NOT assume unique
+-- -----------------------------------------------------------------------------
+-- SELECT *
+-- FROM (
+--   SELECT srr.wagon_id,
+--          srr.getting_date,
+--          COUNT(*) AS row_cnt,
+--          COUNT(DISTINCT srr.report_id) AS distinct_reports
+--   FROM dbtc.statereportrecords srr
+--   WHERE srr.getting_date >= :d_from
+--     AND srr.getting_date <  :d_to
+--   GROUP BY srr.wagon_id, srr.getting_date
+--   HAVING COUNT(*) > 1
+--   ORDER BY COUNT(*) DESC
+-- )
+-- WHERE ROWNUM <= 200;
+-- Export: p4_2_NK1_wagon_getting_dups_<yyyymmdd>.csv
+
+-- -----------------------------------------------------------------------------
+-- NK1.3 Content diversity for one colliding pair (ids only; no PII dumps)
+-- -----------------------------------------------------------------------------
+-- SELECT srr.report_id,
+--        srr.wagon_id,
+--        srr.getting_date,
+--        srr.location_date,
+--        srr.location_station_id,
+--        srr.operation_id,
+--        srr.current_state_id,
+--        srr.train_code,
+--        ORA_HASH(
+--          NVL(TO_CHAR(srr.location_date,'YYYYMMDDHH24MISS'),'N') || '|' ||
+--          NVL(TO_CHAR(srr.location_station_id),'N') || '|' ||
+--          NVL(TO_CHAR(srr.operation_id),'N') || '|' ||
+--          NVL(srr.train_code,'N') || '|' ||
+--          NVL(TO_CHAR(srr.current_state_id),'N')
+--        ) AS content_hash32
+-- FROM dbtc.statereportrecords srr
+-- WHERE srr.getting_date >= :d_from
+--   AND srr.getting_date <  :d_to
+--   AND srr.report_id = :report_id
+--   AND srr.wagon_id = :wagon_id
+--   AND ROWNUM <= 50;
+-- Export: p4_2_NK1_dup_content_<yyyymmdd>.csv
+
+-- -----------------------------------------------------------------------------
+-- NK1.4 Hour volume (COUNT only inside indexed hour — after plan PASS)
+-- -----------------------------------------------------------------------------
+-- SELECT COUNT(*) AS rows_in_hour
+-- FROM dbtc.statereportrecords srr
+-- WHERE srr.getting_date >= :d_from
+--   AND srr.getting_date <  :d_to;
+-- Export: p4_2_NK1_hour_volume_<yyyymmdd>.csv
