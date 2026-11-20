@@ -14,7 +14,7 @@
 | Данные | Synthetic adapters по умолчанию; JDBC к Oracle 12.2 (`ojdbc10:19.33`) — smoke был разовый; постоянный доступ DENIED |
 | Frontend | React + TypeScript + Vite, Ant Design, AG Grid Community |
 | Интеграции | FTP/live import — вне кода хоста; RWL — offline fixtures (`platform-rwl`, `modules/intake`); 1С — DENIED |
-| Целевой store | ADR-0009 **PROPOSED**: `RAILDB` / `RAIL_APP`; DBTC — миграция/архив |
+| Целевой store | ADR-0009 **ACCEPTED (direction only, 2026-11-20)**: `RAILDB` / `RAIL_APP`; DBTC — миграция/архив; Create/JDBC/migrate DENIED |
 
 ### Структура репозитория
 
@@ -129,8 +129,8 @@ flowchart TD
 
 | ID | Задача | Блокер | Агенты |
 | --- | --- | --- | --- |
-| P2-1 | Accept ADR-0009 | владелец продукта; пакет готовности: [../architecture/42_ADR0009_DECISION_READINESS.md](../architecture/42_ADR0009_DECISION_READINESS.md) | lead, database |
-| P2-2 | Create RAILDB + Flyway `RAIL_APP` | P2-1 + DBA | database, backend |
+| P2-1 | Accept ADR-0009 | **DONE (direction only)** — ADR + APPROVALS 2026-11-20; [42](../architecture/42_ADR0009_DECISION_READINESS.md), [43](../architecture/43_ADR0009_DBA_CREATE_CHECKLIST.md) | lead, database |
+| P2-2 | Create RAILDB + Flyway `RAIL_APP` | DBA checklist 43 + **отдельные** APPROVED Create, затем Flyway | database, backend |
 | P2-3 | Offline→controlled RWL/FTP intake design + B-tests | P2-2 / B1 | backend, database, qa |
 | P2-4 | Ремонты / склад read-only screens | research G6+ | backend, frontend |
 | P2-5 | Expedition / finance / 1С | отдельные требования | all (после APPROVED) |

@@ -1,6 +1,8 @@
 # 06. Стратегия хранения
 
-Хранилище на всём переносе — схема `DBTC` Oracle 12.2.0.1.0. Второй базы нет. Этот документ не содержит DDL и не разрешает его выполнять. Объёмы ниже — `NUM_ROWS` / `BLOCKS` из статистики, не `COUNT(*)`. Источник: [02_ORACLE_PERFORMANCE.md](../analysis/02_ORACLE_PERFORMANCE.md).
+> **Target store superseded by [ADR-0009](decisions/ADR-0009-raildb-primary-store.md) (Accepted direction, 2026-11-20):** целевой store — `RAILDB` / `RAIL_APP`; окно миграции 12м + FULL/OPEN/REF — [25](25_DBTC_TO_RAILDB_MIGRATION_MATRIX.md). Ниже — **физика и правила legacy `DBTC`**, нужные для миграции и parity. Этот документ не содержит DDL и не разрешает Create/Flyway.
+
+Хранилище **legacy** — схема `DBTC` Oracle 12.2.0.1.0. Объёмы ниже — `NUM_ROWS` / `BLOCKS` из статистики, не `COUNT(*)`. Источник: [02_ORACLE_PERFORMANCE.md](../analysis/02_ORACLE_PERFORMANCE.md).
 
 ## Три слоя
 

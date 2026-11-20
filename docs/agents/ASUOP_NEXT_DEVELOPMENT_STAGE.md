@@ -266,10 +266,10 @@ Jobs в `.github/workflows/gradle-jdk21-test.yml`: `unit-tests` (Gradle + explic
 
 ## 12. Следующее действие владельца
 
-1. ~~Просмотреть этот отчёт и утвердить P4-0~~ — **DONE** (APPROVED + PR #6 merged).  
-2. Решение по **Accept ADR-0009**: пакет [42_ADR0009_DECISION_READINESS.md](../architecture/42_ADR0009_DECISION_READINESS.md) (READY / DBA / BLOCKED / DEFERRED).  
-3. После Accept — отдельные APPROVALS на Create RAILDB / Flyway / TEST JDBC (не в этом docs-пакете).  
-4. Не снимать `@Disabled` с JDBC и не подключать Production без строк журнала.
+1. ~~P4-0~~ — **DONE** (PR #6).  
+2. ~~Accept ADR-0009 direction~~ — **DONE** (2026-11-20); checklist Create: [43](../architecture/43_ADR0009_DBA_CREATE_CHECKLIST.md).  
+3. Далее — DBA checklist → отдельные APPROVALS на Create / Flyway / TEST JDBC.  
+4. NK1/DT1/G31/R1-Q-TZ **OPEN**; не снимать `@Disabled` с JDBC; Production запрещён.
 
 ---
 

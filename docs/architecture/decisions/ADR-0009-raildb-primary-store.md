@@ -2,84 +2,110 @@
 
 ## Статус
 
-**PROPOSED** (2026-11-16). Не Accepted. Не открывает JDBC, DDL, DML, создание `RAILDB`, Flyway apply или Production access.
+**ACCEPTED — architecture direction only** (2026-11-20). Владелец проекта (чат ASUOP Manager).
 
-Пакет готовности к решению (без Accept): [42_ADR0009_DECISION_READINESS.md](../42_ADR0009_DECISION_READINESS.md) (2026-11-20).
+Пакет готовности: [42_ADR0009_DECISION_READINESS.md](../42_ADR0009_DECISION_READINESS.md).  
+Фиксация Accept и открытых условий: [APPROVALS_TEMPLATE.md](../APPROVALS_TEMPLATE.md).  
+DBA checklist перед Create: [43_ADR0009_DBA_CREATE_CHECKLIST.md](../43_ADR0009_DBA_CREATE_CHECKLIST.md).
+
+### Что Accept разрешает
+
+- Целевое архитектурное направление: отдельная Oracle **`RAILDB`** + схема **`RAIL_APP`**; `DBTC` = миграция + архив после cutover.
+- Планирование и docs (контракты, DDL drafts, DBA checklist) в рамках уже APPROVED offline-срезов.
+
+### Что Accept **не** разрешает (нужны отдельные строки APPROVALS)
+
+- Создание instance/PDB `RAILDB`
+- Flyway apply / исполнение DDL
+- JDBC connect (TEST RO, write, Production)
+- Миграция данных DBTC → RAILDB
+- Live FTP / RWL
+- Смена бизнес-кода / REST под connect
+- Объявление закрытыми **NK1**, **DT1**, **G31**, **R1-Q-TZ**
 
 ## Контекст
 
-Утверждённые ранее документы фиксируют схему `DBTC` как единственное бизнес-хранилище на всём переносе («второй базы нет»): [05_ORACLE_INTEGRATION.md](../05_ORACLE_INTEGRATION.md), [06_DATA_STORAGE_STRATEGY.md](../06_DATA_STORAGE_STRATEGY.md), [ADR-0006](ADR-0006-flyway-app-schema-only.md), [ADR-0007](ADR-0007-single-writer-read-first.md).
+Ранее документы фиксировали схему `DBTC` как единственное бизнес-хранилище на переносе: [05_ORACLE_INTEGRATION.md](../05_ORACLE_INTEGRATION.md), [06_DATA_STORAGE_STRATEGY.md](../06_DATA_STORAGE_STRATEGY.md), [ADR-0006](ADR-0006-flyway-app-schema-only.md), [ADR-0007](ADR-0007-single-writer-read-first.md). После Accept **целевой** store supersede’ится этим ADR; текущая эксплуатация legacy на `DBTC` продолжается до cutover.
 
-Заказчик утвердил **вариант 2**: новая платформа NUFF / ВВП / NUUD должна иметь **собственную основную** Oracle-базу и после переключения не зависеть от `DBTC` в повседневной работе. `DBTC` остаётся источником первичной миграции, сверки и архивом данных старше окна переноса.
+Заказчик утвердил **вариант 2**: собственная основная Oracle-база; после переключения повседневная работа не зависит от `DBTC`. `DBTC` — источник первичной миграции, сверки и архив старше окна переноса.
 
-В существующей RAC уже создана схема-пользователь `RAIL_APP` (квота 5 ГиБ). Это **не** целевое самостоятельное хранилище и **не** отдельная база.
+Схема-пользователь `RAIL_APP` в существующей RAC (квота 5 ГиБ) **не** является целевым store.
 
-## Решение (предлагаемое)
+## Решение (принято как направление)
 
-1. Создать **отдельную Oracle Database `RAILDB`** (совместимую с 12.2 на этапе внедрения; апгрейд до 19c — отдельное окно DBA) на хосте `TC-ASUVP-03` **только после** проверки ресурсов, лицензии, бэкапов и явного разрешения в журнале APPROVALS.
+1. Целевое хранилище — **отдельная Oracle Database `RAILDB`** (совместимость с 12.2 на этапе внедрения; апгрейд до 19c — отдельное окно DBA) на хосте-кандидате `TC-ASUVP-03` **только после** DBA checklist и явного APPROVED Create.
 2. Рабочая схема приложения внутри `RAILDB`: **`RAIL_APP`**.
-3. После cutover все **новые** бизнес-данные пишутся только в `RAILDB`. Обычная работа Java-приложения **не требует** подключения к `DBTC`.
-4. `DBTC` на этапе миграции **не изменяется** (нет DDL/DML от этого проекта). После подтверждённого переключения `DBTC` — архив (история старше окна + fallback forensics).
-5. Первичная миграция: история **последних 12 календарных месяцев** до даты cutover (`cutoff = cutover_ts − 12 months`) **плюс** все актуальные сущности, открытые операции, остатки, справочники и bootstrap начальных состояний на границе cutoff. Детали — [25_DBTC_TO_RAILDB_MIGRATION_MATRIX.md](../25_DBTC_TO_RAILDB_MIGRATION_MATRIX.md).
-6. Квота 5 ГиБ схемы `RAIL_APP` в RAC **не** используется как ориентир sizing `RAILDB` (см. оценку объёмов в инструкции DBA).
-7. Схема `RAIL_APP` внутри RAC не является prod store; возможный staging только по отдельной строке журнала.
-8. Java сохраняет modular monolith, порты R0–R3 и REST-контракты; адаптеры: Synthetic / LegacyDbtcRead / RailDbJdbc / RwlApiClient / FtpIntake.
-9. RWL API — кандидат источника дислокации, **не** доказанная замена FTP до B1-сверки полноты, лимитов и периодичности ([12-rwl-api-intake.md](../../analysis/12-rwl-api-intake.md)).
-10. Flyway (когда будет разрешён) применяется только к `RAILDB.RAIL_APP`, никогда к ленте `DBTC`.
+3. После cutover новые бизнес-данные пишутся только в `RAILDB`. Обычная работа приложения не требует `DBTC`.
+4. `DBTC` на миграции **не изменяется** проектом (нет DDL/DML). После cutover — архив.
+5. Первичная миграция (когда будет APPROVED): **12 календарных месяцев** истории + FULL/OPEN/REF + bootstrap на cutoff. Детали — [25](../25_DBTC_TO_RAILDB_MIGRATION_MATRIX.md). **Сейчас миграция DENIED.**
+6. Квота 5 ГиБ RAC `RAIL_APP` не ориентир sizing.
+7. RAC schema `RAIL_APP` не prod store.
+8. Java: modular monolith, порты R0–R3, REST; адаптеры Synthetic / (future) LegacyDbtcRead / RailDbJdbc / RwlApiClient / FtpIntake.
+9. RWL — кандидат intake, не замена FTP до B1.
+10. Flyway (когда APPROVED) только на `RAILDB.RAIL_APP`, никогда на `DBTC`.
+
+### Утверждённые предпочтения владельца (2026-11-20)
+
+| Тема | Решение |
+| --- | --- |
+| Топология | Предпочтительно **A** (отдельный instance); A/B и service name — **DBA confirm** до Create |
+| Charset | Предпочтительно **AL32UTF8**; DBA confirm + совместимость с DBTC `CL8MSWIN1251` |
+| DDL path | **V0** если Partitioning licensed; иначе **V0b** после проверки логической эквивалентности |
+| Create RAILDB | **Не сейчас** |
+| JDBC TEST RO / write / Production | **Не сейчас** / write отдельно / Production запрещён |
+| Migrator DBTC read + RAILDB write | **Не сейчас** |
+| G31 | **OPEN**; `rail_wagon_watched` пуст до бизнес-источника |
+| R1-Q-TZ | **OPEN**; временно half-open сутки на `dislocation_ts` (GETTING) |
+| Rollback | Целевая политика **≤ 72 ч** + quarantine replay; drill обязателен до cutover |
+| NK1 / DT1 | Остаются **BLOCKED/OPEN** — не закрыты этим Accept |
 
 ## Отношение к принятым ADR
 
-| ADR | Действие при Accept ADR-0009 |
+| ADR | Действие после Accept ADR-0009 |
 | --- | --- |
-| ADR-0001 | Уточнить: контуры платформы живут на `RAILDB`, не «одна схема DBTC» |
-| ADR-0002 | JDBC/не-JPA сохраняется; целевые таблицы — `RAILDB`; пакеты `DBTC` — только миграция/архивное чтение |
-| ADR-0003 | Драйвер `ojdbc10:19.33.0.0` (+ `orai18n`) остаётся до решения по версии `RAILDB` |
-| ADR-0006 | Scope Flyway расширяется до **бизнес-схемы `RAILDB.RAIL_APP`**; запрет DDL на `DBTC` сохраняется |
-| ADR-0007 | После cutover единственный writer бизнес-данных — новое приложение → `RAILDB`; до cutover legacy остаётся writer в `DBTC` |
-| ADR-0008 | Без изменения DIP/портов |
+| ADR-0001 | Контуры платформы живут на `RAILDB`, не «одна схема DBTC» как целевой store |
+| ADR-0002 | JDBC/не-JPA; целевые таблицы — `RAILDB`; пакеты `DBTC` — миграция/архивное чтение |
+| ADR-0003 | `ojdbc10:19.33.0.0` (+ `orai18n`) до решения по версии `RAILDB` |
+| ADR-0006 | Scope Flyway (когда разрешён) → бизнес-схема `RAILDB.RAIL_APP`; запрет DDL на `DBTC` |
+| ADR-0007 | После cutover writer → `RAILDB`; до cutover legacy writer в `DBTC` |
+| ADR-0008 | DIP/порты без изменения |
 
 Историю прежних ADR **не удалять**.
 
-## Инфраструктура (выбор DBA)
+## Инфраструктура (выбор DBA до Create)
 
-Допустимые целевые формы (решение DBA, зафиксировать в журнале до создания):
+- **A.** Отдельный instance (предпочтение владельца): SID/service например `RAILDB` / `RAILDB.WORLD`.
+- **B.** PDB `RAILDB` — если DBA не может A.
 
-- **A.** Отдельный instance: `ORACLE_SID=RAILDB`, service name например `RAILDB` / `RAILDB.WORLD`, listener shared или dedicated.
-- **B.** CDB на том же хосте, PDB `RAILDB`, service = PDB service name.
-
-Существующий сервис `RAC.WORLD` остаётся для текущей RAC/`DBTC` и **не** переименовывается под `RAILDB`.
+`RAC.WORLD` не переименовывается под `RAILDB`.
 
 ## Критерии готовности к переключению (минимум)
 
-- Сверка counts / контрольных сумм / текущих состояний вагонов / open repairs / остатков / FK.
-- Идемпотентность комплектов R0 `(file_name, kit_type)`.
-- Успешный drill отката (см. ниже) на копии.
-- Default runtime profile без обязательного `DBTC`.
+- Сверка counts / checksums / current / open repairs / stock / FK.
+- Идемпотентность комплектов `(file_name, kit_type)`.
+- Успешный rollback drill на копии.
+- Default runtime без обязательного `DBTC`.
 - Явная строка APPROVALS на cutover.
 
-## План отката после переключения (реалистичный)
+## План отката после переключения
 
-Простого «переключить datasource обратно на DBTC» **недостаточно**: после cutover в `RAILDB` появляются данные, которых нет в архиве `DBTC`.
+Простого «переключить datasource на DBTC» недостаточно.
 
-1. **До cutover (soak):** legacy writer в `DBTC` ещё работает; `RAILDB` наполняется миграцией + delta; приложение может читать для сверки, но не является единственным writer.
-2. **Cutover:** остановить запись новых бизнес-данных в `DBTC` со стороны нового контура; включить writer → `RAILDB`; сохранить все входные файлы/ответы API в карантине ≥ срока отката.
-3. **Rollback window (рекомендуемо ≤ 72 ч, уточняет ops):**
-   - остановить writers в `RAILDB`;
-   - восстановить приём legacy importer в `DBTC`;
-   - **replay** сохранённых FTP/API payloads с момента cutover в legacy-контур (предпочтительно) **или** контролируемый reverse-export из `RAILDB` только для событий, которые legacy умеет принять;
-   - переключить приложение на `LegacyDbtcRead` / synthetic;
-   - `RAILDB` не уничтожать — forensics + RMAN.
-4. **Потери при откате:** ручные операции, выполненные только в новом UI и не имеющие обратного контура в legacy, требуют журнала исключений и ручной сверки.
-5. **После закрытия rollback window:** откат на `DBTC` как primary считается чрезвычайным и отдельным проектом.
+1. **Soak:** legacy writer в `DBTC`; `RAILDB` наполняется миграцией + delta; app может читать для сверки.
+2. **Cutover:** writer → `RAILDB`; quarantine входных payloads ≥ окна отката.
+3. **Rollback window (≤ 72 ч, политика принята; уточняет ops):** stop RAILDB writers → restore legacy intake → **replay** quarantine в legacy → app на LegacyDbtcRead/synthetic → `RAILDB` сохранить (RMAN/forensics).
+4. Потери UI-only операций без reverse path — журнал исключений.
+5. После окна — откат на DBTC primary = чрезвычайный отдельный проект.
 
 ## Последствия
 
-- Нужны новые строки APPROVALS на создание `RAILDB`, read `DBTC`, write `RAILDB`, cutover.
-- Документы 05/06/15 требуют пометки «superseded for target store by ADR-0009» после Accept (не в этом PROPOSED-срезе обязательно править текст целиком).
-- Sizing, backup и charset — в [24_RAILDB_DBA_INSTRUCTION.md](../24_RAILDB_DBA_INSTRUCTION.md).
+- 05/06/15: пометка superseded for **target store** (см. эти документы).
+- Create / Flyway / JDBC / migrate — только новые строки APPROVALS.
+- Sizing/backup: [24](../24_RAILDB_DBA_INSTRUCTION.md), checklist [43](../43_ADR0009_DBA_CREATE_CHECKLIST.md).
 
 ## Ссылки
 
-- Матрица миграции: [25_DBTC_TO_RAILDB_MIGRATION_MATRIX.md](../25_DBTC_TO_RAILDB_MIGRATION_MATRIX.md)
+- Decision readiness: [42](../42_ADR0009_DECISION_READINESS.md)
+- Migration matrix: [25](../25_DBTC_TO_RAILDB_MIGRATION_MATRIX.md)
 - RWL: [12-rwl-api-intake.md](../../analysis/12-rwl-api-intake.md)
-- Watched list research: [11-nuff-active-wagon-list.md](../../analysis/11-nuff-active-wagon-list.md)
+- Watched research: [11-nuff-active-wagon-list.md](../../analysis/11-nuff-active-wagon-list.md)
