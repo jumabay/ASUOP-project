@@ -344,4 +344,144 @@ describe('App R1/R2/R3 scenarios', () => {
     },
     15000,
   )
+
+  it(
+    'renders shell nav with enabled fleet and disabled stubs',
+    async () => {
+      mockApi()
+      render(
+        <ConfigProvider>
+          <App />
+        </ConfigProvider>,
+      )
+
+      await waitFor(() => {
+        expect(screen.getByTestId('app-sider-brand')).toBeInTheDocument()
+      })
+      expect(screen.getByRole('menuitem', { name: /Слежение/ })).toBeInTheDocument()
+      expect(screen.getByRole('menuitem', { name: /Реестр/ })).toBeInTheDocument()
+      expect(screen.getByTestId('nav-stub-repairs')).toBeInTheDocument()
+      expect(screen.getByTestId('nav-stub-warehouse')).toBeInTheDocument()
+      expect(screen.getByTestId('nav-stub-reports')).toBeInTheDocument()
+      expect(screen.getByRole('menuitem', { name: /Ремонты/ })).toHaveAttribute(
+        'aria-disabled',
+        'true',
+      )
+    },
+    15000,
+  )
+
+  it(
+    'global header search loads card without day history',
+    async () => {
+      mockApi()
+      const user = userEvent.setup()
+      render(
+        <ConfigProvider>
+          <App />
+        </ConfigProvider>,
+      )
+
+      const global = screen.getByTestId('global-wagon-search')
+      const input = within(global).getByRole('textbox', { name: 'Глобальный поиск вагона' })
+      await user.clear(input)
+      await user.type(input, 'SYN-00001')
+      await user.click(within(global).getByRole('button', { name: /^Найти$|^loading Найти$/ }))
+
+      await waitFor(() => {
+        expect(screen.getByText(/Карточка вагона/)).toBeInTheDocument()
+      })
+      expect(screen.queryByText(/История дислокации/)).not.toBeInTheDocument()
+      expect(
+        vi.mocked(fetch).mock.calls.some((c) => String(c[0]).includes('/state-reports')),
+      ).toBe(false)
+    },
+    15000,
+  )
+
+  it(
+    'restores list search/page/size/sort from URL on mount',
+    async () => {
+      window.history.replaceState(
+        null,
+        '',
+        '/?tab=registry&wagon=SYN-00001&date=2024-01-15&search=SYN&page=1&size=100&sort=code,desc',
+      )
+      mockApi()
+      render(
+        <ConfigProvider>
+          <App />
+        </ConfigProvider>,
+      )
+
+      await waitFor(() => {
+        expect(screen.getByRole('tab', { name: 'Реестр вагонов' })).toHaveAttribute(
+          'aria-selected',
+          'true',
+        )
+      })
+      const panel = screen.getByRole('tabpanel', { name: 'Реестр вагонов' })
+      expect(within(panel).getByPlaceholderText('Поиск по номеру (contains)')).toHaveValue('SYN')
+      await waitFor(() => {
+        expect(
+          vi.mocked(fetch).mock.calls.some((c) => {
+            const url = decodeURIComponent(String(c[0]))
+            return (
+              url.includes('/api/v1/wagons?') &&
+              url.includes('search=SYN') &&
+              url.includes('page=1') &&
+              url.includes('size=100') &&
+              url.includes('sort=code,desc')
+            )
+          }),
+        ).toBe(true)
+      })
+      const preview = decodeURIComponent(
+        screen.getByTestId('deep-link-preview').textContent ?? '',
+      )
+      expect(preview).toContain('search=SYN')
+      expect(preview).toContain('page=1')
+      expect(preview).toContain('size=100')
+      expect(preview).toContain('sort=code,desc')
+    },
+    15000,
+  )
+
+  it(
+    'restores tab from browser popstate (back)',
+    async () => {
+      mockApi()
+      const user = userEvent.setup()
+      render(
+        <ConfigProvider>
+          <App />
+        </ConfigProvider>,
+      )
+
+      await waitFor(() => {
+        expect(screen.getByRole('tab', { name: 'Вагоны на слежении' })).toHaveAttribute(
+          'aria-selected',
+          'true',
+        )
+      })
+
+      await user.click(screen.getByRole('menuitem', { name: /Реестр/ }))
+      await waitFor(() => {
+        expect(screen.getByRole('tab', { name: 'Реестр вагонов' })).toHaveAttribute(
+          'aria-selected',
+          'true',
+        )
+      })
+      expect(window.location.search).toContain('tab=registry')
+
+      window.history.back()
+      await waitFor(() => {
+        expect(screen.getByRole('tab', { name: 'Вагоны на слежении' })).toHaveAttribute(
+          'aria-selected',
+          'true',
+        )
+      })
+    },
+    15000,
+  )
 })
