@@ -44,9 +44,10 @@
 
 ### 1.3. Документация / дизайн RAILDB (без исполнения)
 
-- ADR-0009 **PROPOSED**; ER `27`, матрица `25`, план 12м `29`, DDL draft `sql/raildb/V0__draft_confirmed_core.sql`
-- **P4-0 Storage Contracts (offline) APPROVED** — overview [40_P4_0_RAILDB_STORAGE_CONTRACTS.md](../architecture/40_P4_0_RAILDB_STORAGE_CONTRACTS.md), R1–R3 field map [41_P4_0_R1_R3_FIELD_MAPPING.md](../architecture/41_P4_0_R1_R3_FIELD_MAPPING.md); V0b non-partitioned fallback + `sql/raildb/read/*` stubs (DO NOT EXECUTE)
-- P3B/P3C dictionary + semantics: RP1/WH1 **CONFIRMED**; NK1/DT1 **BLOCKED**; G31 **OPEN**
+- ADR-0009 **ACCEPTED (architecture direction only)** в журнале; Create/Flyway/JDBC/migrate — **DENIED**. ER `27`, матрица `25`, план 12м `29`, DDL draft V0/V0b
+- **P4-0 Storage Contracts** DONE (PR #6): [40](../architecture/40_P4_0_RAILDB_STORAGE_CONTRACTS.md), [41](../architecture/41_P4_0_R1_R3_FIELD_MAPPING.md)
+- **P4-1** offline pack (scale + migration L0): [ASUOP_P4_1_SCALE_MIGRATION_PLAN.md](ASUOP_P4_1_SCALE_MIGRATION_PLAN.md), docs [44](../architecture/44_MIGRATION_VERIFICATION_MODEL_OFFLINE.md)–[47](../architecture/47_SCALE_MIGRATION_TEST_STRATEGY.md)
+- P3B/P3C: RP1/WH1 **CONFIRMED**; NK1/DT1 **BLOCKED**; G31 **OPEN**
 - DBA worksheets offline; apply / create instance — **DENIED**
 
 ### 1.4. CI / QA (offline)
@@ -89,12 +90,12 @@ Jobs в `.github/workflows/gradle-jdk21-test.yml`: `unit-tests` (Gradle + explic
 
 ## 4. Основные блокирующие проблемы (ранжировано)
 
-1. **ADR-0009 не Accepted** + строки Create RAILDB / Flyway / DBTC read / RAILDB write = **DENIED**.
+1. **ADR-0009 Accepted только как direction** + строки Create RAILDB / Flyway / DBTC read / RAILDB write = **DENIED**.
 2. **Нет APPROVED TEST Oracle** (и отдельного RAILDB) → JDBC adapters и parity IT закрыты.
 3. **NK1 + DT1** (нет DBA tape access plan) → финальная уверенность по ключам/оси времени ленты.
 4. **G31** — источник списка слежения не утверждён (не блокирует реестр/карточку).
 5. **Profile gap `raildb-test`** — неполный набор stub/adapters.
-6. **Натяжение ADR-0006/0007** с целевым store до Accept ADR-0009.
+6. **Натяжение ADR-0006/0007** с целевым store до Create/cutover (Accept direction уже есть).
 7. Вторично: Partitioning license, неполный V0 vs ER, watched ≠ legacy, RWL≠FTP до B1.
 
 ---

@@ -2,9 +2,11 @@
 
 ## Статус
 
-**PROPOSED** (2026-11-16). Не Accepted. Не открывает JDBC, DDL, DML, создание `RAILDB`, Flyway apply или Production access.
+**ACCEPTED (architecture direction only)** — журнал [APPROVALS_TEMPLATE.md](../APPROVALS_TEMPLATE.md), строка Accept ADR-0009 (2026-11-20).  
+Ранее: **PROPOSED** (2026-11-16).
 
-Пакет готовности к решению (без Accept): [42_ADR0009_DECISION_READINESS.md](../42_ADR0009_DECISION_READINESS.md) (2026-11-20).
+Accept direction **не** открывает: Create `RAILDB`, JDBC, DDL/DML, Flyway apply, DBTC read for migration, RAILDB write, Production access, cutover.  
+Пакет готовности: [42_ADR0009_DECISION_READINESS.md](../42_ADR0009_DECISION_READINESS.md); DBA checklist: [43_ADR0009_DBA_CREATE_CHECKLIST.md](../43_ADR0009_DBA_CREATE_CHECKLIST.md).
 
 ## Контекст
 

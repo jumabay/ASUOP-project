@@ -40,7 +40,8 @@ docs/architecture|analysis
 | R3 | DONE (synthetic) | «Вагоны на слежении», synthetic 60 кодов |
 | R4 | DONE (research) | Evidence NUFF `GetActiveWagonList` — caller UI не найден (G31 OPEN) |
 | P0–P3C | Docs / partial | RAILDB pack, offline RWL, dictionary probes; P3C-1 PARTIAL (NK1/DT1 BLOCKED, G31) |
-| P4-0 | APPROVED (offline docs) | Storage contracts R1–R3: [40](../architecture/40_P4_0_RAILDB_STORAGE_CONTRACTS.md), [41](../architecture/41_P4_0_R1_R3_FIELD_MAPPING.md); V0b + `sql/raildb/read/*`. ADR-0009 остаётся PROPOSED; Create/Flyway/JDBC — нет |
+| P4-0 | APPROVED / DONE (PR #6) | Storage contracts R1–R3: [40](../architecture/40_P4_0_RAILDB_STORAGE_CONTRACTS.md), [41](../architecture/41_P4_0_R1_R3_FIELD_MAPPING.md); V0b + `sql/raildb/read/*`. Create/Flyway/JDBC — нет |
+| P4-1 | docs-only (this wave) | Scale ~18k + migration L0 verification model: [ASUOP_P4_1_SCALE_MIGRATION_PLAN.md](ASUOP_P4_1_SCALE_MIGRATION_PLAN.md), [44](../architecture/44_MIGRATION_VERIFICATION_MODEL_OFFLINE.md)–[47](../architecture/47_SCALE_MIGRATION_TEST_STRATEGY.md). CODE fixtures/UX — отдельный APPROVED |
 | JDBC parity | Disabled | Нет APPROVED TEST Oracle URL |
 | Live import / RAILDB create / Flyway apply | DENIED | Ждут отдельных строк APPROVALS |
 
@@ -67,7 +68,7 @@ docs/architecture|analysis
 - A3–A8 и прочие экраны НУВ/УВП/НУД (ремонты, склад, отчёты, права) — вне synthetic R1–R3.
 - JDBC adapters для fleet/dislocation — stubs / disabled IT.
 - Live RWL, FTP intake cutover, single-writer enforcement в рантайме импорта.
-- Accept ADR-0009 + создание `RAILDB` + Flyway `RAIL_APP`.
+- Создание `RAILDB` + Flyway `RAIL_APP` (Accept ADR-0009 direction — DONE; Create/Flyway — DENIED).
 - Закрытие G1–G8, G31 и связанных package body (см. `08_GAPS_AND_UNCERTAINTIES.md`).
 - Expedition / finance / 1С — DENIED UNTIL APPROVED (требования не заданы).
 
@@ -129,8 +130,10 @@ flowchart TD
 
 | ID | Задача | Блокер | Агенты |
 | --- | --- | --- | --- |
-| P2-1 | Accept ADR-0009 | владелец продукта; пакет готовности: [../architecture/42_ADR0009_DECISION_READINESS.md](../architecture/42_ADR0009_DECISION_READINESS.md) | lead, database |
-| P2-2 | Create RAILDB + Flyway `RAIL_APP` | P2-1 + DBA | database, backend |
+| P2-1 | Accept ADR-0009 | **DONE (direction only)** 2026-11-20; [42](../architecture/42_ADR0009_DECISION_READINESS.md), [43](../architecture/43_ADR0009_DBA_CREATE_CHECKLIST.md) | lead, database |
+| P4-0 | Storage contracts R1–R3 offline | **DONE** (PR #6); [40](../architecture/40_P4_0_RAILDB_STORAGE_CONTRACTS.md), [41](../architecture/41_P4_0_R1_R3_FIELD_MAPPING.md) | backend, database |
+| P4-1 | Scale (~18k) + migration L0 verification offline | Plan [ASUOP_P4_1_SCALE_MIGRATION_PLAN.md](ASUOP_P4_1_SCALE_MIGRATION_PLAN.md); docs [44](../architecture/44_MIGRATION_VERIFICATION_MODEL_OFFLINE.md)–[47](../architecture/47_SCALE_MIGRATION_TEST_STRATEGY.md) | all |
+| P2-2 | Create RAILDB + Flyway `RAIL_APP` | DBA checklist 43 + **отдельные** APPROVED Create, затем Flyway | database, backend |
 | P2-3 | Offline→controlled RWL/FTP intake design + B-tests | P2-2 / B1 | backend, database, qa |
 | P2-4 | Ремонты / склад read-only screens | research G6+ | backend, frontend |
 | P2-5 | Expedition / finance / 1С | отдельные требования | all (после APPROVED) |
