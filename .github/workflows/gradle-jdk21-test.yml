@@ -19,5 +19,9 @@ jobs:
           cache: gradle
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+      # Offline only: synthetic profile / no Oracle JDBC. JdbcParityIT stays @Disabled.
       - name: Run unit/module tests
         run: ./gradlew test --no-daemon
+      # Explicit P0-5 REST smoke (also covered by full test); fails fast if smoke class regresses.
+      - name: Synthetic REST smoke (R1–R3)
+        run: ./gradlew :platform-app:test --tests "platform.app.api.SyntheticRuntimeSmokeTest" --no-daemon

@@ -27,6 +27,8 @@ npm run dev
 
 Синтетический вагон: `SYN-00001`, дата с данными: `2024-01-15`, пустой день: `2024-01-16`.
 
+Backend smoke (JDK 21, profile `synthetic`): `docs/agents/SYNTHETIC_RUNTIME_SMOKE.md`.
+
 ## Тесты
 
 ```bat

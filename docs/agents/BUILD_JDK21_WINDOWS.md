@@ -36,9 +36,19 @@ cd /d Z:\
 gradlew.bat test
 ```
 
+## Synthetic boot / REST smoke (P0-5)
+
+See [SYNTHETIC_RUNTIME_SMOKE.md](SYNTHETIC_RUNTIME_SMOKE.md).
+
+```powershell
+.\scripts\gradle-jdk21.ps1 :platform-app:bootRun
+.\scripts\gradle-jdk21.ps1 :platform-app:test --tests "platform.app.api.SyntheticRuntimeSmokeTest"
+.\scripts\rest-smoke-synthetic.ps1   # only if bootRun is already up on :8080
+```
+
 ## CI note
 
-Prefer an ASCII checkout path (GitHub Actions runners are ASCII). Pin `actions/setup-java` to Temurin **21**. No Production/TEST Oracle in CI without APPROVALS.
+Prefer an ASCII checkout path (GitHub Actions runners are ASCII). Pin `actions/setup-java` to Temurin **21**. No Production/TEST Oracle in CI without APPROVALS. Workflow `.github/workflows/gradle-jdk21-test.yml` runs full `test` plus an explicit `:platform-app` synthetic REST smoke step.
 
 ## Out of scope
 

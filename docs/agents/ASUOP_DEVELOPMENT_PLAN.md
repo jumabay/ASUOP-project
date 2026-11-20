@@ -113,7 +113,7 @@ flowchart TD
 | P0-2 | Стабильный тест-прогон на JDK 21 (+ ASCII path / CI) | qa, backend | **DONE** (PR #2). `gradlew test` + frontend tests + CI Temurin 21 |
 | P0-3 | Регрессионный чеклист R0–R3 REST/UI | qa, frontend | Чеклист + автоматические тесты не красные |
 | P0-4 | Secret-hygiene review tools/docs before next code wave | qa, database | Нет секретов в Git; `.gitignore` актуален |
-| P0-5 | Synthetic runtime smoke (boot + REST R1–R3 + FE/API + CI offline) | backend, frontend, qa | App поднимается на `synthetic`; smoke/e2e без Oracle; логи и QA-verdict; **APPROVED** в APPROVALS |
+| P0-5 | Synthetic runtime smoke (boot + REST R1–R3 + FE/API + CI offline) | backend, frontend, qa | App поднимается на `synthetic`; smoke/e2e без Oracle; логи и QA-verdict; **APPROVED** в APPROVALS. Runbook: [SYNTHETIC_RUNTIME_SMOKE.md](SYNTHETIC_RUNTIME_SMOKE.md) |
 
 ### P1 — следующий продуктовый контур (нужны разрешения)
 
