@@ -21,6 +21,8 @@ import platform.fleet.WagonCardPort;
 import platform.fleet.WagonRegistryCriteria;
 import platform.fleet.WagonRegistryPort;
 import platform.fleet.WagonRegistrySort;
+import platform.fleet.WatchedMembershipSource;
+import platform.fleet.WatchedWagonPage;
 import platform.fleet.WatchedWagonPort;
 import platform.oracle.raildb.RailDbJdbcDenied;
 import platform.oracle.raildb.RailDbProfileMarker;
@@ -86,8 +88,19 @@ class RailDbTestProfileFailFastTest {
 
         assertDenied(() -> wagonCardPort.findByCode("12345678"));
         assertDenied(() -> wagonRegistryPort.findPage(criteria));
-        assertDenied(() -> watchedWagonPort.findPage(criteria));
         assertDenied(() -> stateReportDayPort.findLinesForDay("12345678", LocalDate.of(2024, 1, 1)));
+    }
+
+    @Test
+    void watchedReturnsEmptyPendingG31WithoutJdbc() {
+        WagonRegistryCriteria criteria =
+                new WagonRegistryCriteria(null, 0, 10, WagonRegistrySort.CODE_ASC);
+
+        WatchedWagonPage page = watchedWagonPort.findPage(criteria);
+        assertTrue(page.content().isEmpty());
+        assertEquals(0, page.totalElements());
+        assertEquals(WatchedMembershipSource.EMPTY_PENDING_G31, page.membershipSource());
+        assertTrue(page.membershipNote().contains("G31"));
     }
 
     private static void assertDenied(Runnable call) {

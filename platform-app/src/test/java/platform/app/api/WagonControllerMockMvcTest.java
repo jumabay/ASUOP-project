@@ -1,5 +1,6 @@
 package platform.app.api;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -26,6 +27,7 @@ import platform.fleet.WagonCardPort;
 import platform.fleet.WagonRegistryItem;
 import platform.fleet.WagonRegistryPage;
 import platform.fleet.WagonRegistryPort;
+import platform.fleet.WatchedMembershipSource;
 import platform.fleet.WatchedWagonItem;
 import platform.fleet.WatchedWagonPage;
 import platform.fleet.WatchedWagonPort;
@@ -186,30 +188,47 @@ class WagonControllerMockMvcTest {
 
     @Test
     void getWatched_ok() throws Exception {
-        when(watchedWagonPort.findPage(any())).thenReturn(new WatchedWagonPage(
+        when(watchedWagonPort.findPage(any())).thenReturn(WatchedWagonPage.of(
                 List.of(sampleWatched("SYN-00001"), sampleWatched("SYN-00002")),
                 0,
                 50,
                 2,
-                1));
+                1,
+                WatchedMembershipSource.FIXTURE));
 
         mockMvc.perform(get("/api/v1/wagons/watched"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(2)))
                 .andExpect(jsonPath("$.content[0].wagonCode").value("SYN-00001"))
                 .andExpect(jsonPath("$.content[0].model").value("12-132"))
-                .andExpect(jsonPath("$.totalElements").value(2));
+                .andExpect(jsonPath("$.totalElements").value(2))
+                .andExpect(jsonPath("$.membershipSource").value("FIXTURE"))
+                .andExpect(jsonPath("$.membershipNote").exists());
     }
 
     @Test
     void getWatched_empty() throws Exception {
-        when(watchedWagonPort.findPage(any())).thenReturn(new WatchedWagonPage(List.of(), 0, 50, 0, 0));
+        when(watchedWagonPort.findPage(any())).thenReturn(
+                WatchedWagonPage.of(List.of(), 0, 50, 0, 0, WatchedMembershipSource.FIXTURE));
 
         mockMvc.perform(get("/api/v1/wagons/watched").param("search", "NOMATCH"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(0)))
                 .andExpect(jsonPath("$.totalElements").value(0))
-                .andExpect(jsonPath("$.totalPages").value(0));
+                .andExpect(jsonPath("$.totalPages").value(0))
+                .andExpect(jsonPath("$.membershipSource").value("FIXTURE"));
+    }
+
+    @Test
+    void getWatched_emptyPendingG31() throws Exception {
+        when(watchedWagonPort.findPage(any())).thenReturn(WatchedWagonPage.emptyPendingG31(0, 50));
+
+        mockMvc.perform(get("/api/v1/wagons/watched"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(0)))
+                .andExpect(jsonPath("$.totalElements").value(0))
+                .andExpect(jsonPath("$.membershipSource").value("EMPTY_PENDING_G31"))
+                .andExpect(jsonPath("$.membershipNote", containsString("G31")));
     }
 
     @Test

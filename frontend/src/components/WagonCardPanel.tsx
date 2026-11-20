@@ -5,7 +5,7 @@ const { Text } = Typography
 
 interface Props {
   card: WagonCard | null
-  /** Client hint when card was opened from the watched tab — not G31 membership parity. */
+  /** Client navigation hint when card was opened from the watched tab — not G31 / Active membership. */
   fromWatched?: boolean
 }
 
@@ -26,9 +26,11 @@ export function WagonCardPanel({ card, fromWatched = false }: Props) {
               Карточка вагона <Text code>{card.wagonCode}</Text>
             </span>
             {fromWatched && (
-              <Tag color="blue" data-testid="wagon-card-watched-tag">
-                На слежении
-              </Tag>
+              <Tooltip title="Контекст навигации: карточка открыта из вкладки «Вагоны на слежении». Не подтверждает Active / GetActiveWagonList членство (G31 OPEN).">
+                <Tag color="blue" data-testid="wagon-card-watched-tag">
+                  Контекст: слежение
+                </Tag>
+              </Tooltip>
             )}
           </Flex>
         }
