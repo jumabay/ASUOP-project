@@ -39,13 +39,13 @@ export function WatchedWagonGrid({ rows, empty, onSelect }: Props) {
   }
 
   return (
-    <div className="ag-theme-quartz state-report-grid" style={{ height: 420, width: '100%' }}>
+    <div className="ag-theme-quartz state-report-grid" style={{ height: 560, width: '100%' }}>
       <AgGridReact<WatchedWagonItem>
         rowData={rows}
         columnDefs={columnDefs}
         getRowId={(params) => params.data.wagonCode}
         suppressCellFocus
-        animateRows
+        animateRows={false}
         onRowClicked={(event: RowClickedEvent<WatchedWagonItem>) => {
           if (event.data?.wagonCode) {
             onSelect(event.data.wagonCode)

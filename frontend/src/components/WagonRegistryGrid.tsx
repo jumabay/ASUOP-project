@@ -26,13 +26,13 @@ export function WagonRegistryGrid({ rows, empty, onSelect }: Props) {
   }
 
   return (
-    <div className="ag-theme-quartz state-report-grid" style={{ height: 360, width: '100%' }}>
+    <div className="ag-theme-quartz state-report-grid" style={{ height: 520, width: '100%' }}>
       <AgGridReact<WagonRegistryItem>
         rowData={rows}
         columnDefs={columnDefs}
         getRowId={(params) => params.data.wagonCode}
         suppressCellFocus
-        animateRows
+        animateRows={false}
         onRowClicked={(event: RowClickedEvent<WagonRegistryItem>) => {
           if (event.data?.wagonCode) {
             onSelect(event.data.wagonCode)
