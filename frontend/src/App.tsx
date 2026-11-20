@@ -6,7 +6,6 @@ import {
   DatePicker,
   Flex,
   Input,
-  Layout,
   Pagination,
   Row,
   Select,
@@ -16,13 +15,15 @@ import {
   Typography,
 } from 'antd'
 import dayjs, { type Dayjs } from 'dayjs'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   fetchStateReports,
   fetchWagonCard,
   fetchWagonRegistry,
   fetchWatchedWagons,
 } from './api/wagonsApi'
+import { AppShell } from './components/AppShell'
+import { GlobalWagonSearch } from './components/GlobalWagonSearch'
 import { StateReportGrid } from './components/StateReportGrid'
 import { WagonCardPanel } from './components/WagonCardPanel'
 import { WagonRegistryGrid } from './components/WagonRegistryGrid'
@@ -40,6 +41,9 @@ import {
   parseListTab,
   readDeepLinkFromSearch,
   writeDeepLinkToUrl,
+  type DeepLinkState,
+  type DeepLinkWriteMode,
+  type ListSort,
   type ListTab,
 } from './utils/deepLink'
 import {
@@ -49,20 +53,37 @@ import {
 } from './utils/listPaging'
 import './App.css'
 
-const { Header, Content } = Layout
-const { Title, Paragraph, Text } = Typography
+const { Paragraph, Text } = Typography
 
-function initialDeepLink() {
+function initialDeepLink(): DeepLinkState {
   if (typeof window === 'undefined') {
-    return { tab: 'watched' as ListTab, wagon: 'SYN-00001', date: '2024-01-15' }
+    return readDeepLinkFromSearch('')
   }
   return readDeepLinkFromSearch(window.location.search)
 }
 
+function applyListParamsToTab(
+  link: DeepLinkState,
+  setters: {
+    setSearchInput: (v: string) => void
+    setSearch: (v: string) => void
+    setSort: (v: ListSort) => void
+    setPage: (v: number) => void
+    setSize: (v: number) => void
+  },
+) {
+  setters.setSearchInput(link.search)
+  setters.setSearch(link.search)
+  setters.setSort(link.sort)
+  setters.setPage(link.page)
+  setters.setSize(link.size)
+}
+
 export default function App() {
-  const [activeTab, setActiveTab] = useState<ListTab>(() => initialDeepLink().tab)
-  const [wagonCode, setWagonCode] = useState(() => initialDeepLink().wagon)
-  const [date, setDate] = useState<Dayjs>(() => dayjs(initialDeepLink().date))
+  const boot = useMemo(() => initialDeepLink(), [])
+  const [activeTab, setActiveTab] = useState<ListTab>(() => boot.tab)
+  const [wagonCode, setWagonCode] = useState(() => boot.wagon)
+  const [date, setDate] = useState<Dayjs>(() => dayjs(boot.date))
   const [cardLoading, setCardLoading] = useState(false)
   const [dayLoading, setDayLoading] = useState(false)
   const [card, setCard] = useState<WagonCard | null>(null)
@@ -71,40 +92,139 @@ export default function App() {
   const [dayError, setDayError] = useState<string | null>(null)
   const [notFound, setNotFound] = useState(false)
   const [limitExceeded, setLimitExceeded] = useState(false)
-  const [fromWatched, setFromWatched] = useState(() => initialDeepLink().tab === 'watched')
+  const [fromWatched, setFromWatched] = useState(() => boot.tab === 'watched')
 
-  const [registrySearchInput, setRegistrySearchInput] = useState('')
-  const [registrySearch, setRegistrySearch] = useState('')
-  const [registrySort, setRegistrySort] = useState<'code,asc' | 'code,desc'>('code,asc')
-  const [registryPage, setRegistryPage] = useState(0)
-  const [registrySize, setRegistrySize] = useState(50)
+  const [registrySearchInput, setRegistrySearchInput] = useState(() =>
+    boot.tab === 'registry' ? boot.search : '',
+  )
+  const [registrySearch, setRegistrySearch] = useState(() =>
+    boot.tab === 'registry' ? boot.search : '',
+  )
+  const [registrySort, setRegistrySort] = useState<ListSort>(() =>
+    boot.tab === 'registry' ? boot.sort : 'code,asc',
+  )
+  const [registryPage, setRegistryPage] = useState(() =>
+    boot.tab === 'registry' ? boot.page : 0,
+  )
+  const [registrySize, setRegistrySize] = useState(() =>
+    boot.tab === 'registry' ? boot.size : 50,
+  )
   const [registryRows, setRegistryRows] = useState<WagonRegistryItem[]>([])
   const [registryTotal, setRegistryTotal] = useState(0)
   const [registryLoading, setRegistryLoading] = useState(false)
   const [registryError, setRegistryError] = useState<string | null>(null)
 
-  const [watchedSearchInput, setWatchedSearchInput] = useState('')
-  const [watchedSearch, setWatchedSearch] = useState('')
-  const [watchedSort, setWatchedSort] = useState<'code,asc' | 'code,desc'>('code,asc')
-  const [watchedPage, setWatchedPage] = useState(0)
-  const [watchedSize, setWatchedSize] = useState(50)
+  const [watchedSearchInput, setWatchedSearchInput] = useState(() =>
+    boot.tab === 'watched' ? boot.search : '',
+  )
+  const [watchedSearch, setWatchedSearch] = useState(() =>
+    boot.tab === 'watched' ? boot.search : '',
+  )
+  const [watchedSort, setWatchedSort] = useState<ListSort>(() =>
+    boot.tab === 'watched' ? boot.sort : 'code,asc',
+  )
+  const [watchedPage, setWatchedPage] = useState(() =>
+    boot.tab === 'watched' ? boot.page : 0,
+  )
+  const [watchedSize, setWatchedSize] = useState(() =>
+    boot.tab === 'watched' ? boot.size : 50,
+  )
   const [watchedRows, setWatchedRows] = useState<WatchedWagonItem[]>([])
   const [watchedTotal, setWatchedTotal] = useState(0)
   const [watchedLoading, setWatchedLoading] = useState(false)
   const [watchedError, setWatchedError] = useState<string | null>(null)
 
-  const deepLinkState = useMemo(
+  const urlWriteModeRef = useRef<DeepLinkWriteMode>('replace')
+  const syncingFromUrlRef = useRef(false)
+
+  const activeListParams = useMemo(() => {
+    if (activeTab === 'registry') {
+      return {
+        search: registrySearch,
+        page: registryPage,
+        size: registrySize,
+        sort: registrySort,
+      }
+    }
+    return {
+      search: watchedSearch,
+      page: watchedPage,
+      size: watchedSize,
+      sort: watchedSort,
+    }
+  }, [
+    activeTab,
+    registrySearch,
+    registryPage,
+    registrySize,
+    registrySort,
+    watchedSearch,
+    watchedPage,
+    watchedSize,
+    watchedSort,
+  ])
+
+  const deepLinkState: DeepLinkState = useMemo(
     () => ({
       tab: activeTab,
       wagon: wagonCode.trim() || 'SYN-00001',
       date: date.format('YYYY-MM-DD'),
+      search: activeListParams.search,
+      page: activeListParams.page,
+      size: activeListParams.size,
+      sort: activeListParams.sort,
     }),
-    [activeTab, wagonCode, date],
+    [activeTab, wagonCode, date, activeListParams],
   )
 
+  const scheduleUrlPush = useCallback(() => {
+    urlWriteModeRef.current = 'push'
+  }, [])
+
   useEffect(() => {
-    writeDeepLinkToUrl(deepLinkState)
+    if (syncingFromUrlRef.current) {
+      syncingFromUrlRef.current = false
+      urlWriteModeRef.current = 'replace'
+      return
+    }
+    const mode = urlWriteModeRef.current
+    urlWriteModeRef.current = 'replace'
+    writeDeepLinkToUrl(deepLinkState, mode)
   }, [deepLinkState])
+
+  const restoreFromDeepLink = useCallback((link: DeepLinkState) => {
+    syncingFromUrlRef.current = true
+    setActiveTab(link.tab)
+    setWagonCode(link.wagon)
+    setDate(dayjs(link.date))
+    setFromWatched(link.tab === 'watched')
+    if (link.tab === 'registry') {
+      applyListParamsToTab(link, {
+        setSearchInput: setRegistrySearchInput,
+        setSearch: setRegistrySearch,
+        setSort: setRegistrySort,
+        setPage: setRegistryPage,
+        setSize: setRegistrySize,
+      })
+    } else {
+      applyListParamsToTab(link, {
+        setSearchInput: setWatchedSearchInput,
+        setSearch: setWatchedSearch,
+        setSort: setWatchedSort,
+        setPage: setWatchedPage,
+        setSize: setWatchedSize,
+      })
+    }
+  }, [])
+
+  useEffect(() => {
+    const onPopState = () => {
+      const link = readDeepLinkFromSearch(window.location.search)
+      restoreFromDeepLink(link)
+    }
+    window.addEventListener('popstate', onPopState)
+    return () => window.removeEventListener('popstate', onPopState)
+  }, [restoreFromDeepLink])
 
   useEffect(() => {
     if (registrySearchInput === registrySearch) {
@@ -113,9 +233,10 @@ export default function App() {
     const timer = window.setTimeout(() => {
       setRegistrySearch(registrySearchInput)
       setRegistryPage(0)
+      scheduleUrlPush()
     }, LIST_SEARCH_DEBOUNCE_MS)
     return () => window.clearTimeout(timer)
-  }, [registrySearchInput, registrySearch])
+  }, [registrySearchInput, registrySearch, scheduleUrlPush])
 
   useEffect(() => {
     if (watchedSearchInput === watchedSearch) {
@@ -124,9 +245,10 @@ export default function App() {
     const timer = window.setTimeout(() => {
       setWatchedSearch(watchedSearchInput)
       setWatchedPage(0)
+      scheduleUrlPush()
     }, LIST_SEARCH_DEBOUNCE_MS)
     return () => window.clearTimeout(timer)
-  }, [watchedSearchInput, watchedSearch])
+  }, [watchedSearchInput, watchedSearch, scheduleUrlPush])
 
   const loadRegistry = useCallback(async () => {
     setRegistryLoading(true)
@@ -190,17 +312,33 @@ export default function App() {
     }
   }, [activeTab, loadWatched])
 
-  const applyRegistrySearch = useCallback((value: string) => {
-    setRegistrySearchInput(value)
-    setRegistrySearch(value)
-    setRegistryPage(0)
-  }, [])
+  const applyRegistrySearch = useCallback(
+    (value: string) => {
+      setRegistrySearchInput(value)
+      setRegistrySearch(value)
+      setRegistryPage(0)
+      scheduleUrlPush()
+    },
+    [scheduleUrlPush],
+  )
 
-  const applyWatchedSearch = useCallback((value: string) => {
-    setWatchedSearchInput(value)
-    setWatchedSearch(value)
-    setWatchedPage(0)
-  }, [])
+  const applyWatchedSearch = useCallback(
+    (value: string) => {
+      setWatchedSearchInput(value)
+      setWatchedSearch(value)
+      setWatchedPage(0)
+      scheduleUrlPush()
+    },
+    [scheduleUrlPush],
+  )
+
+  const selectFleetTab = useCallback(
+    (tab: ListTab) => {
+      scheduleUrlPush()
+      setActiveTab(tab)
+    },
+    [scheduleUrlPush],
+  )
 
   function clearCardErrors() {
     setError(null)
@@ -212,7 +350,11 @@ export default function App() {
     setLimitExceeded(false)
   }
 
-  async function loadWagonCardOnly(code: string, openedFromWatched: boolean) {
+  async function loadWagonCardOnly(
+    code: string,
+    openedFromWatched: boolean,
+    options?: { pushUrl?: boolean },
+  ) {
     const trimmed = code.trim()
     if (!trimmed) {
       setError('Укажите номер вагона')
@@ -226,6 +368,9 @@ export default function App() {
     clearDayErrors()
     setWagonCode(trimmed)
     setFromWatched(openedFromWatched)
+    if (options?.pushUrl !== false) {
+      scheduleUrlPush()
+    }
 
     try {
       const wagonCard = await fetchWagonCard(trimmed)
@@ -285,7 +430,7 @@ export default function App() {
       return
     }
     const link = readDeepLinkFromSearch(window.location.search)
-    void loadWagonCardOnly(link.wagon, link.tab === 'watched')
+    void loadWagonCardOnly(link.wagon, link.tab === 'watched', { pushUrl: false })
     // Mount-only deep-link restore; loadWagonCardOnly is intentionally omitted.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -296,313 +441,319 @@ export default function App() {
   const pageSizeOptions = LIST_PAGE_SIZE_OPTIONS.map(String)
 
   return (
-    <Layout className="app-shell">
-      <Header className="app-header">
-        <Flex align="center" justify="space-between">
-          <div>
-            <Text className="brand">АСУВП</Text>
-            <Title level={4} className="header-title">
-              Реестр, слежение и карточка вагона
-            </Title>
-          </div>
-          <Text type="secondary">R3 · synthetic</Text>
-        </Flex>
-      </Header>
-      <Content className="app-content">
-        <Card className="search-card">
-          <Tabs
-            activeKey={activeTab}
-            onChange={(key) => setActiveTab(parseListTab(key))}
-            items={[
-              {
-                key: 'watched',
-                label: 'Вагоны на слежении',
-                children: (
-                  <>
-                    <Paragraph type="secondary" style={{ marginBottom: 16 }}>
-                      Synthetic-подмножество каталога (60 вагонов). Паспорт A2, серверная пагинация.
-                      Клик открывает карточку R1. Соответствие GetActiveWagonList не подтверждено.
-                    </Paragraph>
-                    <Row gutter={[12, 12]} align="middle">
-                      <Col xs={24} md={8}>
-                        <Input
-                          size="large"
-                          placeholder="Поиск по номеру (contains)"
-                          value={watchedSearchInput}
-                          onChange={(e) => {
-                            const value = e.target.value
-                            if (value === '') {
-                              applyWatchedSearch('')
-                            } else {
-                              setWatchedSearchInput(value)
-                            }
-                          }}
-                          onPressEnter={() => applyWatchedSearch(watchedSearchInput)}
-                          allowClear
-                        />
-                      </Col>
-                      <Col xs={24} md={5}>
-                        <Select
-                          size="large"
-                          style={{ width: '100%' }}
-                          value={watchedSort}
-                          onChange={(value: 'code,asc' | 'code,desc') => {
-                            setWatchedPage(0)
-                            setWatchedSort(value)
-                          }}
-                          options={[
-                            { value: 'code,asc', label: 'Код ↑' },
-                            { value: 'code,desc', label: 'Код ↓' },
-                          ]}
-                        />
-                      </Col>
-                      <Col xs={24} md={5}>
-                        <Button
-                          type="primary"
-                          size="large"
-                          block
-                          onClick={() => applyWatchedSearch(watchedSearchInput)}
-                        >
-                          Найти
-                        </Button>
-                      </Col>
-                      <Col xs={24} md={6}>
-                        <Button
-                          size="large"
-                          block
-                          loading={watchedLoading}
-                          onClick={() => void loadWatched()}
-                        >
-                          Обновить список
-                        </Button>
-                      </Col>
-                    </Row>
-                    <div style={{ marginTop: 16 }}>
-                      {watchedLoading && (
-                        <Flex justify="center" style={{ padding: 24 }}>
-                          <Spin size="large" description="Загрузка слежения…" />
-                        </Flex>
-                      )}
-                      {watchedError && <Alert type="error" showIcon title={watchedError} />}
-                      {!watchedLoading && (
-                        <WatchedWagonGrid
-                          rows={watchedRows}
-                          empty={watchedEmpty}
-                          onSelect={(code) => void loadWagonCardOnly(code, true)}
-                        />
-                      )}
-                      <Flex justify="end" style={{ marginTop: 12 }}>
-                        <Pagination
-                          current={watchedPage + 1}
-                          pageSize={watchedSize}
-                          total={watchedTotal}
-                          showSizeChanger
-                          showQuickJumper
-                          pageSizeOptions={pageSizeOptions}
-                          showTotal={(total, range) =>
-                            formatListShowTotal(total, range, watchedPage, watchedSize)
+    <AppShell
+      activeTab={activeTab}
+      onSelectFleetTab={selectFleetTab}
+      headerExtra={
+        <GlobalWagonSearch
+          initialCode={wagonCode}
+          loading={cardLoading}
+          onSearch={(code) => void loadWagonCardOnly(code, activeTab === 'watched')}
+        />
+      }
+    >
+      <Card className="search-card">
+        <Tabs
+          activeKey={activeTab}
+          onChange={(key) => selectFleetTab(parseListTab(key))}
+          items={[
+            {
+              key: 'watched',
+              label: 'Вагоны на слежении',
+              children: (
+                <>
+                  <Paragraph type="secondary" style={{ marginBottom: 16 }}>
+                    Synthetic-подмножество каталога (60 вагонов). Паспорт A2, серверная пагинация.
+                    Клик открывает карточку R1. Соответствие GetActiveWagonList не подтверждено.
+                  </Paragraph>
+                  <Row gutter={[12, 12]} align="middle">
+                    <Col xs={24} md={8}>
+                      <Input
+                        size="large"
+                        placeholder="Поиск по номеру (contains)"
+                        value={watchedSearchInput}
+                        onChange={(e) => {
+                          const value = e.target.value
+                          if (value === '') {
+                            applyWatchedSearch('')
+                          } else {
+                            setWatchedSearchInput(value)
                           }
-                          onChange={(page, pageSize) => {
-                            setWatchedPage(page - 1)
-                            setWatchedSize(pageSize)
-                          }}
-                        />
+                        }}
+                        onPressEnter={() => applyWatchedSearch(watchedSearchInput)}
+                        allowClear
+                      />
+                    </Col>
+                    <Col xs={24} md={5}>
+                      <Select
+                        size="large"
+                        style={{ width: '100%' }}
+                        value={watchedSort}
+                        onChange={(value: ListSort) => {
+                          scheduleUrlPush()
+                          setWatchedPage(0)
+                          setWatchedSort(value)
+                        }}
+                        options={[
+                          { value: 'code,asc', label: 'Код ↑' },
+                          { value: 'code,desc', label: 'Код ↓' },
+                        ]}
+                      />
+                    </Col>
+                    <Col xs={24} md={5}>
+                      <Button
+                        type="primary"
+                        size="large"
+                        block
+                        onClick={() => applyWatchedSearch(watchedSearchInput)}
+                      >
+                        Найти
+                      </Button>
+                    </Col>
+                    <Col xs={24} md={6}>
+                      <Button
+                        size="large"
+                        block
+                        loading={watchedLoading}
+                        onClick={() => void loadWatched()}
+                      >
+                        Обновить список
+                      </Button>
+                    </Col>
+                  </Row>
+                  <div style={{ marginTop: 16 }}>
+                    {watchedLoading && (
+                      <Flex justify="center" style={{ padding: 24 }}>
+                        <Spin size="large" description="Загрузка слежения…" />
                       </Flex>
-                    </div>
-                  </>
-                ),
-              },
-              {
-                key: 'registry',
-                label: 'Реестр вагонов',
-                children: (
-                  <>
-                    <Paragraph type="secondary" style={{ marginBottom: 16 }}>
-                      Серверная пагинация (до 200), поиск contains по номеру, сортировка по коду. Клик
-                      по строке открывает карточку R1.
-                    </Paragraph>
-                    <Row gutter={[12, 12]} align="middle">
-                      <Col xs={24} md={8}>
-                        <Input
-                          size="large"
-                          placeholder="Поиск по номеру (contains)"
-                          value={registrySearchInput}
-                          onChange={(e) => {
-                            const value = e.target.value
-                            if (value === '') {
-                              applyRegistrySearch('')
-                            } else {
-                              setRegistrySearchInput(value)
-                            }
-                          }}
-                          onPressEnter={() => applyRegistrySearch(registrySearchInput)}
-                          allowClear
-                        />
-                      </Col>
-                      <Col xs={24} md={5}>
-                        <Select
-                          size="large"
-                          style={{ width: '100%' }}
-                          value={registrySort}
-                          onChange={(value: 'code,asc' | 'code,desc') => {
-                            setRegistryPage(0)
-                            setRegistrySort(value)
-                          }}
-                          options={[
-                            { value: 'code,asc', label: 'Код ↑' },
-                            { value: 'code,desc', label: 'Код ↓' },
-                          ]}
-                        />
-                      </Col>
-                      <Col xs={24} md={5}>
-                        <Button
-                          type="primary"
-                          size="large"
-                          block
-                          onClick={() => applyRegistrySearch(registrySearchInput)}
-                        >
-                          Найти
-                        </Button>
-                      </Col>
-                      <Col xs={24} md={6}>
-                        <Button
-                          size="large"
-                          block
-                          loading={registryLoading}
-                          onClick={() => void loadRegistry()}
-                        >
-                          Обновить реестр
-                        </Button>
-                      </Col>
-                    </Row>
-                    <div style={{ marginTop: 16 }}>
-                      {registryLoading && (
-                        <Flex justify="center" style={{ padding: 24 }}>
-                          <Spin size="large" description="Загрузка реестра…" />
-                        </Flex>
-                      )}
-                      {registryError && <Alert type="error" showIcon title={registryError} />}
-                      {!registryLoading && (
-                        <WagonRegistryGrid
-                          rows={registryRows}
-                          empty={registryEmpty}
-                          onSelect={(code) => void loadWagonCardOnly(code, false)}
-                        />
-                      )}
-                      <Flex justify="end" style={{ marginTop: 12 }}>
-                        <Pagination
-                          current={registryPage + 1}
-                          pageSize={registrySize}
-                          total={registryTotal}
-                          showSizeChanger
-                          showQuickJumper
-                          pageSizeOptions={pageSizeOptions}
-                          showTotal={(total, range) =>
-                            formatListShowTotal(total, range, registryPage, registrySize)
+                    )}
+                    {watchedError && <Alert type="error" showIcon title={watchedError} />}
+                    {!watchedLoading && (
+                      <WatchedWagonGrid
+                        rows={watchedRows}
+                        empty={watchedEmpty}
+                        onSelect={(code) => void loadWagonCardOnly(code, true)}
+                      />
+                    )}
+                    <Flex justify="end" style={{ marginTop: 12 }}>
+                      <Pagination
+                        current={watchedPage + 1}
+                        pageSize={watchedSize}
+                        total={watchedTotal}
+                        showSizeChanger
+                        showQuickJumper
+                        pageSizeOptions={pageSizeOptions}
+                        showTotal={(total, range) =>
+                          formatListShowTotal(total, range, watchedPage, watchedSize)
+                        }
+                        onChange={(page, pageSize) => {
+                          scheduleUrlPush()
+                          setWatchedPage(page - 1)
+                          setWatchedSize(pageSize)
+                        }}
+                      />
+                    </Flex>
+                  </div>
+                </>
+              ),
+            },
+            {
+              key: 'registry',
+              label: 'Реестр вагонов',
+              children: (
+                <>
+                  <Paragraph type="secondary" style={{ marginBottom: 16 }}>
+                    Серверная пагинация (до 200), поиск contains по номеру, сортировка по коду. Клик
+                    по строке открывает карточку R1.
+                  </Paragraph>
+                  <Row gutter={[12, 12]} align="middle">
+                    <Col xs={24} md={8}>
+                      <Input
+                        size="large"
+                        placeholder="Поиск по номеру (contains)"
+                        value={registrySearchInput}
+                        onChange={(e) => {
+                          const value = e.target.value
+                          if (value === '') {
+                            applyRegistrySearch('')
+                          } else {
+                            setRegistrySearchInput(value)
                           }
-                          onChange={(page, pageSize) => {
-                            setRegistryPage(page - 1)
-                            setRegistrySize(pageSize)
-                          }}
-                        />
+                        }}
+                        onPressEnter={() => applyRegistrySearch(registrySearchInput)}
+                        allowClear
+                      />
+                    </Col>
+                    <Col xs={24} md={5}>
+                      <Select
+                        size="large"
+                        style={{ width: '100%' }}
+                        value={registrySort}
+                        onChange={(value: ListSort) => {
+                          scheduleUrlPush()
+                          setRegistryPage(0)
+                          setRegistrySort(value)
+                        }}
+                        options={[
+                          { value: 'code,asc', label: 'Код ↑' },
+                          { value: 'code,desc', label: 'Код ↓' },
+                        ]}
+                      />
+                    </Col>
+                    <Col xs={24} md={5}>
+                      <Button
+                        type="primary"
+                        size="large"
+                        block
+                        onClick={() => applyRegistrySearch(registrySearchInput)}
+                      >
+                        Найти
+                      </Button>
+                    </Col>
+                    <Col xs={24} md={6}>
+                      <Button
+                        size="large"
+                        block
+                        loading={registryLoading}
+                        onClick={() => void loadRegistry()}
+                      >
+                        Обновить реестр
+                      </Button>
+                    </Col>
+                  </Row>
+                  <div style={{ marginTop: 16 }}>
+                    {registryLoading && (
+                      <Flex justify="center" style={{ padding: 24 }}>
+                        <Spin size="large" description="Загрузка реестра…" />
                       </Flex>
-                    </div>
-                  </>
-                ),
-              },
-            ]}
-          />
-        </Card>
+                    )}
+                    {registryError && <Alert type="error" showIcon title={registryError} />}
+                    {!registryLoading && (
+                      <WagonRegistryGrid
+                        rows={registryRows}
+                        empty={registryEmpty}
+                        onSelect={(code) => void loadWagonCardOnly(code, false)}
+                      />
+                    )}
+                    <Flex justify="end" style={{ marginTop: 12 }}>
+                      <Pagination
+                        current={registryPage + 1}
+                        pageSize={registrySize}
+                        total={registryTotal}
+                        showSizeChanger
+                        showQuickJumper
+                        pageSizeOptions={pageSizeOptions}
+                        showTotal={(total, range) =>
+                          formatListShowTotal(total, range, registryPage, registrySize)
+                        }
+                        onChange={(page, pageSize) => {
+                          scheduleUrlPush()
+                          setRegistryPage(page - 1)
+                          setRegistrySize(pageSize)
+                        }}
+                      />
+                    </Flex>
+                  </div>
+                </>
+              ),
+            },
+          ]}
+        />
+      </Card>
 
-        <Card className="search-card" style={{ marginTop: 24 }} title="Карточка и история">
-          <Paragraph type="secondary" style={{ marginBottom: 16 }}>
-            Карточка загружается отдельно; сутки — по явной кнопке (R1). Deep-link:{' '}
-            <Text code>{buildDeepLinkSearch(deepLinkState)}</Text>
-          </Paragraph>
-          <Row gutter={[12, 12]} align="middle">
-            <Col xs={24} md={8}>
-              <Input
-                size="large"
-                placeholder="Номер вагона"
-                value={wagonCode}
-                onChange={(e) => setWagonCode(e.target.value)}
-                onPressEnter={() => void loadWagonCardOnly(wagonCode, activeTab === 'watched')}
-                allowClear
-              />
-            </Col>
-            <Col xs={24} md={6}>
-              <DatePicker
-                size="large"
-                style={{ width: '100%' }}
-                value={date}
-                onChange={(value) => {
-                  if (value) {
-                    setDate(value)
-                    setDay(null)
-                    clearDayErrors()
-                  }
-                }}
-                format="YYYY-MM-DD"
-              />
-            </Col>
-            <Col xs={24} md={5}>
-              <Button
-                type="primary"
-                size="large"
-                block
-                loading={cardLoading}
-                onClick={() => void loadWagonCardOnly(wagonCode, activeTab === 'watched')}
-              >
-                Найти
-              </Button>
-            </Col>
-            <Col xs={24} md={5}>
-              <Button
-                size="large"
-                block
-                loading={dayLoading}
-                onClick={() => void loadDayHistory()}
-              >
-                Загрузить сутки
-              </Button>
-            </Col>
-          </Row>
-        </Card>
-
-        <Space orientation="vertical" size="large" style={{ width: '100%', marginTop: 24 }}>
-          {(cardLoading || dayLoading) && (
-            <Flex justify="center" style={{ padding: 32 }}>
-              <Spin size="large" description={cardLoading ? 'Загрузка карточки…' : 'Загрузка суток…'} />
-            </Flex>
-          )}
-
-          {notFound && <Alert type="warning" showIcon title="Вагон не найден" />}
-          {limitExceeded && (
-            <Alert
-              type="error"
-              showIcon
-              title="RESULT_LIMIT_EXCEEDED"
-              description="Строк больше 500. Сервер вернул HTTP 422 без обрезки данных."
+      <Card className="search-card" style={{ marginTop: 24 }} title="Карточка и история">
+        <Paragraph type="secondary" style={{ marginBottom: 16 }}>
+          Карточка загружается отдельно; сутки — по явной кнопке (R1). Deep-link:{' '}
+          <Text code data-testid="deep-link-preview">
+            {buildDeepLinkSearch(deepLinkState)}
+          </Text>
+        </Paragraph>
+        <Row gutter={[12, 12]} align="middle">
+          <Col xs={24} md={8}>
+            <Input
+              size="large"
+              placeholder="Номер вагона"
+              value={wagonCode}
+              onChange={(e) => setWagonCode(e.target.value)}
+              onPressEnter={() => void loadWagonCardOnly(wagonCode, activeTab === 'watched')}
+              allowClear
             />
-          )}
-          {error && !notFound && <Alert type="error" showIcon title={error} />}
-          {dayError && !notFound && !limitExceeded && (
-            <Alert type="error" showIcon title={dayError} />
-          )}
+          </Col>
+          <Col xs={24} md={6}>
+            <DatePicker
+              size="large"
+              style={{ width: '100%' }}
+              value={date}
+              onChange={(value) => {
+                if (value) {
+                  setDate(value)
+                  setDay(null)
+                  clearDayErrors()
+                }
+              }}
+              format="YYYY-MM-DD"
+            />
+          </Col>
+          <Col xs={24} md={5}>
+            <Button
+              type="primary"
+              size="large"
+              block
+              loading={cardLoading}
+              onClick={() => void loadWagonCardOnly(wagonCode, activeTab === 'watched')}
+            >
+              Найти
+            </Button>
+          </Col>
+          <Col xs={24} md={5}>
+            <Button
+              size="large"
+              block
+              loading={dayLoading}
+              onClick={() => void loadDayHistory()}
+            >
+              Загрузить сутки
+            </Button>
+          </Col>
+        </Row>
+      </Card>
 
-          {!cardLoading && card && (
-            <Card>
-              <WagonCardPanel card={card} fromWatched={fromWatched} />
-            </Card>
-          )}
+      <Space orientation="vertical" size="large" style={{ width: '100%', marginTop: 24 }}>
+        {(cardLoading || dayLoading) && (
+          <Flex justify="center" style={{ padding: 32 }}>
+            <Spin
+              size="large"
+              description={cardLoading ? 'Загрузка карточки…' : 'Загрузка суток…'}
+            />
+          </Flex>
+        )}
 
-          {!dayLoading && day && (
-            <Card title={`История дислокации · ${day.date}`}>
-              <StateReportGrid lines={day.lines} empty={emptyDay} />
-            </Card>
-          )}
-        </Space>
-      </Content>
-    </Layout>
+        {notFound && <Alert type="warning" showIcon title="Вагон не найден" />}
+        {limitExceeded && (
+          <Alert
+            type="error"
+            showIcon
+            title="RESULT_LIMIT_EXCEEDED"
+            description="Строк больше 500. Сервер вернул HTTP 422 без обрезки данных."
+          />
+        )}
+        {error && !notFound && <Alert type="error" showIcon title={error} />}
+        {dayError && !notFound && !limitExceeded && (
+          <Alert type="error" showIcon title={dayError} />
+        )}
+
+        {!cardLoading && card && (
+          <Card>
+            <WagonCardPanel card={card} fromWatched={fromWatched} />
+          </Card>
+        )}
+
+        {!dayLoading && day && (
+          <Card title={`История дислокации · ${day.date}`}>
+            <StateReportGrid lines={day.lines} empty={emptyDay} />
+          </Card>
+        )}
+      </Space>
+    </AppShell>
   )
 }
