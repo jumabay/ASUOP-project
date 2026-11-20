@@ -129,7 +129,7 @@ flowchart TD
 
 | ID | Задача | Блокер | Агенты |
 | --- | --- | --- | --- |
-| P2-1 | Accept ADR-0009 | владелец продукта | lead, database |
+| P2-1 | Accept ADR-0009 | владелец продукта; пакет готовности: [../architecture/42_ADR0009_DECISION_READINESS.md](../architecture/42_ADR0009_DECISION_READINESS.md) | lead, database |
 | P2-2 | Create RAILDB + Flyway `RAIL_APP` | P2-1 + DBA | database, backend |
 | P2-3 | Offline→controlled RWL/FTP intake design + B-tests | P2-2 / B1 | backend, database, qa |
 | P2-4 | Ремонты / склад read-only screens | research G6+ | backend, frontend |

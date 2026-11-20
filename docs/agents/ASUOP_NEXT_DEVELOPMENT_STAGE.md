@@ -266,10 +266,10 @@ Jobs в `.github/workflows/gradle-jdk21-test.yml`: `unit-tests` (Gradle + explic
 
 ## 12. Следующее действие владельца
 
-1. Просмотреть этот отчёт и **утвердить или отклонить** срез **P4-0 Storage Contracts (offline)**.  
-2. При согласии — добавить строку в `APPROVALS_TEMPLATE.md` и дать CODE APPROVED на feature-ветку stubs+docs.  
-3. Параллельно (человек/DBA): пакет на **Accept ADR-0009** + create `RAILDB` (не поручать агентам без строк журнала).  
-4. Не снимать `@Disabled` с JDBC и не подключать Production.
+1. ~~Просмотреть этот отчёт и утвердить P4-0~~ — **DONE** (APPROVED + PR #6 merged).  
+2. Решение по **Accept ADR-0009**: пакет [42_ADR0009_DECISION_READINESS.md](../architecture/42_ADR0009_DECISION_READINESS.md) (READY / DBA / BLOCKED / DEFERRED).  
+3. После Accept — отдельные APPROVALS на Create RAILDB / Flyway / TEST JDBC (не в этом docs-пакете).  
+4. Не снимать `@Disabled` с JDBC и не подключать Production без строк журнала.
 
 ---
 
