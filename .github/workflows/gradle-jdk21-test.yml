@@ -25,3 +25,87 @@ jobs:
       # Explicit P0-5 REST smoke (also covered by full test); fails fast if smoke class regresses.
       - name: Synthetic REST smoke (R1–R3)
         run: ./gradlew :platform-app:test --tests "platform.app.api.SyntheticRuntimeSmokeTest" --no-daemon
+
+  frontend-unit:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Vitest
+        run: npm test
+      - name: Production build
+        run: npm run build
+
+  # P0-5 FE↔API + P1-4 Playwright: synthetic/offline only (no Oracle).
+  playwright-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Boot synthetic backend (port 8080)
+        run: |
+          ./gradlew :platform-app:bootRun --no-daemon > /tmp/bootRun.log 2>&1 &
+          echo $! > /tmp/bootRun.pid
+      - name: Wait for synthetic API
+        run: |
+          for i in $(seq 1 90); do
+            if curl -sf "http://127.0.0.1:8080/api/v1/wagons/SYN-00001" >/dev/null; then
+              echo "Synthetic API ready on :8080"
+              exit 0
+            fi
+            sleep 4
+          done
+          echo "=== bootRun log (tail) ==="
+          tail -n 200 /tmp/bootRun.log || true
+          exit 1
+      - name: Frontend install, Chromium, build
+        working-directory: frontend
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          npm run build
+      - name: Playwright synthetic browser smoke
+        working-directory: frontend
+        env:
+          CI: true
+          API_PROXY_TARGET: http://127.0.0.1:8080
+        run: npx playwright test
+      - name: Upload Playwright artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-synthetic-smoke
+          path: |
+            frontend/playwright-report
+            frontend/test-results
+            frontend/e2e/screenshots
+          if-no-files-found: ignore
+      - name: Stop synthetic backend
+        if: always()
+        run: |
+          if [ -f /tmp/bootRun.pid ]; then
+            kill "$(cat /tmp/bootRun.pid)" || true
+          fi

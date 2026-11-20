@@ -63,9 +63,47 @@ Full suite (includes the smoke class + broader `SyntheticWagonApiIntegrationTest
 | --- | --- |
 | API base | `http://localhost:8080` |
 | Vite UI | `http://localhost:5173` |
-| Proxy | `/api` → `http://localhost:8080` (`frontend/vite.config.ts`) |
+| Preview UI | `http://127.0.0.1:4173` (Playwright default) |
+| Proxy | `/api` → `http://localhost:8080` (`frontend/vite.config.ts`, both `server` and `preview`) |
 | Smoke wagon | `SYN-00001` |
 | Day with data / empty | `2024-01-15` / `2024-01-16` |
+
+### Alternate API port (when 8080 is occupied)
+
+Do **not** kill unknown processes on 8080. Boot backend on another port and point the Vite proxy:
+
+```powershell
+# Terminal A — JDK 21 only (SERVER_PORT or --server.port)
+$env:SERVER_PORT = "8081"
+.\scripts\gradle-jdk21.ps1 :platform-app:bootRun
+# alternative: .\scripts\gradle-jdk21.ps1 :platform-app:bootRun --args="--server.port=8081"
+
+# Terminal B — UI / Playwright
+cd frontend
+$env:API_PROXY_TARGET = "http://localhost:8081"
+npm run build
+npx playwright test
+```
+
+`API_PROXY_TARGET` is read when Vite starts (dev or preview). Default remains `http://localhost:8080`.
+
+### Playwright browser smoke (P1-4)
+
+Synthetic/offline only. Screenshots use fixture codes (`SYN-00001`, dates above) — no secrets/PII.
+
+```powershell
+cd frontend
+npm ci
+npm run test:e2e:install   # local Chromium; corporate TLS may need NODE_TLS_REJECT_UNAUTHORIZED=0 once
+npm test                   # Vitest
+npm run build
+# backend must already answer R1–R3 (see Boot / REST checks)
+npm run test:e2e           # starts vite preview, runs e2e/synthetic-smoke.spec.ts
+```
+
+CI: job `playwright-smoke` in `.github/workflows/gradle-jdk21-test.yml` boots `:platform-app:bootRun`, waits for `/api/v1/wagons/SYN-00001`, builds the UI, runs Playwright Chromium.
+
+Artifacts (local, gitignored): `frontend/e2e/screenshots/*.png`, `frontend/playwright-report/`, `frontend/test-results/`.
 
 ## Out of scope
 
