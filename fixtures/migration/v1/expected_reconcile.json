@@ -1,0 +1,428 @@
+{
+    "schema_version":  "migration-l0-v1",
+    "pack_id":  "migration-l0-v1",
+    "cutover_ts":  "2026-11-16T00:00:00",
+    "cutoff_ts":  "2025-11-16T00:00:00",
+    "gaps_open":  [
+                      "NK1",
+                      "DT1",
+                      "G31",
+                      "R1-Q-TZ"
+                  ],
+    "counts":  {
+                   "refs_stations":  5,
+                   "refs_wagon_types":  3,
+                   "refs_operations":  3,
+                   "refs_repair_types":  3,
+                   "refs_warehouses":  2,
+                   "refs_part_types":  2,
+                   "wagons_FULL":  20,
+                   "current_FULL":  20,
+                   "stock_FULL":  5,
+                   "repairs_OPEN":  1,
+                   "repairs_12M":  2,
+                   "repairs_ARCHIVE_DBTC":  3,
+                   "repairs_SKIP":  1,
+                   "kits_12M":  5,
+                   "kits_ARCHIVE_DBTC":  3,
+                   "kits_SKIP":  0,
+                   "tape_total":  100,
+                   "tape_12M":  75,
+                   "tape_BOOTSTRAP":  17,
+                   "tape_ARCHIVE_DBTC":  7,
+                   "tape_SKIP":  1,
+                   "watched_items":  0
+               },
+    "watched":  {
+                    "status":  "BLOCKED",
+                    "tag":  "SKIP",
+                    "reason":  "G31",
+                    "items":  [
+
+                              ]
+                },
+    "duplicates":  {
+                       "policy":  "retain_all_no_DISTINCT",
+                       "nk1_status":  "OPEN",
+                       "groups":  [
+                                      {
+                                          "code":  "W000006",
+                                          "getting_ts":  "2026-04-01T10:00:00",
+                                          "source_count":  3,
+                                          "event_ids":  [
+                                                            10016,
+                                                            10017,
+                                                            10018
+                                                        ],
+                                          "provenance_keys":  [
+                                                                  "SYN|TAPE|W000006|2026-04-01T10:00:00|10016-A",
+                                                                  "SYN|TAPE|W000006|2026-04-01T10:00:00|10017-B",
+                                                                  "SYN|TAPE|W000006|2026-04-01T10:00:00|10018-C"
+                                                              ],
+                                          "policy":  "retain_all"
+                                      }
+                                  ],
+                       "unique_event_ids":  true,
+                       "unique_provenance":  true
+                   },
+    "chronology":  {
+                       "axis":  "GETTING_DATE",
+                       "dt1_status":  "BLOCKED",
+                       "bootstrap_policy":  "max_getting_strictly_before_cutoff_per_wagon",
+                       "bootstrap_rows":  [
+                                              {
+                                                  "code":  "W000001",
+                                                  "event_id":  10002,
+                                                  "getting_ts":  "2025-10-01T10:00:00"
+                                              },
+                                              {
+                                                  "code":  "W000003",
+                                                  "event_id":  10009,
+                                                  "getting_ts":  "2025-09-01T09:00:00"
+                                              },
+                                              {
+                                                  "code":  "W000004",
+                                                  "event_id":  10013,
+                                                  "getting_ts":  "2025-01-01T00:00:00"
+                                              },
+                                              {
+                                                  "code":  "W000005",
+                                                  "event_id":  10015,
+                                                  "getting_ts":  "2025-08-01T06:00:00"
+                                              },
+                                              {
+                                                  "code":  "W000006",
+                                                  "event_id":  10019,
+                                                  "getting_ts":  "2025-07-01T10:00:00"
+                                              },
+                                              {
+                                                  "code":  "W000007",
+                                                  "event_id":  10021,
+                                                  "getting_ts":  "2025-05-05T05:00:00"
+                                              },
+                                              {
+                                                  "code":  "W000008",
+                                                  "event_id":  10023,
+                                                  "getting_ts":  "2025-02-15T00:00:00"
+                                              },
+                                              {
+                                                  "code":  "W000009",
+                                                  "event_id":  10024,
+                                                  "getting_ts":  "2024-04-01T00:00:00"
+                                              },
+                                              {
+                                                  "code":  "W000010",
+                                                  "event_id":  10029,
+                                                  "getting_ts":  "2025-11-15T23:59:59"
+                                              },
+                                              {
+                                                  "code":  "W000011",
+                                                  "event_id":  10031,
+                                                  "getting_ts":  "2025-11-15T12:00:00"
+                                              },
+                                              {
+                                                  "code":  "W000012",
+                                                  "event_id":  10033,
+                                                  "getting_ts":  "2025-05-01T00:00:00"
+                                              },
+                                              {
+                                                  "code":  "W000014",
+                                                  "event_id":  10037,
+                                                  "getting_ts":  "2025-11-01T00:00:00"
+                                              },
+                                              {
+                                                  "code":  "W000015",
+                                                  "event_id":  10041,
+                                                  "getting_ts":  "2025-03-03T03:00:00"
+                                              },
+                                              {
+                                                  "code":  "W000017",
+                                                  "event_id":  10046,
+                                                  "getting_ts":  "2025-06-01T00:00:00"
+                                              },
+                                              {
+                                                  "code":  "W000018",
+                                                  "event_id":  10049,
+                                                  "getting_ts":  "2025-04-01T00:00:00"
+                                              },
+                                              {
+                                                  "code":  "W000019",
+                                                  "event_id":  10098,
+                                                  "getting_ts":  "2025-08-15T00:00:00"
+                                              },
+                                              {
+                                                  "code":  "W000020",
+                                                  "event_id":  10100,
+                                                  "getting_ts":  "2025-01-01T00:00:00"
+                                              }
+                                          ],
+                       "no_future_in_primary":  true,
+                       "r1_q_tz_status":  "OPEN",
+                       "r1_q_tz_note":  "Day bounds half-open [D,D+1) on getting_ts documented; UTC vs local undecided",
+                       "getting_ne_location_examples":  [
+                                                            {
+                                                                "code":  "W000005",
+                                                                "note":  "selection uses getting_ts; location_ts may differ (DT1 OPEN)"
+                                                            }
+                                                        ]
+                   },
+    "tape_by_day_selected":  [
+                                 {
+                                     "day":  "2024-04-01",
+                                     "selected_count":  1
+                                 },
+                                 {
+                                     "day":  "2025-01-01",
+                                     "selected_count":  2
+                                 },
+                                 {
+                                     "day":  "2025-02-15",
+                                     "selected_count":  1
+                                 },
+                                 {
+                                     "day":  "2025-03-03",
+                                     "selected_count":  1
+                                 },
+                                 {
+                                     "day":  "2025-04-01",
+                                     "selected_count":  1
+                                 },
+                                 {
+                                     "day":  "2025-05-01",
+                                     "selected_count":  1
+                                 },
+                                 {
+                                     "day":  "2025-05-05",
+                                     "selected_count":  1
+                                 },
+                                 {
+                                     "day":  "2025-06-01",
+                                     "selected_count":  1
+                                 },
+                                 {
+                                     "day":  "2025-07-01",
+                                     "selected_count":  1
+                                 },
+                                 {
+                                     "day":  "2025-08-01",
+                                     "selected_count":  1
+                                 },
+                                 {
+                                     "day":  "2025-08-15",
+                                     "selected_count":  1
+                                 },
+                                 {
+                                     "day":  "2025-09-01",
+                                     "selected_count":  1
+                                 },
+                                 {
+                                     "day":  "2025-10-01",
+                                     "selected_count":  1
+                                 },
+                                 {
+                                     "day":  "2025-11-01",
+                                     "selected_count":  1
+                                 },
+                                 {
+                                     "day":  "2025-11-15",
+                                     "selected_count":  2
+                                 },
+                                 {
+                                     "day":  "2025-11-16",
+                                     "selected_count":  3
+                                 },
+                                 {
+                                     "day":  "2025-11-17",
+                                     "selected_count":  1
+                                 },
+                                 {
+                                     "day":  "2025-11-20",
+                                     "selected_count":  1
+                                 },
+                                 {
+                                     "day":  "2026-01-01",
+                                     "selected_count":  2
+                                 },
+                                 {
+                                     "day":  "2026-01-20",
+                                     "selected_count":  1
+                                 },
+                                 {
+                                     "day":  "2026-02-10",
+                                     "selected_count":  1
+                                 },
+                                 {
+                                     "day":  "2026-02-15",
+                                     "selected_count":  1
+                                 },
+                                 {
+                                     "day":  "2026-03-01",
+                                     "selected_count":  1
+                                 },
+                                 {
+                                     "day":  "2026-03-02",
+                                     "selected_count":  1
+                                 },
+                                 {
+                                     "day":  "2026-03-03",
+                                     "selected_count":  1
+                                 },
+                                 {
+                                     "day":  "2026-04-01",
+                                     "selected_count":  3
+                                 },
+                                 {
+                                     "day":  "2026-04-04",
+                                     "selected_count":  1
+                                 },
+                                 {
+                                     "day":  "2026-05-01",
+                                     "selected_count":  25
+                                 },
+                                 {
+                                     "day":  "2026-05-02",
+                                     "selected_count":  24
+                                 },
+                                 {
+                                     "day":  "2026-06-15",
+                                     "selected_count":  1
+                                 },
+                                 {
+                                     "day":  "2026-07-01",
+                                     "selected_count":  2
+                                 },
+                                 {
+                                     "day":  "2026-07-02",
+                                     "selected_count":  1
+                                 },
+                                 {
+                                     "day":  "2026-08-01",
+                                     "selected_count":  1
+                                 },
+                                 {
+                                     "day":  "2026-09-01",
+                                     "selected_count":  1
+                                 },
+                                 {
+                                     "day":  "2026-10-01",
+                                     "selected_count":  1
+                                 },
+                                 {
+                                     "day":  "2026-10-10",
+                                     "selected_count":  1
+                                 },
+                                 {
+                                     "day":  "2026-11-01",
+                                     "selected_count":  1
+                                 }
+                             ],
+    "kit_idempotency":  [
+                            {
+                                "filename":  "syn_kit_12m_001.dat",
+                                "type":  0,
+                                "kit_ids":  [
+                                                301,
+                                                306
+                                            ],
+                                "policy":  "idempotent_header_uk_filename_type",
+                                "expected_headers_after_replay":  1,
+                                "note":  "L0 documents expectation; physical replay is M6 (not asserted as executed)"
+                            }
+                        ],
+    "orphans":  {
+                    "kit_fk_gap":  "KIT_FK_12m_UNKNOWN",
+                    "tape_orphan_kit_ids":  [
+                                                {
+                                                    "event_id":  10048,
+                                                    "code":  "W000018",
+                                                    "kit_id":  9999,
+                                                    "policy":  "soft_null_or_flag_orphan",
+                                                    "gap":  "KIT_FK_12m_UNKNOWN"
+                                                }
+                                            ]
+                },
+    "exclusions":  [
+                       {
+                           "ref":  null,
+                           "tag":  "ARCHIVE_DBTC",
+                           "exclusion_reason":  "out_of_window_pre_cutoff"
+                       },
+                       {
+                           "ref":  null,
+                           "tag":  "ARCHIVE_DBTC",
+                           "exclusion_reason":  "out_of_window_pre_cutoff"
+                       },
+                       {
+                           "ref":  null,
+                           "tag":  "ARCHIVE_DBTC",
+                           "exclusion_reason":  "out_of_window_pre_cutoff"
+                       },
+                       {
+                           "ref":  null,
+                           "tag":  "ARCHIVE_DBTC",
+                           "exclusion_reason":  "out_of_window_pre_cutoff"
+                       },
+                       {
+                           "ref":  null,
+                           "tag":  "ARCHIVE_DBTC",
+                           "exclusion_reason":  "out_of_window_pre_cutoff"
+                       },
+                       {
+                           "ref":  null,
+                           "tag":  "ARCHIVE_DBTC",
+                           "exclusion_reason":  "out_of_window_pre_cutoff"
+                       },
+                       {
+                           "ref":  null,
+                           "tag":  "ARCHIVE_DBTC",
+                           "exclusion_reason":  "out_of_window_pre_cutoff"
+                       },
+                       {
+                           "ref":  null,
+                           "tag":  "SKIP",
+                           "exclusion_reason":  "future_after_cutover"
+                       },
+                       {
+                           "ref":  null,
+                           "tag":  "ARCHIVE_DBTC",
+                           "exclusion_reason":  "out_of_window_pre_cutoff"
+                       },
+                       {
+                           "ref":  null,
+                           "tag":  "ARCHIVE_DBTC",
+                           "exclusion_reason":  "out_of_window_pre_cutoff"
+                       },
+                       {
+                           "ref":  null,
+                           "tag":  "ARCHIVE_DBTC",
+                           "exclusion_reason":  "out_of_window_pre_cutoff"
+                       },
+                       {
+                           "ref":  null,
+                           "tag":  "ARCHIVE_DBTC",
+                           "exclusion_reason":  "out_of_window_pre_cutoff"
+                       },
+                       {
+                           "ref":  null,
+                           "tag":  "ARCHIVE_DBTC",
+                           "exclusion_reason":  "out_of_window_pre_cutoff"
+                       },
+                       {
+                           "ref":  null,
+                           "tag":  "ARCHIVE_DBTC",
+                           "exclusion_reason":  "out_of_window_pre_cutoff"
+                       },
+                       {
+                           "ref":  null,
+                           "tag":  "SKIP",
+                           "exclusion_reason":  "ending_null_without_current_pointer"
+                       }
+                   ],
+    "invariants":  [
+                       "All wagons/current/stock tagged FULL",
+                       "Open repairs only via current_repair_id pointer (RP1)",
+                       "Tape duplicates retained with distinct event_id and provenance_key",
+                       "Watched empty and BLOCKED until G31",
+                       "Do not claim NK1 DT1 G31 R1-Q-TZ closed"
+                   ]
+}

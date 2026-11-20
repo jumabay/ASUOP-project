@@ -1,0 +1,105 @@
+{
+    "schema_version":  "migration-l0-v1",
+    "stations":  [
+                     {
+                         "code":  "6900",
+                         "name":  "SYN Station Alpha",
+                         "id":  1001
+                     },
+                     {
+                         "code":  "6901",
+                         "name":  "SYN Station Beta",
+                         "id":  1002
+                     },
+                     {
+                         "code":  "6902",
+                         "name":  "SYN Station Gamma",
+                         "id":  1003
+                     },
+                     {
+                         "code":  "7100",
+                         "name":  "SYN Station Delta",
+                         "id":  1004
+                     },
+                     {
+                         "code":  "7200",
+                         "name":  "SYN Station Epsilon",
+                         "id":  1005
+                     }
+                 ],
+    "wagon_types":  [
+                        {
+                            "code":  "KR",
+                            "name":  "Covered (syn)",
+                            "id":  1
+                        },
+                        {
+                            "code":  "PL",
+                            "name":  "Platform (syn)",
+                            "id":  2
+                        },
+                        {
+                            "code":  "HV",
+                            "name":  "Hopper (syn)",
+                            "id":  3
+                        }
+                    ],
+    "operations":  [
+                       {
+                           "code":  "01",
+                           "name":  "Arrival (syn)",
+                           "id":  1
+                       },
+                       {
+                           "code":  "03",
+                           "name":  "Departure (syn)",
+                           "id":  2
+                       },
+                       {
+                           "code":  "10",
+                           "name":  "Loading (syn)",
+                           "id":  3
+                       }
+                   ],
+    "repair_types":  [
+                         {
+                             "code":  "DR",
+                             "name":  "Depot repair (syn)",
+                             "id":  0
+                         },
+                         {
+                             "code":  "KR",
+                             "name":  "Capital repair (syn)",
+                             "id":  1
+                         },
+                         {
+                             "code":  "TR1",
+                             "name":  "TR-1 (syn)",
+                             "id":  7
+                         }
+                     ],
+    "warehouses":  [
+                       {
+                           "code":  "WH-A",
+                           "name":  "Synthetic warehouse A",
+                           "id":  501
+                       },
+                       {
+                           "code":  "WH-B",
+                           "name":  "Synthetic warehouse B",
+                           "id":  502
+                       }
+                   ],
+    "part_types":  [
+                       {
+                           "code":  "AXLE",
+                           "name":  "Axle (syn)",
+                           "id":  11
+                       },
+                       {
+                           "code":  "WHEEL",
+                           "name":  "Wheel pair (syn)",
+                           "id":  12
+                       }
+                   ]
+}

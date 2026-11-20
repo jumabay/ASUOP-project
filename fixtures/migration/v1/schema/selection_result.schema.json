@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://asuop.local/schemas/migration-l0/selection_result.schema.json",
+  "title": "MigrationL0SelectionResult",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "pack_id",
+    "cutover_ts",
+    "cutoff_ts",
+    "axis",
+    "gaps_open",
+    "refs",
+    "wagons",
+    "current",
+    "repairs",
+    "stock",
+    "kits",
+    "tape",
+    "watched"
+  ],
+  "properties": {
+    "schema_version": { "const": "migration-l0-v1" },
+    "pack_id": { "type": "string" },
+    "cutover_ts": { "type": "string", "format": "date-time" },
+    "cutoff_ts": { "type": "string", "format": "date-time" },
+    "axis": { "const": "GETTING_DATE" },
+    "gaps_open": {
+      "type": "array",
+      "items": { "type": "string" },
+      "contains": { "const": "NK1" }
+    },
+    "notes": { "type": "array", "items": { "type": "string" } },
+    "refs": { "type": "object" },
+    "wagons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "tag"],
+        "properties": {
+          "code": { "type": "string", "pattern": "^W\\d{6}$" },
+          "wagon_id": { "type": "integer" },
+          "tag": { "enum": ["FULL"] },
+          "exclusion_reason": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "current": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "tag"],
+        "properties": {
+          "tag": { "enum": ["FULL"] }
+        }
+      }
+    },
+    "repairs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["repair_id", "tag"],
+        "properties": {
+          "tag": {
+            "enum": ["OPEN", "12M", "ARCHIVE_DBTC", "SKIP"]
+          },
+          "exclusion_reason": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "stock": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["stock_id", "tag"],
+        "properties": {
+          "tag": { "enum": ["FULL"] }
+        }
+      }
+    },
+    "kits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kit_id", "tag"],
+        "properties": {
+          "tag": { "enum": ["12M", "ARCHIVE_DBTC", "SKIP", "BOOTSTRAP"] },
+          "exclusion_reason": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "tape": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["event_id", "code", "getting_ts", "tag", "provenance_key"],
+        "properties": {
+          "event_id": { "type": "integer" },
+          "code": { "type": "string" },
+          "getting_ts": { "type": "string" },
+          "tag": {
+            "enum": ["12M", "BOOTSTRAP", "ARCHIVE_DBTC", "SKIP"]
+          },
+          "exclusion_reason": { "type": ["string", "null"] },
+          "provenance_key": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "watched": {
+      "type": "object",
+      "required": ["status", "tag", "items"],
+      "properties": {
+        "migration_phase": { "const": "M8" },
+        "status": { "const": "BLOCKED" },
+        "tag": { "const": "SKIP" },
+        "reason": { "type": "string" },
+        "items": {
+          "type": "array",
+          "maxItems": 0
+        }
+      }
+    }
+  },
+  "additionalProperties": true
+}

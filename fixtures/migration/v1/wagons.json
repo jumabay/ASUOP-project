@@ -1,0 +1,165 @@
+{
+    "schema_version":  "migration-l0-v1",
+    "wagons":  [
+                   {
+                       "wagon_id":  1,
+                       "code":  "W000001",
+                       "create_ts":  "2018-03-01T10:00:00",
+                       "wagon_type_id":  1,
+                       "owner_code":  "SYN-OWNER",
+                       "scenario":  "old_create_active_full"
+                   },
+                   {
+                       "wagon_id":  2,
+                       "code":  "W000002",
+                       "create_ts":  "2026-01-15T08:00:00",
+                       "wagon_type_id":  2,
+                       "owner_code":  "SYN-OWNER",
+                       "scenario":  "create_inside_12m_full"
+                   },
+                   {
+                       "wagon_id":  3,
+                       "code":  "W000003",
+                       "create_ts":  "2015-06-20T12:00:00",
+                       "wagon_type_id":  1,
+                       "owner_code":  "SYN-OWNER",
+                       "scenario":  "archive_bootstrap_12m_tape"
+                   },
+                   {
+                       "wagon_id":  4,
+                       "code":  "W000004",
+                       "create_ts":  "2010-01-01T00:00:00",
+                       "wagon_type_id":  3,
+                       "owner_code":  "SYN-OWNER",
+                       "scenario":  "archive_only_needs_bootstrap"
+                   },
+                   {
+                       "wagon_id":  5,
+                       "code":  "W000005",
+                       "create_ts":  "2019-08-08T09:00:00",
+                       "wagon_type_id":  2,
+                       "owner_code":  "SYN-OWNER",
+                       "scenario":  "getting_ne_location"
+                   },
+                   {
+                       "wagon_id":  6,
+                       "code":  "W000006",
+                       "create_ts":  "2017-11-11T11:11:11",
+                       "wagon_type_id":  1,
+                       "owner_code":  "SYN-OWNER",
+                       "scenario":  "intentional_duplicates"
+                   },
+                   {
+                       "wagon_id":  7,
+                       "code":  "W000007",
+                       "create_ts":  "2016-04-04T04:00:00",
+                       "wagon_type_id":  3,
+                       "owner_code":  "SYN-OWNER",
+                       "scenario":  "open_repair_old_begin"
+                   },
+                   {
+                       "wagon_id":  8,
+                       "code":  "W000008",
+                       "create_ts":  "2020-02-02T02:00:00",
+                       "wagon_type_id":  1,
+                       "owner_code":  "SYN-OWNER",
+                       "scenario":  "closed_repair_in_12m"
+                   },
+                   {
+                       "wagon_id":  9,
+                       "code":  "W000009",
+                       "create_ts":  "2014-09-09T09:00:00",
+                       "wagon_type_id":  2,
+                       "owner_code":  "SYN-OWNER",
+                       "scenario":  "closed_repair_pre_cutoff_archive"
+                   },
+                   {
+                       "wagon_id":  10,
+                       "code":  "W000010",
+                       "create_ts":  "2021-05-05T05:00:00",
+                       "wagon_type_id":  1,
+                       "owner_code":  "SYN-OWNER",
+                       "scenario":  "day_boundary_r1qtz_open"
+                   },
+                   {
+                       "wagon_id":  11,
+                       "code":  "W000011",
+                       "create_ts":  "2013-07-07T07:00:00",
+                       "wagon_type_id":  3,
+                       "owner_code":  "SYN-OWNER",
+                       "scenario":  "bootstrap_equals_cutoff"
+                   },
+                   {
+                       "wagon_id":  12,
+                       "code":  "W000012",
+                       "create_ts":  "2022-12-12T12:00:00",
+                       "wagon_type_id":  2,
+                       "owner_code":  "SYN-OWNER",
+                       "scenario":  "kit_12m_and_archive"
+                   },
+                   {
+                       "wagon_id":  13,
+                       "code":  "W000013",
+                       "create_ts":  "2011-01-01T01:00:00",
+                       "wagon_type_id":  1,
+                       "owner_code":  "SYN-OWNER",
+                       "scenario":  "no_tape_before_cutoff_no_bootstrap"
+                   },
+                   {
+                       "wagon_id":  14,
+                       "code":  "W000014",
+                       "create_ts":  "2018-10-10T10:00:00",
+                       "wagon_type_id":  2,
+                       "owner_code":  "SYN-OWNER",
+                       "scenario":  "multiple_archive_bootstrap_pick_max"
+                   },
+                   {
+                       "wagon_id":  15,
+                       "code":  "W000015",
+                       "create_ts":  "2019-03-03T03:00:00",
+                       "wagon_type_id":  3,
+                       "owner_code":  "SYN-OWNER",
+                       "scenario":  "stock_full_old_wagon"
+                   },
+                   {
+                       "wagon_id":  16,
+                       "code":  "W000016",
+                       "create_ts":  "2025-11-16T00:00:00",
+                       "wagon_type_id":  1,
+                       "owner_code":  "SYN-OWNER",
+                       "scenario":  "create_exactly_cutoff_full"
+                   },
+                   {
+                       "wagon_id":  17,
+                       "code":  "W000017",
+                       "create_ts":  "2024-06-01T06:00:00",
+                       "wagon_type_id":  2,
+                       "owner_code":  "SYN-OWNER",
+                       "scenario":  "future_getting_excluded"
+                   },
+                   {
+                       "wagon_id":  18,
+                       "code":  "W000018",
+                       "create_ts":  "2012-02-02T02:00:00",
+                       "wagon_type_id":  1,
+                       "owner_code":  "SYN-OWNER",
+                       "scenario":  "kit_orphan_soft_null"
+                   },
+                   {
+                       "wagon_id":  19,
+                       "code":  "W000019",
+                       "create_ts":  "2023-08-08T08:00:00",
+                       "wagon_type_id":  3,
+                       "owner_code":  "SYN-OWNER",
+                       "scenario":  "dense_12m_hour_strip"
+                   },
+                   {
+                       "wagon_id":  20,
+                       "code":  "W000020",
+                       "create_ts":  "2015-05-05T05:00:00",
+                       "wagon_type_id":  2,
+                       "owner_code":  "SYN-OWNER",
+                       "scenario":  "spare_active_minimal_tape"
+                   }
+               ]
+}

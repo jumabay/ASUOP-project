@@ -1,0 +1,75 @@
+{
+    "schema_version":  "migration-l0-v1",
+    "repairs":  [
+                    {
+                        "repair_id":  7001,
+                        "wagon_id":  7,
+                        "code":  "W000007",
+                        "repair_type_id":  0,
+                        "begin_ts":  "2020-01-10T00:00:00",
+                        "ending_ts":  null,
+                        "is_open_via_current":  true,
+                        "scenario":  "open_old_begin"
+                    },
+                    {
+                        "repair_id":  7002,
+                        "wagon_id":  7,
+                        "code":  "W000007",
+                        "repair_type_id":  7,
+                        "begin_ts":  "2019-05-01T00:00:00",
+                        "ending_ts":  "2019-06-01T00:00:00",
+                        "is_open_via_current":  false,
+                        "scenario":  "closed_pre_cutoff_same_wagon"
+                    },
+                    {
+                        "repair_id":  8001,
+                        "wagon_id":  8,
+                        "code":  "W000008",
+                        "repair_type_id":  1,
+                        "begin_ts":  "2026-02-01T00:00:00",
+                        "ending_ts":  "2026-02-20T00:00:00",
+                        "is_open_via_current":  false,
+                        "scenario":  "closed_in_12m"
+                    },
+                    {
+                        "repair_id":  8002,
+                        "wagon_id":  8,
+                        "code":  "W000008",
+                        "repair_type_id":  0,
+                        "begin_ts":  "2024-01-01T00:00:00",
+                        "ending_ts":  "2024-02-01T00:00:00",
+                        "is_open_via_current":  false,
+                        "scenario":  "closed_pre_cutoff"
+                    },
+                    {
+                        "repair_id":  9001,
+                        "wagon_id":  9,
+                        "code":  "W000009",
+                        "repair_type_id":  0,
+                        "begin_ts":  "2018-03-01T00:00:00",
+                        "ending_ts":  "2018-04-01T00:00:00",
+                        "is_open_via_current":  false,
+                        "scenario":  "closed_archive_only"
+                    },
+                    {
+                        "repair_id":  10001,
+                        "wagon_id":  10,
+                        "code":  "W000010",
+                        "repair_type_id":  7,
+                        "begin_ts":  "2025-12-01T00:00:00",
+                        "ending_ts":  "2025-12-15T00:00:00",
+                        "is_open_via_current":  false,
+                        "scenario":  "closed_near_cutoff_in_12m"
+                    },
+                    {
+                        "repair_id":  15001,
+                        "wagon_id":  15,
+                        "code":  "W000015",
+                        "repair_type_id":  1,
+                        "begin_ts":  "2026-06-01T00:00:00",
+                        "ending_ts":  null,
+                        "is_open_via_current":  false,
+                        "scenario":  "ending_null_but_not_current_pointer"
+                    }
+                ]
+}

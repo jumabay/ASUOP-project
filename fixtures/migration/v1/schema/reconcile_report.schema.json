@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://asuop.local/schemas/migration-l0/reconcile_report.schema.json",
+  "title": "MigrationL0ReconcileReport",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "pack_id",
+    "cutover_ts",
+    "cutoff_ts",
+    "gaps_open",
+    "counts",
+    "watched",
+    "duplicates",
+    "chronology",
+    "exclusions"
+  ],
+  "properties": {
+    "schema_version": { "const": "migration-l0-v1" },
+    "pack_id": { "type": "string" },
+    "cutover_ts": { "type": "string" },
+    "cutoff_ts": { "type": "string" },
+    "gaps_open": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "counts": {
+      "type": "object",
+      "required": [
+        "wagons_FULL",
+        "current_FULL",
+        "stock_FULL",
+        "tape_12M",
+        "tape_BOOTSTRAP",
+        "tape_ARCHIVE_DBTC",
+        "watched_items"
+      ],
+      "properties": {
+        "watched_items": { "const": 0 }
+      }
+    },
+    "watched": {
+      "type": "object",
+      "required": ["status", "tag", "items"],
+      "properties": {
+        "status": { "const": "BLOCKED" },
+        "tag": { "const": "SKIP" },
+        "items": { "type": "array", "maxItems": 0 }
+      }
+    },
+    "duplicates": {
+      "type": "object",
+      "required": ["policy", "nk1_status", "groups"],
+      "properties": {
+        "policy": { "const": "retain_all_no_DISTINCT" },
+        "nk1_status": { "const": "OPEN" },
+        "unique_event_ids": { "type": "boolean" },
+        "unique_provenance": { "type": "boolean" },
+        "groups": { "type": "array" }
+      }
+    },
+    "chronology": {
+      "type": "object",
+      "required": ["axis", "dt1_status", "bootstrap_rows", "r1_q_tz_status"],
+      "properties": {
+        "axis": { "const": "GETTING_DATE" },
+        "dt1_status": { "enum": ["BLOCKED", "OPEN"] },
+        "r1_q_tz_status": { "const": "OPEN" },
+        "bootstrap_rows": { "type": "array" }
+      }
+    },
+    "tape_by_day_selected": { "type": "array" },
+    "kit_idempotency": { "type": "array" },
+    "orphans": { "type": "object" },
+    "exclusions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["ref", "tag", "exclusion_reason"],
+        "properties": {
+          "ref": { "type": "string" },
+          "tag": { "type": "string" },
+          "exclusion_reason": { "type": "string" }
+        }
+      }
+    },
+    "invariants": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": true
+}
