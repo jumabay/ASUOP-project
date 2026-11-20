@@ -110,9 +110,10 @@ flowchart TD
 | ID | Задача | Агенты | Критерий готовности |
 | --- | --- | --- | --- |
 | P0-1 | Зафиксировать мультиагентный контур (agents, AGENTS, rules, этот план) | lead | Файлы в PR; без бизнес-кода |
-| P0-2 | Стабильный тест-прогон на JDK 21 (+ ASCII path / CI) | qa, backend | `gradlew test` и `frontend` tests воспроизводимо зелёные |
+| P0-2 | Стабильный тест-прогон на JDK 21 (+ ASCII path / CI) | qa, backend | **DONE** (PR #2). `gradlew test` + frontend tests + CI Temurin 21 |
 | P0-3 | Регрессионный чеклист R0–R3 REST/UI | qa, frontend | Чеклист + автоматические тесты не красные |
 | P0-4 | Secret-hygiene review tools/docs before next code wave | qa, database | Нет секретов в Git; `.gitignore` актуален |
+| P0-5 | Synthetic runtime smoke (boot + REST R1–R3 + FE/API + CI offline) | backend, frontend, qa | App поднимается на `synthetic`; smoke/e2e без Oracle; логи и QA-verdict; **APPROVED** в APPROVALS |
 
 ### P1 — следующий продуктовый контур (нужны разрешения)
 
@@ -121,7 +122,7 @@ flowchart TD
 | P1-1 | Выдать TEST Oracle + read-only учётка | APPROVALS | database, lead |
 | P1-2 | Включить/написать JDBC read adapters для A1/A2 + parity IT | P1-1 | backend, database, qa |
 | P1-3 | Закрыть G31 / критерий watched list vs legacy | package text или TEST | database, backend |
-| P1-4 | UI polish + e2e smoke (Playwright — по стратегии 16, отдельное APPROVED) | P0-3 | frontend, qa |
+| P1-4 | Playwright browser e2e smoke (synthetic/offline) | **APPROVED WITH CONSTRAINTS** (см. APPROVALS); выполнять с P0-5 | frontend, qa |
 
 ### P2 — миграция и расширения
 
@@ -165,14 +166,16 @@ flowchart TD
 4. `/frontend` подтверждает `npm test` + `npm run build`.
 5. `/qa` пишет короткий regression sheet R1–R3 (карточка, сутки, реестр, слежение).
 6. PR → review человека → merge в `main`.
-7. **Стоп.** Следующий цикл (JDBC / RAILDB) не стартует без новых строк в APPROVALS.
+7. **DONE (PR #2).** Следующий цикл кода — только после строк APPROVALS на P0-5 / P1-4 (docs-only PR) и merge.
 
-### Что нужно от человека для первого цикла
+### Цикл P0-5 / P1-4 (после merge APPROVALS)
 
-- Одобрение этого конфигурационного PR.
-- Подтверждение, что агенты могут править **только** build/test/CI/docs для стабилизации прогона (P0-2), либо указание использовать исключительно `subst` без правок кода.
-- JDK 21 как default для агентных сессий (или согласие всегда экспортировать `JAVA_HOME`).
-- По-прежнему: никаких Production Oracle credentials в репозиторий.
+1. Lead: `feature/p0-synthetic-runtime-smoke`.
+2. `/backend`: boot `synthetic` на JDK 21; REST smoke R1–R3; чинит только test/CI infra.
+3. `/frontend`: UI↔API integration + Playwright smoke (synthetic/offline only).
+4. GitHub Actions: offline job(s) без Oracle/FTP/RWL.
+5. `/qa`: независимый verdict по логам; без ослабления assert.
+6. PR → human merge. **Не** JDBC / RAILDB / live integrations.
 
 ## 9. Ссылки
 
