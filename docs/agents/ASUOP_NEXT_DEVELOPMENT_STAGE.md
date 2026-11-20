@@ -51,7 +51,8 @@
 ### 1.4. CI / QA (offline)
 
 Jobs в `.github/workflows/gradle-jdk21-test.yml`: `unit-tests` (Gradle + explicit `SyntheticRuntimeSmokeTest`), `frontend-unit` (Vitest + build), `playwright-smoke` (bootRun synthetic + Chromium).  
-Вердикт QA: **PASS** для «synthetic demo / offline CI»; **BLOCKED** для ops / Oracle / legacy parity.
+Вердикт QA: **PASS** для «synthetic demo / offline CI»; **BLOCKED** для ops / Oracle / legacy parity.  
+**CI evidence (follow-up):** push на `main` после merge PR #4 (`224c3eb`) — workflow `Gradle JDK21 test` **success** (run `44690124705`, 2026-11-20). Docs-only PR #5 CI — регрессия того же offline suite.
 
 ---
 
