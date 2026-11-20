@@ -40,6 +40,7 @@ docs/architecture|analysis
 | R3 | DONE (synthetic) | «Вагоны на слежении», synthetic 60 кодов |
 | R4 | DONE (research) | Evidence NUFF `GetActiveWagonList` — caller UI не найден (G31 OPEN) |
 | P0–P3C | Docs / partial | RAILDB pack, offline RWL, dictionary probes; P3C-1 PARTIAL (NK1/DT1 BLOCKED, G31) |
+| P4-0 | APPROVED (offline docs) | Storage contracts R1–R3: [40](../architecture/40_P4_0_RAILDB_STORAGE_CONTRACTS.md), [41](../architecture/41_P4_0_R1_R3_FIELD_MAPPING.md); V0b + `sql/raildb/read/*`. ADR-0009 остаётся PROPOSED; Create/Flyway/JDBC — нет |
 | JDBC parity | Disabled | Нет APPROVED TEST Oracle URL |
 | Live import / RAILDB create / Flyway apply | DENIED | Ждут отдельных строк APPROVALS |
 

@@ -45,6 +45,7 @@
 ### 1.3. Документация / дизайн RAILDB (без исполнения)
 
 - ADR-0009 **PROPOSED**; ER `27`, матрица `25`, план 12м `29`, DDL draft `sql/raildb/V0__draft_confirmed_core.sql`
+- **P4-0 Storage Contracts (offline) APPROVED** — overview [40_P4_0_RAILDB_STORAGE_CONTRACTS.md](../architecture/40_P4_0_RAILDB_STORAGE_CONTRACTS.md), R1–R3 field map [41_P4_0_R1_R3_FIELD_MAPPING.md](../architecture/41_P4_0_R1_R3_FIELD_MAPPING.md); V0b non-partitioned fallback + `sql/raildb/read/*` stubs (DO NOT EXECUTE)
 - P3B/P3C dictionary + semantics: RP1/WH1 **CONFIRMED**; NK1/DT1 **BLOCKED**; G31 **OPEN**
 - DBA worksheets offline; apply / create instance — **DENIED**
 
@@ -169,7 +170,7 @@ Jobs в `.github/workflows/gradle-jdk21-test.yml`: `unit-tests` (Gradle + explic
 
 | Decision | Предлагаемый статус | Разрешает | Не разрешает |
 | --- | --- | --- | --- |
-| P4-0 RAILDB storage contracts (offline) | **нужен APPROVED** | Docs DDL/SQL drafts; fail-fast stubs всех read-портов под `raildb-test`; mapping R1–R2; тесты без Oracle | JDBC connect; Flyway apply; create RAILDB; DBTC/RAILDB DML; live FTP/RWL; смена REST R1–R3; Accept ADR-0009 |
+| P4-0 RAILDB storage contracts (offline) | **APPROVED** (журнал); docs `40`/`41` | Docs DDL/SQL drafts; fail-fast stubs всех read-портов под `raildb-test`; mapping R1–R3; тесты без Oracle | JDBC connect; Flyway apply; create RAILDB; DBTC/RAILDB DML; live FTP/RWL; смена REST R1–R3; Accept ADR-0009 |
 
 *Этот docs-only PR **не** добавляет строку в `APPROVALS_TEMPLATE.md` без явного согласия владельца — ниже только текст для копирования.*
 
@@ -226,8 +227,8 @@ Jobs в `.github/workflows/gradle-jdk21-test.yml`: `unit-tests` (Gradle + explic
 
 ### 9.2. Definition of Done — S1
 
-- [ ] Строка APPROVED P4-0 в журнале  
-- [ ] DDL/SQL drafts + mapping committed; V0 не «применён»  
+- [x] Строка APPROVED P4-0 в журнале  
+- [ ] DDL/SQL drafts + mapping committed (`40`/`41`, V0b, `sql/raildb/read/*`); V0 не «применён»  
 - [ ] Stubs всех четырёх портов под `raildb-test`; synthetic не сломан  
 - [ ] QA verdict PASS  
 - [ ] PR в `main`; merge только человеком  
@@ -277,5 +278,6 @@ Jobs в `.github/workflows/gradle-jdk21-test.yml`: `unit-tests` (Gradle + explic
 - План: [ASUOP_DEVELOPMENT_PLAN.md](ASUOP_DEVELOPMENT_PLAN.md)  
 - Approvals: [../architecture/APPROVALS_TEMPLATE.md](../architecture/APPROVALS_TEMPLATE.md)  
 - ADR-0009: [../architecture/decisions/ADR-0009-raildb-primary-store.md](../architecture/decisions/ADR-0009-raildb-primary-store.md)  
+- P4-0 contracts: [40](../architecture/40_P4_0_RAILDB_STORAGE_CONTRACTS.md), [41](../architecture/41_P4_0_R1_R3_FIELD_MAPPING.md)  
 - ER / 12м / matrix: [27](../architecture/27_RAILDB_ER_MODEL.md), [29](../architecture/29_RAILDB_MIGRATION_12M_PLAN.md), [25](../architecture/25_DBTC_TO_RAILDB_MIGRATION_MATRIX.md)  
 - Smoke: [SYNTHETIC_RUNTIME_SMOKE.md](SYNTHETIC_RUNTIME_SMOKE.md)

@@ -1,9 +1,12 @@
--- DRAFT ONLY for RAILDB.RAIL_APP — DO NOT EXECUTE (P3A/P3B-0).
+-- DRAFT ONLY for RAILDB.RAIL_APP — DO NOT EXECUTE (P3A/P3B-0; referenced by P4-0).
 -- Flyway disabled. Apply only after APPROVALS + P3B column confirmation.
 -- Oracle 12.2 syntax OK for IDENTITY / RANGE partitions.
 -- LICENSING: PARTITION BY RANGE + LOCAL indexes require Oracle Partitioning option (EE).
 -- If Partitioning is not licensed, replace RAIL_DISL_EVENT with a non-partitioned table
--- and keep (wagon_id, dislocation_ts) btree indexes (see 32_P3B0_DICTIONARY_PROBE_AUDIT.md §4).
+-- and keep (wagon_id, dislocation_ts) btree indexes (see 32_P3B0_DICTIONARY_PROBE_AUDIT.md §4
+-- and V0b__draft_nonpartitioned_disl_fallback.sql — P4-0).
+-- Read-path contracts / SELECT stubs: docs/architecture/40_P4_0_RAILDB_STORAGE_CONTRACTS.md
+-- and sql/raildb/read/*.sql. ADR-0009 remains PROPOSED.
 -- Objects below are logical core with PROVISIONAL UK where noted.
 
 -- References
