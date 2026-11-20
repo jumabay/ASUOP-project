@@ -1,6 +1,6 @@
 ---
 description: Special Oracle and legacy integration constraints.
-globs: **/*.{sql,pls,plsql},backend/**/repository/**,backend/**/integration/**,workers/**
+globs: "**/*.{sql,pls,plsql},platform-oracle/**/*,tools/oracle-*/**/*,tools/dbtc-*/**/*,docs/architecture/sql/**/*"
 alwaysApply: false
 ---
 # Oracle + legacy boundaries
