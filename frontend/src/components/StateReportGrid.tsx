@@ -1,9 +1,10 @@
 import { AgGridReact } from 'ag-grid-react'
 import type { ColDef } from 'ag-grid-community'
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community'
-import { Empty } from 'antd'
+import { Empty, Space } from 'antd'
 import { useMemo } from 'react'
 import type { StateReportLine } from '../types'
+import { DAY_LINE_MAX, DayReportStatus } from './DayReportStatus'
 import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-quartz.css'
 
@@ -12,33 +13,70 @@ ModuleRegistry.registerModules([AllCommunityModule])
 interface Props {
   lines: StateReportLine[]
   empty: boolean
+  loading?: boolean
+  error?: string | null
+  onRetry?: () => void
+  /** When set (data loaded), shows caption N / max 500. */
+  lineCount?: number | null
+  maxLines?: number
 }
 
-export function StateReportGrid({ lines, empty }: Props) {
+export function StateReportGrid({
+  lines,
+  empty,
+  loading = false,
+  error = null,
+  onRetry,
+  lineCount = null,
+  maxLines = DAY_LINE_MAX,
+}: Props) {
   const columnDefs = useMemo<ColDef<StateReportLine>[]>(
     () => [
-      { field: 'reportId', headerName: 'ID отчёта', width: 120 },
-      { field: 'dislocationTime', headerName: 'Время дислокации', flex: 1, minWidth: 180 },
-      { field: 'stationCode', headerName: 'Станция', width: 120 },
-      { field: 'operationCode', headerName: 'Операция', width: 120 },
-      { field: 'wagonCode', headerName: 'Вагон', width: 130 },
+      { field: 'reportId', headerName: 'ID отчёта', width: 120, sortable: true },
+      {
+        field: 'dislocationTime',
+        headerName: 'Время дислокации',
+        flex: 1,
+        minWidth: 180,
+        sortable: true,
+      },
+      { field: 'stationCode', headerName: 'Станция', width: 120, sortable: true },
+      { field: 'operationCode', headerName: 'Операция', width: 120, sortable: true },
+      { field: 'wagonCode', headerName: 'Вагон', width: 130, sortable: true },
     ],
     [],
   )
 
-  if (empty) {
-    return <Empty description="За выбранные сутки записей нет" />
+  if (loading || error) {
+    return (
+      <DayReportStatus
+        loading={loading}
+        error={error}
+        onRetry={onRetry}
+        lineCount={null}
+        maxLines={maxLines}
+      />
+    )
   }
 
   return (
-    <div className="ag-theme-quartz state-report-grid" style={{ height: 360, width: '100%' }}>
-      <AgGridReact<StateReportLine>
-        rowData={lines}
-        columnDefs={columnDefs}
-        getRowId={(params) => String(params.data.reportId)}
-        suppressCellFocus
-        animateRows
-      />
-    </div>
+    <Space orientation="vertical" size="middle" style={{ width: '100%' }}>
+      <DayReportStatus lineCount={lineCount} maxLines={maxLines} />
+      {empty ? (
+        <Empty description="За выбранные сутки записей нет" />
+      ) : (
+        <div className="ag-theme-quartz state-report-grid" style={{ height: 360, width: '100%' }}>
+          <AgGridReact<StateReportLine>
+            rowData={lines}
+            columnDefs={columnDefs}
+            getRowId={(params) => String(params.data.reportId)}
+            suppressCellFocus
+            animateRows={false}
+          />
+        </div>
+      )}
+    </Space>
   )
 }
+
+export { DAY_LINE_MAX }
