@@ -30,12 +30,18 @@ export interface WatchedWagonItem {
   inventoryPark: boolean
 }
 
+/** Additive P5-D honesty label; FIXTURE ≠ company Active / G31. */
+export type WatchedMembershipSource = 'FIXTURE' | 'EMPTY_PENDING_G31'
+
 export interface WatchedWagonPage {
   content: WatchedWagonItem[]
   page: number
   size: number
   totalElements: number
   totalPages: number
+  /** Additive (P5-D); synthetic returns FIXTURE, RAIL returns EMPTY_PENDING_G31. */
+  membershipSource: WatchedMembershipSource
+  membershipNote: string
 }
 
 export interface StateReportLine {
