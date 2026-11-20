@@ -1,0 +1,37 @@
+-- =============================================================================
+-- P4-2 DRAFT — DO NOT EXECUTE under P4-2 gate.
+-- =============================================================================
+-- Purpose: EXPLAIN PLAN ONLY before any STATEREPORTRECORDS data probe (NK1/DT1).
+-- Account: TEST / DBTC_READONLY after separate APPROVED tape access plan.
+-- Forbidden: Production; unscoped binds; treating this file as authorization to run.
+-- Pass: INDEX RANGE/UNIQUE on IDX_REC_GETTING_DATE (or wagon+getting), NOT FULL SCAN.
+-- Timeout suggest: 15s. No tape row fetch required for plan display.
+-- Binds (example shapes only — DBA chooses low-traffic hour):
+--   :d_from TIMESTAMP, :d_to TIMESTAMP  -- half-open one hour
+--   :wagon_id NUMBER                    -- for second shape
+-- Sanitize exports: no passwords; plan text only.
+-- Ancestor: ../p3c/00_explain_plan_gates.sql
+-- =============================================================================
+
+-- EXPLAIN PLAN FOR
+-- SELECT /*+ INDEX(srr IDX_REC_GETTING_DATE) */
+--        srr.wagon_id, srr.report_id, srr.getting_date, srr.location_date
+-- FROM dbtc.statereportrecords srr
+-- WHERE srr.getting_date >= :d_from
+--   AND srr.getting_date <  :d_to
+--   AND ROWNUM <= 100;
+--
+-- SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY(NULL, NULL, 'BASIC +PREDICATE +INDEX'));
+
+-- EXPLAIN PLAN FOR
+-- SELECT /*+ INDEX(srr IDX_REC_WAGON_ID) */
+--        srr.wagon_id, srr.report_id, srr.getting_date
+-- FROM dbtc.statereportrecords srr
+-- WHERE srr.wagon_id = :wagon_id
+--   AND srr.getting_date <= :cutoff_ts
+--   AND ROWNUM <= 50;
+--
+-- SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY(NULL, NULL, 'BASIC +PREDICATE +INDEX'));
+
+-- Export: p4_2_NK1_plan_<yyyymmdd>.txt
+-- STOP if plan shows TABLE ACCESS FULL on STATEREPORTRECORDS.

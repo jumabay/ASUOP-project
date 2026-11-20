@@ -1,0 +1,82 @@
+-- =============================================================================
+-- P4-2 DRAFT — DO NOT EXECUTE under P4-2 gate.
+-- =============================================================================
+-- Gap: G31 — watched / Active membership (WagonPackage.GetActiveWagonList)
+-- Safe intent: dictionary + SPEC text discovery ONLY.
+-- Forbidden: EXECUTE / CALL / BEGIN GetActiveWagonList; cursor dumps;
+--            claiming watched filled; using R3 watched.json as M8 source.
+-- Constraint: Watched / M8 stays EMPTY until G31 business pick + evidence.
+-- Timeout suggest: 30s. Expected load: ALL_* catalog (low).
+-- If 0 rows: grant gap — use secured file-share SPEC export (doc 38); no secrets in Git.
+-- Ancestor: ../p3c/G31_watched_dictionary.sql + doc 38 request list
+-- =============================================================================
+
+-- -----------------------------------------------------------------------------
+-- G31.1 Package object visibility
+-- -----------------------------------------------------------------------------
+-- SELECT object_name, object_type, status, created, last_ddl_time
+-- FROM all_objects
+-- WHERE owner = 'DBTC'
+--   AND object_type IN ('PACKAGE', 'PACKAGE BODY')
+--   AND object_name IN (
+--         'WAGONPACKAGE',
+--         'STATEREPORTPACKAGE',
+--         'WAGONSTATEREPORTSPKG',
+--         'GIVINGPKG',
+--         'IMPORTPKG',
+--         'REPAIRSPKG',
+--         'WAREHOUSEPKG'
+--       )
+-- ORDER BY object_name, object_type;
+-- Export: p4_2_G31_packages_<yyyymmdd>.csv
+
+-- -----------------------------------------------------------------------------
+-- G31.2 Arguments for Active vs explorer list (Oracle 12.2: OBJECT_NAME = subprogram)
+-- -----------------------------------------------------------------------------
+-- SELECT package_name,
+--        object_name AS procedure_name,
+--        overload,
+--        argument_name,
+--        position,
+--        data_type,
+--        in_out
+-- FROM all_arguments
+-- WHERE owner = 'DBTC'
+--   AND package_name = 'WAGONPACKAGE'
+--   AND UPPER(object_name) IN ('GETACTIVEWAGONLIST', 'GETWAGONLIST', 'GETWAGONBYCODE')
+-- ORDER BY object_name, overload, position;
+-- Export: p4_2_G31_args_<yyyymmdd>.csv
+
+-- -----------------------------------------------------------------------------
+-- G31.3 SPEC text snippets only (BODY only if DBA policy + separate approve)
+-- -----------------------------------------------------------------------------
+-- SELECT name, type, line, text
+-- FROM all_source
+-- WHERE owner = 'DBTC'
+--   AND name = 'WAGONPACKAGE'
+--   AND type = 'PACKAGE'
+--   AND (
+--         UPPER(text) LIKE '%GETACTIVEWAGONLIST%'
+--      OR UPPER(text) LIKE '%GETWAGONLIST%'
+--       )
+--   AND ROWNUM <= 200
+-- ORDER BY line;
+-- Export: p4_2_G31_spec_<yyyymmdd>.csv
+-- Prefer DBA secured export of full SPEC if catalog SELECT denied.
+
+-- -----------------------------------------------------------------------------
+-- G31.4 Document-slice columns (clue only — NOT Active membership proof)
+-- -----------------------------------------------------------------------------
+-- SELECT table_name, column_name, data_type, nullable
+-- FROM all_tab_columns
+-- WHERE owner = 'DBTC'
+--   AND table_name IN ('WAGONSTATEREPORTS', 'WAGONSTATEREPORTSRECORDS')
+-- ORDER BY table_name, column_id;
+-- Export: p4_2_G31_doc_slice_cols_<yyyymmdd>.csv
+
+-- Offline distinction (no SQL):
+--   GetWagonList          = explorer "Все вагоны" (CONFIRMED R4 / doc 11)
+--   GetActiveWagonList    = Remoting API; UI call-site not found; predicate UNKNOWN
+--   wagons.txt            = PublishRegistryStateReports* (CONFIRMED other path)
+--   R3 watched.json (60)  = synthetic fixture — NEVER M8 source
+-- Membership populate requires owner pick AFTER evidence — not this file.
