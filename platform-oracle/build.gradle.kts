@@ -10,3 +10,11 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
+
+// Copy offline migration golden pack into test classpath (no Oracle).
+tasks.named<ProcessResources>("processTestResources") {
+    from("${rootProject.projectDir}/fixtures/migration/v1") {
+        into("fixtures/migration/v1")
+        exclude("_generate.ps1", "validate.ps1")
+    }
+}
