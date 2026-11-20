@@ -23,7 +23,9 @@ import {
   fetchWatchedWagons,
 } from './api/wagonsApi'
 import { AppShell } from './components/AppShell'
+import { DayReportStatus } from './components/DayReportStatus'
 import { GlobalWagonSearch } from './components/GlobalWagonSearch'
+import { ListErrorRetry } from './components/ListErrorRetry'
 import { StateReportGrid } from './components/StateReportGrid'
 import { WagonCardPanel } from './components/WagonCardPanel'
 import { WagonRegistryGrid } from './components/WagonRegistryGrid'
@@ -527,7 +529,9 @@ export default function App() {
                         <Spin size="large" description="Загрузка слежения…" />
                       </Flex>
                     )}
-                    {watchedError && <Alert type="error" showIcon title={watchedError} />}
+                    {watchedError && (
+                      <ListErrorRetry message={watchedError} onRetry={() => void loadWatched()} />
+                    )}
                     {!watchedLoading && (
                       <WatchedWagonGrid
                         rows={watchedRows}
@@ -627,7 +631,12 @@ export default function App() {
                         <Spin size="large" description="Загрузка реестра…" />
                       </Flex>
                     )}
-                    {registryError && <Alert type="error" showIcon title={registryError} />}
+                    {registryError && (
+                      <ListErrorRetry
+                        message={registryError}
+                        onRetry={() => void loadRegistry()}
+                      />
+                    )}
                     {!registryLoading && (
                       <WagonRegistryGrid
                         rows={registryRows}
@@ -719,12 +728,9 @@ export default function App() {
       </Card>
 
       <Space orientation="vertical" size="large" style={{ width: '100%', marginTop: 24 }}>
-        {(cardLoading || dayLoading) && (
+        {cardLoading && (
           <Flex justify="center" style={{ padding: 32 }}>
-            <Spin
-              size="large"
-              description={cardLoading ? 'Загрузка карточки…' : 'Загрузка суток…'}
-            />
+            <Spin size="large" description="Загрузка карточки…" />
           </Flex>
         )}
 
@@ -738,9 +744,6 @@ export default function App() {
           />
         )}
         {error && !notFound && <Alert type="error" showIcon title={error} />}
-        {dayError && !notFound && !limitExceeded && (
-          <Alert type="error" showIcon title={dayError} />
-        )}
 
         {!cardLoading && card && (
           <Card>
@@ -748,9 +751,22 @@ export default function App() {
           </Card>
         )}
 
+        {(dayLoading || (dayError && !notFound && !limitExceeded)) && (
+          <DayReportStatus
+            loading={dayLoading}
+            error={dayError && !notFound && !limitExceeded ? dayError : null}
+            onRetry={() => void loadDayHistory()}
+          />
+        )}
+
         {!dayLoading && day && (
           <Card title={`История дислокации · ${day.date}`}>
-            <StateReportGrid lines={day.lines} empty={emptyDay} />
+            <StateReportGrid
+              lines={day.lines}
+              empty={emptyDay}
+              lineCount={day.lines.length}
+              onRetry={() => void loadDayHistory()}
+            />
           </Card>
         )}
       </Space>
