@@ -47,8 +47,9 @@ jobs:
         run: npm run build
 
   # P0-5 FE↔API + P1-4 Playwright: synthetic/offline only (no Oracle).
+  # Pin OS: Playwright 1.57 has no chromium deps for ubuntu26.04 (ubuntu-latest).
   playwright-smoke:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 21
@@ -81,12 +82,15 @@ jobs:
           echo "=== bootRun log (tail) ==="
           tail -n 200 /tmp/bootRun.log || true
           exit 1
-      - name: Frontend install, Chromium, build
+      - name: Frontend npm ci
         working-directory: frontend
-        run: |
-          npm ci
-          npx playwright install --with-deps chromium
-          npm run build
+        run: npm ci
+      - name: Install Playwright Chromium
+        working-directory: frontend
+        run: npx playwright install --with-deps chromium
+      - name: Frontend production build
+        working-directory: frontend
+        run: npm run build
       - name: Playwright synthetic browser smoke
         working-directory: frontend
         env:
