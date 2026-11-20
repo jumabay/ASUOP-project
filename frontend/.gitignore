@@ -12,6 +12,14 @@ dist
 dist-ssr
 *.local
 
+# Playwright (P1-4) — keep artifacts local / CI-only
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/e2e/screenshots/*.png
+
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
