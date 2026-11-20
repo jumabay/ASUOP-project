@@ -233,4 +233,4 @@ Create **Production** twin is a **separate** approval after TEST soak — not im
 
 P4-2 delivers this handoff + checklist **as documentation**.  
 **No** Oracle connect, **no** Create RAILDB, **no** DDL/Flyway, **no** real accounts, **no** migrate.  
-Next human gate: close TBD list in §14 of checklist 43 / questions above → Approve **Create empty RAILDB TEST**.
+Next human gate: close TBD items in checklist 43 §1 (pre-create decisions) and §6 (sign-off) / questions above → Approve **Create empty RAILDB TEST**.
