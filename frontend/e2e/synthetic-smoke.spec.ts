@@ -69,8 +69,8 @@ test.describe('P1-4 synthetic UI smoke (offline)', () => {
     await setPickerDate(page, DAY_WITH_DATA)
     await page.getByRole('button', { name: 'Найти' }).click()
 
-    await expect(page.getByText('Карточка вагона')).toBeVisible()
-    await expect(page.getByText(SYN_WAGON, { exact: true }).first()).toBeVisible()
+    // Prefer exact card caption — header also contains substring «карточка вагона».
+    await expect(page.getByText(`Карточка вагона ${SYN_WAGON}`, { exact: true })).toBeVisible()
     await expect(page.getByText(`История дислокации · ${DAY_WITH_DATA}`)).toBeVisible()
     await expect(page.getByRole('gridcell', { name: SYN_WAGON, exact: true }).first()).toBeVisible()
 
@@ -115,7 +115,7 @@ test.describe('P1-4 synthetic UI smoke (offline)', () => {
     await expect(row).toBeVisible()
     await row.click()
 
-    await expect(page.getByText('Карточка вагона')).toBeVisible()
+    await expect(page.getByText(`Карточка вагона ${SYN_WAGON}`, { exact: true })).toBeVisible()
     await expect(page.getByText(`История дислокации · ${DAY_WITH_DATA}`)).toBeVisible()
   })
 })
