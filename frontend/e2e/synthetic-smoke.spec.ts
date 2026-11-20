@@ -20,6 +20,20 @@ async function setPickerDate(page: Page, isoDate: string) {
   await page.keyboard.press('Escape')
 }
 
+async function applyListSearch(page: Page, panelName: string, value: string) {
+  const panel = page.getByRole('tabpanel', { name: panelName })
+  const search = panel.getByPlaceholder('Поиск по номеру (contains)')
+  await search.fill(value)
+  await panel.getByRole('button', { name: 'Найти' }).click()
+}
+
+function cardFindButton(page: Page) {
+  return page
+    .locator('.ant-card')
+    .filter({ hasText: 'Карточка и история' })
+    .getByRole('button', { name: 'Найти' })
+}
+
 test.describe('P1-4 synthetic UI smoke (offline)', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/')
@@ -32,12 +46,11 @@ test.describe('P1-4 synthetic UI smoke (offline)', () => {
       'true',
     )
 
+    await applyListSearch(page, 'Вагоны на слежении', SYN_WAGON)
     const panel = page.getByRole('tabpanel', { name: 'Вагоны на слежении' })
-    const search = panel.getByPlaceholder('Поиск по номеру (contains)')
-    await search.fill(SYN_WAGON)
     await expect(panel.getByRole('gridcell', { name: SYN_WAGON, exact: true })).toBeVisible()
 
-    await search.fill('NOMATCH')
+    await applyListSearch(page, 'Вагоны на слежении', 'NOMATCH')
     await expect(page.getByText('По заданным условиям вагоны не найдены')).toBeVisible()
 
     await page.screenshot({
@@ -53,9 +66,8 @@ test.describe('P1-4 synthetic UI smoke (offline)', () => {
       'true',
     )
 
+    await applyListSearch(page, 'Реестр вагонов', SYN_WAGON)
     const panel = page.getByRole('tabpanel', { name: 'Реестр вагонов' })
-    const search = panel.getByPlaceholder('Поиск по номеру (contains)')
-    await search.fill(SYN_WAGON)
     await expect(panel.getByRole('gridcell', { name: SYN_WAGON, exact: true })).toBeVisible()
 
     await page.screenshot({
@@ -64,13 +76,15 @@ test.describe('P1-4 synthetic UI smoke (offline)', () => {
     })
   })
 
-  test('wagon card and day history with data', async ({ page }) => {
+  test('wagon card loads without day; day on explicit action', async ({ page }) => {
     await page.getByPlaceholder('Номер вагона').fill(SYN_WAGON)
     await setPickerDate(page, DAY_WITH_DATA)
-    await page.getByRole('button', { name: 'Найти' }).click()
+    await cardFindButton(page).click()
 
-    // Prefer exact card caption — header also contains substring «карточка вагона».
     await expect(page.getByText(`Карточка вагона ${SYN_WAGON}`, { exact: true })).toBeVisible()
+    await expect(page.getByText(/История дислокации/)).toHaveCount(0)
+
+    await page.getByRole('button', { name: 'Загрузить сутки' }).click()
     await expect(page.getByText(`История дислокации · ${DAY_WITH_DATA}`)).toBeVisible()
     await expect(page.getByRole('gridcell', { name: SYN_WAGON, exact: true }).first()).toBeVisible()
 
@@ -83,7 +97,7 @@ test.describe('P1-4 synthetic UI smoke (offline)', () => {
   test('empty day history path', async ({ page }) => {
     await page.getByPlaceholder('Номер вагона').fill(SYN_WAGON)
     await setPickerDate(page, DAY_EMPTY)
-    await page.getByRole('button', { name: 'Найти' }).click()
+    await page.getByRole('button', { name: 'Загрузить сутки' }).click()
 
     await expect(page.getByText(`История дислокации · ${DAY_EMPTY}`)).toBeVisible()
     await expect(page.getByText('За выбранные сутки записей нет')).toBeVisible()
@@ -97,7 +111,7 @@ test.describe('P1-4 synthetic UI smoke (offline)', () => {
   test('not-found error path', async ({ page }) => {
     await page.getByPlaceholder('Номер вагона').fill(UNKNOWN_WAGON)
     await setPickerDate(page, DAY_WITH_DATA)
-    await page.getByRole('button', { name: 'Найти' }).click()
+    await cardFindButton(page).click()
 
     await expect(page.getByText('Вагон не найден')).toBeVisible()
 
@@ -107,15 +121,17 @@ test.describe('P1-4 synthetic UI smoke (offline)', () => {
     })
   })
 
-  test('watched row opens card via navigation', async ({ page }) => {
+  test('watched row opens card only; deep-link updates URL', async ({ page }) => {
+    await applyListSearch(page, 'Вагоны на слежении', SYN_WAGON)
     const panel = page.getByRole('tabpanel', { name: 'Вагоны на слежении' })
-    const search = panel.getByPlaceholder('Поиск по номеру (contains)')
-    await search.fill(SYN_WAGON)
     const row = panel.getByRole('row', { name: new RegExp(SYN_WAGON) })
     await expect(row).toBeVisible()
     await row.click()
 
     await expect(page.getByText(`Карточка вагона ${SYN_WAGON}`, { exact: true })).toBeVisible()
-    await expect(page.getByText(`История дислокации · ${DAY_WITH_DATA}`)).toBeVisible()
+    await expect(page.getByTestId('wagon-card-watched-tag')).toHaveText('На слежении')
+    await expect(page.getByText(/История дислокации/)).toHaveCount(0)
+    await expect(page).toHaveURL(/tab=watched/)
+    await expect(page).toHaveURL(new RegExp(`wagon=${SYN_WAGON}`))
   })
 })
