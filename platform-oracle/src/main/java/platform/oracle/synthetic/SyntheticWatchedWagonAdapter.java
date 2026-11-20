@@ -10,10 +10,15 @@ import org.springframework.stereotype.Component;
 import platform.fleet.WagonCardPort;
 import platform.fleet.WagonRegistryCriteria;
 import platform.fleet.WagonRegistrySort;
+import platform.fleet.WatchedMembershipSource;
 import platform.fleet.WatchedWagonItem;
 import platform.fleet.WatchedWagonPage;
 import platform.fleet.WatchedWagonPort;
 
+/**
+ * Synthetic watched adapter: returns classpath fixture rows labeled
+ * {@link WatchedMembershipSource#FIXTURE} (demo only; not company Active / G31).
+ */
 @Component
 @Profile("synthetic")
 public class SyntheticWatchedWagonAdapter implements WatchedWagonPort {
@@ -58,12 +63,13 @@ public class SyntheticWatchedWagonAdapter implements WatchedWagonPort {
                     .toList();
         }
 
-        return new WatchedWagonPage(
+        return WatchedWagonPage.of(
                 content,
                 criteria.page(),
                 criteria.size(),
                 total,
-                WatchedWagonPage.computeTotalPages(total, criteria.size()));
+                WatchedWagonPage.computeTotalPages(total, criteria.size()),
+                WatchedMembershipSource.FIXTURE);
     }
 
     private WatchedWagonItem toItem(String wagonCode) {

@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import platform.fleet.WagonRegistryCriteria;
 import platform.fleet.WagonRegistrySort;
+import platform.fleet.WatchedMembershipSource;
 import platform.fleet.WatchedWagonPage;
 
 class SyntheticWatchedWagonAdapterTest {
@@ -32,9 +33,20 @@ class SyntheticWatchedWagonAdapterTest {
         assertEquals(60, page.totalElements());
         assertEquals(1, page.totalPages());
         assertEquals(60, page.content().size());
+        assertEquals(WatchedMembershipSource.FIXTURE, page.membershipSource());
+        assertTrue(page.membershipNote().contains("FIXTURE"));
         assertTrue(page.content().stream().allMatch(i -> catalog.contains(i.wagonCode())));
         assertTrue(catalog.contains("SYN-00250"));
         assertTrue(page.content().stream().noneMatch(i -> "SYN-00250".equals(i.wagonCode())));
+    }
+
+    @Test
+    void membershipSourceIsFixtureNotActiveClaim() {
+        WatchedWagonPage page = adapter.findPage(
+                new WagonRegistryCriteria(null, 0, 1, WagonRegistrySort.CODE_ASC));
+        assertEquals(WatchedMembershipSource.FIXTURE, page.membershipSource());
+        assertFalse(page.membershipNote().toLowerCase().contains("getactivewagonlist confirmed"));
+        assertTrue(page.membershipNote().contains("G31 OPEN"));
     }
 
     @Test

@@ -13,12 +13,13 @@ class WatchedWagonQueryTest {
         assertEquals(0, criteria.page());
         assertEquals(50, criteria.size());
         assertEquals(WagonRegistrySort.CODE_ASC, criteria.sort());
-        return new WatchedWagonPage(
+        return WatchedWagonPage.of(
                 List.of(sample("SYN-00001")),
                 criteria.page(),
                 criteria.size(),
                 1,
-                1);
+                1,
+                WatchedMembershipSource.FIXTURE);
     });
 
     @Test
@@ -26,16 +27,19 @@ class WatchedWagonQueryTest {
         WatchedWagonPage page = query.search(null, null, null, null);
         assertEquals(1, page.content().size());
         assertEquals("SYN-00001", page.content().getFirst().wagonCode());
+        assertEquals(WatchedMembershipSource.FIXTURE, page.membershipSource());
+        assertTrue(page.membershipNote().contains("FIXTURE"));
     }
 
     @Test
     void blankSearchBecomesNull() {
         WatchedWagonQuery q = new WatchedWagonQuery(criteria -> {
             assertEquals(null, criteria.search());
-            return new WatchedWagonPage(List.of(), 0, 50, 0, 0);
+            return WatchedWagonPage.of(List.of(), 0, 50, 0, 0, WatchedMembershipSource.FIXTURE);
         });
         WatchedWagonPage page = q.search("   ", 0, 50, "code,asc");
         assertTrue(page.content().isEmpty());
+        assertEquals(WatchedMembershipSource.FIXTURE, page.membershipSource());
     }
 
     @Test
@@ -51,6 +55,15 @@ class WatchedWagonQueryTest {
     @Test
     void invalidSortRejected() {
         assertThrows(InvalidSortException.class, () -> query.search(null, 0, 50, "model,asc"));
+    }
+
+    @Test
+    void emptyPendingG31Factory() {
+        WatchedWagonPage page = WatchedWagonPage.emptyPendingG31(0, 50);
+        assertTrue(page.content().isEmpty());
+        assertEquals(0, page.totalElements());
+        assertEquals(WatchedMembershipSource.EMPTY_PENDING_G31, page.membershipSource());
+        assertTrue(page.membershipNote().contains("G31"));
     }
 
     private static WatchedWagonItem sample(String code) {

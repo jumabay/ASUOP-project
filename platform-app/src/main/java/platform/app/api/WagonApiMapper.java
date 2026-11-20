@@ -72,6 +72,8 @@ final class WagonApiMapper {
                 page.page(),
                 page.size(),
                 page.totalElements(),
-                page.totalPages());
+                page.totalPages(),
+                page.membershipSource().name(),
+                page.membershipNote());
     }
 }
