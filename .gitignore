@@ -1,6 +1,7 @@
 # Build / IDE
 **/build/
 **/.gradle/
+**/.gradle-asuop/
 **/out/
 **/.idea/
 **/.vscode/
@@ -9,6 +10,7 @@
 *.log
 *.tmp
 *.swp
+build-*-test.log
 
 # OS
 Thumbs.db
