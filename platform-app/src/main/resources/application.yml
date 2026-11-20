@@ -26,8 +26,9 @@ spring:
     activate:
       on-profile: raildb-test
 
-# P1 placeholder only — do NOT activate for normal development.
-# No datasource URL/username/password here: connection is DENIED until APPROVALS.
+# P4-0 stubs only — do NOT activate for normal development.
+# Fail-fast RailDb* port adapters; still no datasource URL/username/password.
+# Activating raildb-test alone must NOT fall back to synthetic adapters.
 # Future (separate approve): JDBC to RAILDB service (not RAC.WORLD / not RAC RAIL_APP schema),
 # password from ${RAIL_DB_PASSWORD}, Flyway disabled by default.
 logging:
