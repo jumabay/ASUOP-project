@@ -135,7 +135,7 @@ flowchart TD
 | P4-0 | Storage contracts R1–R3 offline | **DONE** (PR #6); [40](../architecture/40_P4_0_RAILDB_STORAGE_CONTRACTS.md), [41](../architecture/41_P4_0_R1_R3_FIELD_MAPPING.md) | backend, database |
 | P4-1 | Scale (~18k) + migration L0 verification offline | Plan [ASUOP_P4_1_SCALE_MIGRATION_PLAN.md](ASUOP_P4_1_SCALE_MIGRATION_PLAN.md); docs [44](../architecture/44_MIGRATION_VERIFICATION_MODEL_OFFLINE.md)–[47](../architecture/47_SCALE_MIGRATION_TEST_STRATEGY.md) | all |
 | P4-2 | DBA readiness + NK1/DT1/G31 offline | **DONE** (docs); Create/JDBC — DENIED; [ASUOP_P4_2_DBA_READINESS_PLAN.md](ASUOP_P4_2_DBA_READINESS_PLAN.md), [50](../architecture/50_P4_2_GO_NOGO_CREATE_RAILDB_TEST.md) | database, lead, qa |
-| P5 | NUFF functional (synthetic-first slices) | Wave 1 **P5-A/B/D DONE** on `main` @ `68564a5` (PR #22–#24). Report: [P5_WAVE1_COMPLETION_REPORT.md](P5_WAVE1_COMPLETION_REPORT.md). P5-C/E/F/G/H DENIED. Plan: [ASUOP_P5_NUFF_FUNCTIONAL_PLAN.md](ASUOP_P5_NUFF_FUNCTIONAL_PLAN.md), [53](../architecture/53_P5_NUFF_TEST_MATRIX.md) | all |
+| P5 | NUFF functional (synthetic-first slices) | Wave 1 **DONE** (`68564a5`). Wave 2 proposal: [ASUOP_P5_WAVE2_PROPOSAL.md](ASUOP_P5_WAVE2_PROPOSAL.md) — recommend 2A=`P5-C`+`P5-G` (synthetic); 2B=`P5-E` after TEST JDBC; `P5-H` out. Report: [P5_WAVE1_COMPLETION_REPORT.md](P5_WAVE1_COMPLETION_REPORT.md). C/E/F/G/H DENIED until APPROVED | all |
 | P2-2 | Create RAILDB + Flyway `RAIL_APP` | DBA checklist 43 + **отдельные** APPROVED Create, затем Flyway | database, backend |
 | P2-3 | Offline→controlled RWL/FTP intake design + B-tests | P2-2 / B1 | backend, database, qa |
 | P2-4 | Ремонты / склад read-only screens | research G6+ | backend, frontend |
