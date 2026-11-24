@@ -24,8 +24,8 @@ Probe: `tools/p5e-ro-smoke` → `P5eMappingProbe` (dictionary + CONTROL dates; *
 
 | Tape column | FK target | Business code column (dictionary) | API field |
 | --- | --- | --- | --- |
-| `LOCATION_STATION_ID` | `DBTC.STATIONS.ID` (`FK_SRR_LOCATION_STATIONS`) | `STATIONS.CODE` (NAME for display) | `stationCode` — **join needed**; ID ≠ code |
-| `OPERATION_ID` | `DBTC.OPERATIONS.ID` (`FK_OPERATION_REPORTRECORDS`) | `OPERATIONS.CODE` | `operationCode` — **join needed**; ID ≠ code |
+| `LOCATION_STATION_ID` | `DBTC.STATIONS.ID` (`FK_SRR_LOCATION_STATIONS`) | `STATIONS.CODE` (NAME for display) | `stationCode` — **CONFIRMED** via join; ID ≠ code |
+| `OPERATION_ID` | `DBTC.OPERATIONS.ID` (`FK_OPERATION_REPORTRECORDS`) | **`OPERATIONS.IDCODE`** (fallback `CODE`; preserves leading zeros) | `operationCode` — **CONFIRMED** via join; ID ≠ code |
 | `REPORT_ID` | `DBTC.STATEREPORTS.ID` | — | `reportId` **CONFIRMED** (numeric) |
 | `WAGON_ID` | `DBTC.WAGON.ID` | via `WAGON.CODE` | `wagonCode` **CONFIRMED** |
 | `GETTING_DATE` | — | — | day **filter axis** **CONFIRMED**; see §3 — **not** VERIFIED as fact time |
@@ -39,12 +39,12 @@ Probe: `tools/p5e-ro-smoke` → `P5eMappingProbe` (dictionary + CONTROL dates; *
 | API field | WAGON column | FK (ALL_CONSTRAINTS) | Dictionary | Display column | Status |
 | --- | --- | --- | --- | --- | --- |
 | `wagonCode` | `CODE` | UK | — | itself | **CONFIRMED** |
-| `model` | `WAGON_MODEL_ID` | → `WAGONMODELS.ID` | `WAGONMODELS` | **UNKNOWN** (need ALL_TAB_COLUMNS/SELECT on models) | FK **CONFIRMED**; display **BLOCKED** |
-| `wagonKind` | `WAGONTYPE_ID` | → `WAGONTYPES.ID` | `WAGONTYPES` | **UNKNOWN** display col | FK **CONFIRMED**; display **BLOCKED** |
-| `ownerName` | `OWNER_ID` | → **`OWNERS.ID`** (не `WAGONOWNERS`) | `OWNERS` | **UNKNOWN** (NAME?) | FK **CONFIRMED**; display **BLOCKED** |
-| `homeStationCode` | `HOMESTATION_ID` | → `STATIONS.ID` | `STATIONS` | `CODE` | FK + target col **CONFIRMED**; need **SELECT** grant |
+| `model` | `WAGON_MODEL_ID` | → `WAGONMODELS.ID` | `WAGONMODELS` | **`NAME`** | FK + display **CONFIRMED** (CONTROL) |
+| `wagonKind` | `WAGONTYPE_ID` | → `WAGONTYPES.ID` | `WAGONTYPES` | **`NAME`** | FK + display **CONFIRMED** (CONTROL) |
+| `ownerName` | `OWNER_ID` | → **`OWNERS.ID`** (не `WAGONOWNERS`) | `OWNERS` | **`NAME`** | FK + display **CONFIRMED** (CONTROL) |
+| `homeStationCode` | `HOMESTATION_ID` | → `STATIONS.ID` | `STATIONS` | `CODE` | FK + SELECT **CONFIRMED** |
 | `homeStationName` | `HOMESTATION_ID` | → `STATIONS.ID` | `STATIONS` | `NAME` | same |
-| `inventoryPark` | `IN_INVENTORY_PARK` | none | — | NUMBER | column **CONFIRMED**; 0/1→boolean **PROVISIONAL** |
+| `inventoryPark` | `IN_INVENTORY_PARK` | none | — | NUMBER | column **CONFIRMED**; CONTROL raw=`1`→`true`; **PROVISIONAL** (не глобальное доказательство) |
 
 **Нет DB FK** на `WAGON.LOCATIONSTATION_ID` / `WAGON.OPERATION_ID` (soft refs) — для `currentState` (вне smoke).
 
@@ -70,29 +70,14 @@ CONTROL `54787361` / day `2026-11-24` (14 rows in probe; earlier smoke counted 1
 
 ---
 
-## 4. Дополнение к разрешению (не применено самостоятельно)
+## 4. Дополнение к разрешению — **APPROVED** (владелец, 2026-11-24)
 
-Нужен SELECT (RO) + при необходимости ALL_TAB_COLUMNS на:
+Зафиксировано в `docs/architecture/APPROVALS_TEMPLATE.md`  
+(`P5-E allow-list delta: ref SELECT + CONTROL JDBC/UI`).
 
-| Object | Зачем |
-| --- | --- |
-| `DBTC.STATIONS` | `CODE`/`NAME` для home + A1 location |
-| `DBTC.OPERATIONS` | `CODE` для A1 operation |
-| `DBTC.WAGONMODELS` | display для `model` |
-| `DBTC.WAGONTYPES` | display для `wagonKind` |
-| `DBTC.OWNERS` | display для `ownerName` |
-
-Черновик строки (владелец утверждает отдельно):
-
-```text
-| P5-E allow-list delta: ref SELECT for A1/A2 codes | APPROVED WITH CONSTRAINTS | Owner: extend P5-E RO window same target/user/deadline.
-  ADD SELECT on DBTC.STATIONS, DBTC.OPERATIONS, DBTC.WAGONMODELS, DBTC.WAGONTYPES, DBTC.OWNERS
-  (bind by PK id only; FETCH FIRST 1 per lookup; timeout 30s).
-  Purpose: resolve CODE/NAME for mapped FKs only. No EXECUTE/DDL/DML/EXPLAIN/registry/watched/currentState.
-  Same CONTROL optional. | <date> |
-```
-
-До утверждения JDBC join на эти таблицы **не** включать в live smoke.
+Разрешено: SELECT + metadata на `STATIONS`/`OPERATIONS`/`WAGONMODELS`/`WAGONTYPES`/`OWNERS`  
+по PK из CONTROL; A1/A2 JDBC profile `dbtc-ro`; UI label «Время среза».  
+Запрещено: EXECUTE/DDL/DML/EXPLAIN; registry/watched JDBC; currentState; import; full scans.
 
 ---
 
@@ -100,17 +85,17 @@ CONTROL `54787361` / day `2026-11-24` (14 rows in probe; earlier smoke counted 1
 
 | Item | Status |
 | --- | --- |
-| Offline mappers + SQL drafts | `platform-oracle` `jdbc` package + unit tests |
-| Live Oracle → API → UI for CONTROL | **не выполнялось** (ждёт ref SELECT delta + adapter activation) |
-| Synthetic regression | unchanged default profile |
+| Offline mappers + SQL drafts | `platform-oracle` `jdbc` + `DbtcMappingFactoriesTest` PASS |
+| Live Oracle → API → UI for CONTROL | **PASS** — evidence [P5_E_JDBC_CONTROL_EVIDENCE.md](P5_E_JDBC_CONTROL_EVIDENCE.md) |
+| Synthetic regression | default profile unchanged; `NoOracleDataSourceTest` PASS |
 
-Код маппит только подтверждённое; station/operation codes остаются пустыми без join; `dislocationTime` from `GETTING_DATE` с явной пометкой provisional в docs/tests.
+`dislocationTime` остаётся **PROVISIONAL** (`GETTING_DATE`); UI: «Время среза». Смена API-контракта времени — отдельное решение.
 
 ---
 
-## 6. Итог (не полное закрытие A1/A2)
+## 6. Итог (не полное закрытие A1/A2 / DT1)
 
-- Доступ/чтение: **PASS**
-- Подтверждено: `wagonCode`, A1 `reportId`/`wagonCode`, FK graph station/op/home/model/type/owner, day axis `GETTING_DATE`
-- Неизвестно / не VERIFIED: display columns models/types/owners; `dislocationTime` as fact; inventory 0/1 semantics; full passport/day parity
-- API/UI live: **не проверено** в этом шаге
+- Доступ/чтение + ref lookups: **PASS**
+- Подтверждено для CONTROL: display `NAME` model/kind/owner; station `CODE`; op `IDCODE` (`04`/`81`); home `68390`; inventory raw `1`→`true` (**sample only**)
+- Не VERIFIED глобально: `dislocationTime` as fact; inventory semantics beyond CONTROL; registry/watched/currentState
+- API/UI live CONTROL: **PASS** under time-boxed `dbtc-ro`

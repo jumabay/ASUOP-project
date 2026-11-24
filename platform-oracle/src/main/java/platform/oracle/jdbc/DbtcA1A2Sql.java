@@ -1,8 +1,9 @@
 package platform.oracle.jdbc;
 
 /**
- * Bound SQL drafts for P5-E A1/A2 on DBTC. Joins marked REQUIRES_REF_SELECT_APPROVAL
- * must not run live until allow-list delta is APPROVED.
+ * Bound SQL drafts for P5-E A1/A2 on DBTC.
+ * Ref joins (stations/operations/models/types/owners) are APPROVED time-boxed
+ * under profile {@code dbtc-ro}; live adapters are in the same package.
  */
 public final class DbtcA1A2Sql {
 
@@ -23,8 +24,8 @@ public final class DbtcA1A2Sql {
             """;
 
     /**
-     * Passport with home station codes. REQUIRES SELECT on DBTC.STATIONS (approved delta).
-     * Models/types/owners still unresolved until their SELECT is approved.
+     * Passport with home station codes (approved ref SELECT delta).
+     * Full passport with models/types/owners: see {@link DbtcJdbcWagonCardAdapter}.
      */
     public static final String WAGON_PASSPORT_WITH_HOME_STATION = """
             SELECT w.id AS wagon_id,

@@ -12,6 +12,11 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.modulith:spring-modulith-starter-core")
 
+    // Opt-in for profile dbtc-ro (P5-E time-boxed). Synthetic default does not open DataSource.
+    runtimeOnly("com.oracle.database.jdbc:ojdbc10:19.33.0.0")
+    runtimeOnly("com.oracle.database.nls:orai18n:19.33.0.0")
+    implementation("org.springframework.boot:spring-boot-starter-jdbc")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.modulith:spring-modulith-starter-test")
 }

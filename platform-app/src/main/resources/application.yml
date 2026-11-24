@@ -35,3 +35,20 @@ logging:
   level:
     root: INFO
     platform: INFO
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dbtc-ro
+
+# P5-E time-boxed RO (APPROVED until 2026-11-25 18:00 +05:00). NOT default.
+# Password: env ASUOP_ORACLE_PASSWORD only. Do not commit secrets.
+asuop:
+  dbtc:
+    jdbc-url: jdbc:oracle:thin:@//tc-asuvp-03:1521/RAC.WORLD
+    user: Dbtc
+logging:
+  level:
+    root: INFO
+    platform: INFO
