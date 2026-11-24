@@ -1,7 +1,10 @@
 # Готовность карточки вагона (после P5-E-CUR)
 
 Дата: **2026-11-24**.  
-Итоговый `main`: **заполняется после merge PR #39**.
+Итоговый `main`: **`c23833a45b493ce9664c5424e884da4d3b12fb3d`**  
+(`Merge pull request #39 from jumabay/feature/p5-e-cur-wagon-current-state`)
+
+Post-merge offline smoke @ `c23833a` (synthetic only, not Oracle): Gradle **148** tests PASS (1 skipped); Vitest **51/51**; `npm run build` OK.
 
 ## Реализовано (read path)
 
