@@ -6,8 +6,8 @@ Wave 2A DONE @ `3f1739c`.
 
 **Статус этого документа:** PREP **COMPLETE**; identity/CONTROL **заполнены владельцем** (2026-11-24). Доп. планы не плодить.  
 **Контур M5:** **не TEST** — «Рабочий контур legacy; только чтение» (`tc-asuvp-03` / `RAC.WORLD`).  
-**Live JDBC:** **BLOCKED** до явного APPROVED заполненной строки §7 в [APPROVALS_TEMPLATE.md](../architecture/APPROVALS_TEMPLATE.md).  
-После APPROVED: RO smoke → отчёт отдельно identity / metadata / business SELECT.  
+**Live JDBC:** строка §7 **APPROVED** владельцем 2026-11-24 (time-boxed до `2026-11-25 18:00 +05:00`).  
+RO smoke разрешён в объёме §2/§7; отчёт отдельно identity / metadata / business SELECT.  
 Успех `CODE` / `GETTING_DATE` ≠ полная сверка A2/A1; прочие поля — `SKIPPED_UNKNOWN_MAPPING`.  
 **Не делает:** Create RAILDB, DDL/DML/Flyway, registry/watched JDBC, auto-merge; постоянный Production allow-list.  
 **Сохранить DENIED:** P5-F, P5-H, Test Oracle write, Create RAILDB (пока не APPROVED отдельно).  
@@ -350,11 +350,11 @@ UI сверка (после APPROVED live): card passport unlocked fields + day 
 
 ---
 
-## 7. Заполненная строка APPROVALS (на утверждение владельца)
+## 7. Заполненная строка APPROVALS — **APPROVED** владельцем 2026-11-24
 
-> Статус в журнале пока **DENIED UNTIL APPROVED**.  
-> Ниже — **проект** для явного APPROVED; пароль не включён.  
-> Контур **не TEST** — scoped RO на рабочем legacy; не путать с dedicated TEST / Create RAILDB.
+> Зафиксировано в [APPROVALS_TEMPLATE.md](../architecture/APPROVALS_TEMPLATE.md): P5-E + scoped Production RO override.  
+> Пароль не включён. Контур **не TEST** — scoped RO на рабочем legacy.  
+> Окно до `2026-11-25 18:00 +05:00`.
 
 ```text
 | P5-E JDBC read A1/A2 on TEST Oracle | APPROVED WITH CONSTRAINTS | Owner (chat ASUOP Manager, 2026-11-24):
