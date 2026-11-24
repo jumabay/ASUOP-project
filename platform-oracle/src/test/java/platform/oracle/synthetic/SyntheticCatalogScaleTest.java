@@ -44,7 +44,7 @@ class SyntheticCatalogScaleTest {
         assertTrue(catalog.contains("SYN-18334"));
 
         WagonRegistryPage page0 = registry.findPage(
-                new WagonRegistryCriteria(null, 0, 200, WagonRegistrySort.CODE_ASC));
+                new WagonRegistryCriteria(null, null, null, 0, 200, WagonRegistrySort.CODE_ASC));
         assertEquals(SyntheticWagonCodeGenerator.SIZE_T1, page0.totalElements());
         assertEquals(92, page0.totalPages()); // ceil(18334/200)=92
         assertEquals(200, page0.content().size());
@@ -52,30 +52,30 @@ class SyntheticCatalogScaleTest {
 
         int lastPageIndex = page0.totalPages() - 1;
         WagonRegistryPage last = registry.findPage(
-                new WagonRegistryCriteria(null, lastPageIndex, 200, WagonRegistrySort.CODE_ASC));
+                new WagonRegistryCriteria(null, null, null, lastPageIndex, 200, WagonRegistrySort.CODE_ASC));
         int expectedLastSize = SyntheticWagonCodeGenerator.SIZE_T1 % 200; // 134
         assertEquals(expectedLastSize, last.content().size());
         assertEquals(SyntheticWagonCodeGenerator.SIZE_T1, last.totalElements());
         assertFalse(last.content().isEmpty());
 
         WagonRegistryPage beyond = registry.findPage(
-                new WagonRegistryCriteria(null, lastPageIndex + 1, 200, WagonRegistrySort.CODE_ASC));
+                new WagonRegistryCriteria(null, null, null, lastPageIndex + 1, 200, WagonRegistrySort.CODE_ASC));
         assertTrue(beyond.content().isEmpty());
         assertEquals(SyntheticWagonCodeGenerator.SIZE_T1, beyond.totalElements());
 
         WagonRegistryPage search = registry.findPage(
-                new WagonRegistryCriteria("SYN-1833", 0, 50, WagonRegistrySort.CODE_ASC));
+                new WagonRegistryCriteria("SYN-1833", null, null, 0, 50, WagonRegistrySort.CODE_ASC));
         assertTrue(search.totalElements() >= 1);
         assertTrue(search.content().stream().allMatch(i -> i.wagonCode().contains("SYN-1833")));
 
         WagonRegistryPage desc = registry.findPage(
-                new WagonRegistryCriteria(null, 0, 50, WagonRegistrySort.CODE_DESC));
+                new WagonRegistryCriteria(null, null, null, 0, 50, WagonRegistrySort.CODE_DESC));
         assertEquals("SYN-18334", desc.content().getFirst().wagonCode());
 
         Set<String> page0Codes = new HashSet<>();
         page0.content().forEach(i -> page0Codes.add(i.wagonCode()));
         WagonRegistryPage page1 = registry.findPage(
-                new WagonRegistryCriteria(null, 1, 200, WagonRegistrySort.CODE_ASC));
+                new WagonRegistryCriteria(null, null, null, 1, 200, WagonRegistrySort.CODE_ASC));
         page1.content().forEach(i -> assertFalse(page0Codes.contains(i.wagonCode())));
 
         WagonCard stub = cards.findByCode("SYN-18334").orElseThrow();
@@ -102,7 +102,7 @@ class SyntheticCatalogScaleTest {
 
         long pageStart = System.nanoTime();
         WagonRegistryPage page0 = registry.findPage(
-                new WagonRegistryCriteria(null, 0, 200, WagonRegistrySort.CODE_ASC));
+                new WagonRegistryCriteria(null, null, null, 0, 200, WagonRegistrySort.CODE_ASC));
         long pageMs = (System.nanoTime() - pageStart) / 1_000_000L;
 
         long heapAfter = rt.totalMemory() - rt.freeMemory();

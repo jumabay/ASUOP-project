@@ -8,6 +8,10 @@ export interface DeepLinkState {
   date: string
   /** Active list contains-search; omitted from URL when empty. */
   search: string
+  /** Owner contains filter; omitted from URL when empty. */
+  owner: string
+  /** Kind equals filter; omitted from URL when empty. */
+  kind: string
   /** 0-based page index. */
   page: number
   size: number
@@ -18,6 +22,8 @@ const DEFAULT_TAB: ListTab = 'watched'
 const DEFAULT_WAGON = 'SYN-00001'
 const DEFAULT_DATE = '2024-01-15'
 const DEFAULT_SEARCH = ''
+const DEFAULT_OWNER = ''
+const DEFAULT_KIND = ''
 const DEFAULT_PAGE = 0
 const DEFAULT_SIZE = 50
 const DEFAULT_SORT: ListSort = 'code,asc'
@@ -30,6 +36,8 @@ export const DEFAULT_DEEP_LINK: DeepLinkState = {
   wagon: DEFAULT_WAGON,
   date: DEFAULT_DATE,
   search: DEFAULT_SEARCH,
+  owner: DEFAULT_OWNER,
+  kind: DEFAULT_KIND,
   page: DEFAULT_PAGE,
   size: DEFAULT_SIZE,
   sort: DEFAULT_SORT,
@@ -66,11 +74,15 @@ export function readDeepLinkFromSearch(search: string): DeepLinkState {
   const wagon = (params.get('wagon') ?? DEFAULT_WAGON).trim() || DEFAULT_WAGON
   const date = (params.get('date') ?? DEFAULT_DATE).trim() || DEFAULT_DATE
   const listSearch = (params.get('search') ?? DEFAULT_SEARCH).trim()
+  const owner = (params.get('owner') ?? DEFAULT_OWNER).trim()
+  const kind = (params.get('kind') ?? DEFAULT_KIND).trim()
   return {
     tab: parseListTab(params.get('tab')),
     wagon,
     date,
     search: listSearch,
+    owner,
+    kind,
     page: parseNonNegativeInt(params.get('page'), DEFAULT_PAGE),
     size: clampSize(parseNonNegativeInt(params.get('size'), DEFAULT_SIZE)),
     sort: parseListSort(params.get('sort')),
@@ -91,6 +103,14 @@ export function buildDeepLinkSearch(state: DeepLinkState): string {
   const trimmedSearch = state.search.trim()
   if (trimmedSearch) {
     params.set('search', trimmedSearch)
+  }
+  const trimmedOwner = state.owner.trim()
+  if (trimmedOwner) {
+    params.set('owner', trimmedOwner)
+  }
+  const trimmedKind = state.kind.trim()
+  if (trimmedKind) {
+    params.set('kind', trimmedKind)
   }
   params.set('page', String(Math.max(0, state.page)))
   params.set('size', String(clampSize(state.size)))

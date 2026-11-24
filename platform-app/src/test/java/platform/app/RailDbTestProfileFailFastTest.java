@@ -84,7 +84,7 @@ class RailDbTestProfileFailFastTest {
     @Test
     void eachPortMethodFailsFastWithDeniedDiagnostic() {
         WagonRegistryCriteria criteria =
-                new WagonRegistryCriteria(null, 0, 10, WagonRegistrySort.CODE_ASC);
+                new WagonRegistryCriteria(null, null, null, 0, 10, WagonRegistrySort.CODE_ASC);
 
         assertDenied(() -> wagonCardPort.findByCode("12345678"));
         assertDenied(() -> wagonRegistryPort.findPage(criteria));
@@ -94,7 +94,7 @@ class RailDbTestProfileFailFastTest {
     @Test
     void watchedReturnsEmptyPendingG31WithoutJdbc() {
         WagonRegistryCriteria criteria =
-                new WagonRegistryCriteria(null, 0, 10, WagonRegistrySort.CODE_ASC);
+                new WagonRegistryCriteria(null, null, null, 0, 10, WagonRegistrySort.CODE_ASC);
 
         WatchedWagonPage page = watchedWagonPort.findPage(criteria);
         assertTrue(page.content().isEmpty());

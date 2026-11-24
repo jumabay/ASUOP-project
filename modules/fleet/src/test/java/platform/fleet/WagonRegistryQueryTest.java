@@ -1,6 +1,7 @@
 package platform.fleet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -15,39 +16,59 @@ class WagonRegistryQueryTest {
             assertEquals(0, criteria.page());
             assertEquals(50, criteria.size());
             assertEquals(WagonRegistrySort.CODE_ASC, criteria.sort());
+            assertNull(criteria.search());
+            assertNull(criteria.owner());
+            assertNull(criteria.kind());
             return new WagonRegistryPage(List.of(), 0, 50, 0, 0);
         });
-        WagonRegistryPage page = query.search(null, null, null, null);
+        WagonRegistryPage page = query.search(null, null, null, null, null, null);
         assertEquals(0, page.totalElements());
         assertEquals(0, page.totalPages());
     }
 
     @Test
-    void trimsBlankSearchToNull() {
+    void trimsBlankFiltersToNull() {
         WagonRegistryQuery query = new WagonRegistryQuery(criteria -> {
-            assertEquals(null, criteria.search());
+            assertNull(criteria.search());
+            assertNull(criteria.owner());
+            assertNull(criteria.kind());
             return new WagonRegistryPage(List.of(), 0, 50, 0, 0);
         });
-        query.search("   ", 0, 50, "code,asc");
+        query.search("   ", "  ", "\t", 0, 50, "code,asc");
+    }
+
+    @Test
+    void passesOwnerAndKind() {
+        WagonRegistryQuery query = new WagonRegistryQuery(criteria -> {
+            assertEquals("SYN", criteria.search());
+            assertEquals("OWNER", criteria.owner());
+            assertEquals("КРЫТЫЙ", criteria.kind());
+            return new WagonRegistryPage(List.of(), 0, 50, 0, 0);
+        });
+        query.search(" SYN ", " OWNER ", " КРЫТЫЙ ", 0, 50, "code,asc");
     }
 
     @Test
     void rejectsNegativePage() {
         WagonRegistryQuery query = new WagonRegistryQuery(c -> null);
-        assertThrows(InvalidPageException.class, () -> query.search(null, -1, 50, "code,asc"));
+        assertThrows(InvalidPageException.class, () ->
+                query.search(null, null, null, -1, 50, "code,asc"));
     }
 
     @Test
     void rejectsInvalidSize() {
         WagonRegistryQuery query = new WagonRegistryQuery(c -> null);
-        assertThrows(InvalidPageSizeException.class, () -> query.search(null, 0, 201, "code,asc"));
-        assertThrows(InvalidPageSizeException.class, () -> query.search(null, 0, 0, "code,asc"));
+        assertThrows(InvalidPageSizeException.class, () ->
+                query.search(null, null, null, 0, 201, "code,asc"));
+        assertThrows(InvalidPageSizeException.class, () ->
+                query.search(null, null, null, 0, 0, "code,asc"));
     }
 
     @Test
     void rejectsInvalidSort() {
         WagonRegistryQuery query = new WagonRegistryQuery(c -> null);
-        assertThrows(InvalidSortException.class, () -> query.search(null, 0, 50, "model,asc"));
+        assertThrows(InvalidSortException.class, () ->
+                query.search(null, null, null, 0, 50, "model,asc"));
     }
 
     @Test
@@ -56,8 +77,12 @@ class WagonRegistryQueryTest {
             assertEquals(WagonRegistrySort.CODE_DESC, criteria.sort());
             return new WagonRegistryPage(List.of(sampleItem("SYN-00002")), 0, 50, 1, 1);
         });
-        assertEquals(1, query.search(null, 0, 50, "code,desc").content().size());
-        assertTrue(query.search(null, 0, 50, "code,desc").content().getFirst().wagonCode().startsWith("SYN-"));
+        assertEquals(1, query.search(null, null, null, 0, 50, "code,desc").content().size());
+        assertTrue(query.search(null, null, null, 0, 50, "code,desc")
+                .content()
+                .getFirst()
+                .wagonCode()
+                .startsWith("SYN-"));
     }
 
     private static WagonRegistryItem sampleItem(String code) {
