@@ -4,8 +4,10 @@
 База плана: [ASUOP_P5_E_JDBC_READ_PLAN.md](ASUOP_P5_E_JDBC_READ_PLAN.md) (PR #31).  
 Wave 2A DONE @ `3f1739c`.
 
-**Статус этого документа:** PREP / docs-only.  
-**Live JDBC не запускать** до явного APPROVED строки §7 в [APPROVALS_TEMPLATE.md](../architecture/APPROVALS_TEMPLATE.md).  
+**Статус этого документа:** PREP **COMPLETE** (2026-11-24). Доп. планы не плодить.  
+**Live JDBC:** **BLOCKED** до параметров DBA + явного APPROVED строки §7 в [APPROVALS_TEMPLATE.md](../architecture/APPROVALS_TEMPLATE.md).  
+После получения параметров: (1) заполнить identity/CONTROL в форме заявки, (2) представить заполненную строку APPROVALS, (3) только после явного разрешения — RO smoke, (4) отчёт отдельно: identity / metadata / business SELECT.  
+Успех `CODE` / `GETTING_DATE` ≠ полная сверка A2/A1; прочие поля — `SKIPPED_UNKNOWN_MAPPING`.  
 **Не делает:** Create RAILDB, DDL/DML/Flyway, Production connect, registry/watched JDBC, auto-merge.  
 **Сохранить DENIED:** P5-F, P5-H, Test Oracle write, Production access, Create RAILDB.  
 Пароли / полные credential connect-string — **вне git**, не печатать в логи evidence.
