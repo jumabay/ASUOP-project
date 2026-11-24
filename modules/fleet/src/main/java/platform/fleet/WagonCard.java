@@ -3,7 +3,7 @@ package platform.fleet;
 import java.util.Objects;
 
 /**
- * A2 wagon card fields (passport subset).
+ * A2 wagon card fields (passport subset) plus optional current-state block (P5-C).
  */
 public record WagonCard(
         String wagonCode,
@@ -12,7 +12,8 @@ public record WagonCard(
         String ownerName,
         String homeStationCode,
         String homeStationName,
-        boolean inventoryPark
+        boolean inventoryPark,
+        WagonCurrentState currentState
 ) {
     public WagonCard {
         Objects.requireNonNull(wagonCode, "wagonCode");

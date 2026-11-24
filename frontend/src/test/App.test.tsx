@@ -39,6 +39,12 @@ const sampleCard = {
   homeStationCode: '6900',
   homeStationName: 'SYN-STATION',
   inventoryPark: true,
+  currentState: {
+    stationCode: '7100',
+    operationCode: '05',
+    dislocationTime: '2024-01-16T06:00:00',
+    trainIndex: 'TRN-DIFF',
+  },
 }
 
 function mockApi(handler?: (url: string) => Response | undefined) {

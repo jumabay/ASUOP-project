@@ -54,9 +54,13 @@ class WagonRegistryQueryTest {
     void acceptsDescSort() {
         WagonRegistryQuery query = new WagonRegistryQuery(criteria -> {
             assertEquals(WagonRegistrySort.CODE_DESC, criteria.sort());
-            return new WagonRegistryPage(List.of(new WagonRegistryItem("SYN-00002")), 0, 50, 1, 1);
+            return new WagonRegistryPage(List.of(sampleItem("SYN-00002")), 0, 50, 1, 1);
         });
         assertEquals(1, query.search(null, 0, 50, "code,desc").content().size());
         assertTrue(query.search(null, 0, 50, "code,desc").content().getFirst().wagonCode().startsWith("SYN-"));
+    }
+
+    private static WagonRegistryItem sampleItem(String code) {
+        return new WagonRegistryItem(code, "12-132", "КРЫТЫЙ", "SYN-OWNER", "6900", "SYN-STATION", true);
     }
 }

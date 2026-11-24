@@ -4,6 +4,7 @@ import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community'
 import { Empty } from 'antd'
 import { useMemo } from 'react'
 import type { WagonRegistryItem } from '../types'
+import { displayValue } from '../utils/displayValue'
 import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-quartz.css'
 
@@ -15,18 +16,74 @@ interface Props {
   onSelect: (wagonCode: string) => void
 }
 
+/** Exported for Vitest contract checks (AG Grid headers are unreliable in jsdom). */
+export const REGISTRY_COLUMN_FIELDS = [
+  'wagonCode',
+  'model',
+  'wagonKind',
+  'ownerName',
+  'homeStationCode',
+  'homeStationName',
+  'inventoryPark',
+] as const
+
+export function buildRegistryColumnDefs(): ColDef<WagonRegistryItem>[] {
+  return [
+    { field: 'wagonCode', headerName: 'Номер вагона', minWidth: 140, flex: 1 },
+    {
+      field: 'model',
+      headerName: 'Модель',
+      minWidth: 100,
+      valueFormatter: (p) => displayValue(p.value as string | null | undefined),
+    },
+    {
+      field: 'wagonKind',
+      headerName: 'Род',
+      minWidth: 110,
+      valueFormatter: (p) => displayValue(p.value as string | null | undefined),
+    },
+    {
+      field: 'ownerName',
+      headerName: 'Собственник',
+      minWidth: 140,
+      flex: 1,
+      valueFormatter: (p) => displayValue(p.value as string | null | undefined),
+    },
+    {
+      field: 'homeStationCode',
+      headerName: 'Ст. код',
+      minWidth: 90,
+      valueFormatter: (p) => displayValue(p.value as string | null | undefined),
+    },
+    {
+      field: 'homeStationName',
+      headerName: 'Ст. приписки',
+      minWidth: 140,
+      flex: 1,
+      valueFormatter: (p) => displayValue(p.value as string | null | undefined),
+    },
+    {
+      field: 'inventoryPark',
+      headerName: 'Инв. парк',
+      minWidth: 100,
+      valueFormatter: (p) => (p.value == null ? displayValue(null) : p.value ? 'Да' : 'Нет'),
+    },
+  ]
+}
+
 export function WagonRegistryGrid({ rows, empty, onSelect }: Props) {
-  const columnDefs = useMemo<ColDef<WagonRegistryItem>[]>(
-    () => [{ field: 'wagonCode', headerName: 'Номер вагона', flex: 1, minWidth: 180 }],
-    [],
-  )
+  const columnDefs = useMemo<ColDef<WagonRegistryItem>[]>(() => buildRegistryColumnDefs(), [])
 
   if (empty) {
     return <Empty description="По заданным условиям вагоны не найдены" />
   }
 
   return (
-    <div className="ag-theme-quartz state-report-grid" style={{ height: 520, width: '100%' }}>
+    <div
+      className="ag-theme-quartz state-report-grid"
+      style={{ height: 520, width: '100%' }}
+      data-testid="wagon-registry-grid"
+    >
       <AgGridReact<WagonRegistryItem>
         rowData={rows}
         columnDefs={columnDefs}

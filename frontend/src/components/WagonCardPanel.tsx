@@ -1,5 +1,6 @@
 import { Button, Descriptions, Empty, Flex, Space, Tag, Tooltip, Typography } from 'antd'
 import type { WagonCard } from '../types'
+import { displayValue } from '../utils/displayValue'
 
 const { Text } = Typography
 
@@ -13,6 +14,8 @@ export function WagonCardPanel({ card, fromWatched = false }: Props) {
   if (!card) {
     return <Empty description="Карточка вагона не загружена" />
   }
+
+  const current = card.currentState
 
   return (
     <Space orientation="vertical" size="middle" style={{ width: '100%' }}>
@@ -35,16 +38,41 @@ export function WagonCardPanel({ card, fromWatched = false }: Props) {
           </Flex>
         }
       >
-        <Descriptions.Item label="Модель">{card.model}</Descriptions.Item>
-        <Descriptions.Item label="Род вагона">{card.wagonKind}</Descriptions.Item>
-        <Descriptions.Item label="Собственник">{card.ownerName}</Descriptions.Item>
+        <Descriptions.Item label="Модель">{displayValue(card.model)}</Descriptions.Item>
+        <Descriptions.Item label="Род вагона">{displayValue(card.wagonKind)}</Descriptions.Item>
+        <Descriptions.Item label="Собственник">{displayValue(card.ownerName)}</Descriptions.Item>
         <Descriptions.Item label="Инвентарный парк">
           {card.inventoryPark ? 'Да' : 'Нет'}
         </Descriptions.Item>
         <Descriptions.Item label="Станция приписки" span={2}>
-          {card.homeStationCode} — {card.homeStationName}
+          {displayValue(card.homeStationCode)} — {displayValue(card.homeStationName)}
         </Descriptions.Item>
       </Descriptions>
+
+      <div data-testid="wagon-card-current-state">
+        <Descriptions bordered size="small" column={2} title="Текущее состояние">
+          {current == null ? (
+            <Descriptions.Item label="Данные" span={2}>
+              {displayValue(null)}
+            </Descriptions.Item>
+          ) : (
+            <>
+              <Descriptions.Item label="Станция">
+                {displayValue(current.stationCode)}
+              </Descriptions.Item>
+              <Descriptions.Item label="Операция">
+                {displayValue(current.operationCode)}
+              </Descriptions.Item>
+              <Descriptions.Item label="Время дислокации">
+                {displayValue(current.dislocationTime)}
+              </Descriptions.Item>
+              <Descriptions.Item label="Индекс поезда">
+                {displayValue(current.trainIndex)}
+              </Descriptions.Item>
+            </>
+          )}
+        </Descriptions>
+      </div>
 
       <Flex gap={8} wrap>
         <Tooltip title="Появится после утверждения модуля">

@@ -7,6 +7,7 @@ public record WagonCardDto(
         String ownerName,
         String homeStationCode,
         String homeStationName,
-        boolean inventoryPark
+        boolean inventoryPark,
+        WagonCurrentStateDto currentState
 ) {
 }
