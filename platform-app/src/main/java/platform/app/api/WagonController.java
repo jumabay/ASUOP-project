@@ -43,8 +43,11 @@ public class WagonController {
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "sort", required = false) String sort,
-            @RequestParam(value = "search", required = false) String search) {
-        return ResponseEntity.ok(WagonApiMapper.toDto(wagonRegistryQuery.search(search, page, size, sort)));
+            @RequestParam(value = "search", required = false) String search,
+            @RequestParam(value = "owner", required = false) String owner,
+            @RequestParam(value = "kind", required = false) String kind) {
+        return ResponseEntity.ok(WagonApiMapper.toDto(
+                wagonRegistryQuery.search(search, owner, kind, page, size, sort)));
     }
 
     /** Literal path before /{wagonCode} so "watched" is never treated as a wagon code. */
@@ -53,8 +56,11 @@ public class WagonController {
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "sort", required = false) String sort,
-            @RequestParam(value = "search", required = false) String search) {
-        return ResponseEntity.ok(WagonApiMapper.toDto(watchedWagonQuery.search(search, page, size, sort)));
+            @RequestParam(value = "search", required = false) String search,
+            @RequestParam(value = "owner", required = false) String owner,
+            @RequestParam(value = "kind", required = false) String kind) {
+        return ResponseEntity.ok(WagonApiMapper.toDto(
+                watchedWagonQuery.search(search, owner, kind, page, size, sort)));
     }
 
     @GetMapping("/{wagonCode}")

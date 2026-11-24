@@ -1,6 +1,7 @@
 package platform.fleet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -24,7 +25,7 @@ class WatchedWagonQueryTest {
 
     @Test
     void defaultsPageSizeAndSort() {
-        WatchedWagonPage page = query.search(null, null, null, null);
+        WatchedWagonPage page = query.search(null, null, null, null, null, null);
         assertEquals(1, page.content().size());
         assertEquals("SYN-00001", page.content().getFirst().wagonCode());
         assertEquals(WatchedMembershipSource.FIXTURE, page.membershipSource());
@@ -32,29 +33,44 @@ class WatchedWagonQueryTest {
     }
 
     @Test
-    void blankSearchBecomesNull() {
+    void blankFiltersBecomeNull() {
         WatchedWagonQuery q = new WatchedWagonQuery(criteria -> {
-            assertEquals(null, criteria.search());
+            assertNull(criteria.search());
+            assertNull(criteria.owner());
+            assertNull(criteria.kind());
             return WatchedWagonPage.of(List.of(), 0, 50, 0, 0, WatchedMembershipSource.FIXTURE);
         });
-        WatchedWagonPage page = q.search("   ", 0, 50, "code,asc");
+        WatchedWagonPage page = q.search("   ", " ", "\t", 0, 50, "code,asc");
         assertTrue(page.content().isEmpty());
         assertEquals(WatchedMembershipSource.FIXTURE, page.membershipSource());
     }
 
     @Test
+    void passesOwnerAndKind() {
+        WatchedWagonQuery q = new WatchedWagonQuery(criteria -> {
+            assertEquals("SYN-OWNER", criteria.owner());
+            assertEquals("КРЫТЫЙ", criteria.kind());
+            return WatchedWagonPage.of(List.of(), 0, 50, 0, 0, WatchedMembershipSource.FIXTURE);
+        });
+        q.search(null, "SYN-OWNER", "КРЫТЫЙ", 0, 50, "code,asc");
+    }
+
+    @Test
     void invalidPageRejected() {
-        assertThrows(InvalidPageException.class, () -> query.search(null, -1, 50, null));
+        assertThrows(InvalidPageException.class, () ->
+                query.search(null, null, null, -1, 50, null));
     }
 
     @Test
     void invalidSizeRejected() {
-        assertThrows(InvalidPageSizeException.class, () -> query.search(null, 0, 201, null));
+        assertThrows(InvalidPageSizeException.class, () ->
+                query.search(null, null, null, 0, 201, null));
     }
 
     @Test
     void invalidSortRejected() {
-        assertThrows(InvalidSortException.class, () -> query.search(null, 0, 50, "model,asc"));
+        assertThrows(InvalidSortException.class, () ->
+                query.search(null, null, null, 0, 50, "model,asc"));
     }
 
     @Test

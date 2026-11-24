@@ -29,7 +29,7 @@ class SyntheticWatchedWagonAdapterTest {
     @Test
     void watchedHas60UniqueCodesSubsetOfCatalog() {
         WatchedWagonPage page = adapter.findPage(
-                new WagonRegistryCriteria(null, 0, 200, WagonRegistrySort.CODE_ASC));
+                new WagonRegistryCriteria(null, null, null, 0, 200, WagonRegistrySort.CODE_ASC));
         assertEquals(60, page.totalElements());
         assertEquals(1, page.totalPages());
         assertEquals(60, page.content().size());
@@ -43,7 +43,7 @@ class SyntheticWatchedWagonAdapterTest {
     @Test
     void membershipSourceIsFixtureNotActiveClaim() {
         WatchedWagonPage page = adapter.findPage(
-                new WagonRegistryCriteria(null, 0, 1, WagonRegistrySort.CODE_ASC));
+                new WagonRegistryCriteria(null, null, null, 0, 1, WagonRegistrySort.CODE_ASC));
         assertEquals(WatchedMembershipSource.FIXTURE, page.membershipSource());
         assertFalse(page.membershipNote().toLowerCase().contains("getactivewagonlist confirmed"));
         assertTrue(page.membershipNote().contains("G31 OPEN"));
@@ -52,9 +52,9 @@ class SyntheticWatchedWagonAdapterTest {
     @Test
     void pages50And10HaveNoOverlap() {
         WatchedWagonPage page0 = adapter.findPage(
-                new WagonRegistryCriteria(null, 0, 50, WagonRegistrySort.CODE_ASC));
+                new WagonRegistryCriteria(null, null, null, 0, 50, WagonRegistrySort.CODE_ASC));
         WatchedWagonPage page1 = adapter.findPage(
-                new WagonRegistryCriteria(null, 1, 50, WagonRegistrySort.CODE_ASC));
+                new WagonRegistryCriteria(null, null, null, 1, 50, WagonRegistrySort.CODE_ASC));
         assertEquals(50, page0.content().size());
         assertEquals(10, page1.content().size());
         assertEquals(60, page0.totalElements());
@@ -70,16 +70,16 @@ class SyntheticWatchedWagonAdapterTest {
     @Test
     void sortDescAndSearch() {
         WatchedWagonPage desc = adapter.findPage(
-                new WagonRegistryCriteria(null, 0, 50, WagonRegistrySort.CODE_DESC));
+                new WagonRegistryCriteria(null, null, null, 0, 50, WagonRegistrySort.CODE_DESC));
         assertEquals("SYN-00060", desc.content().getFirst().wagonCode());
 
         WatchedWagonPage hit = adapter.findPage(
-                new WagonRegistryCriteria("SYN-0000", 0, 50, WagonRegistrySort.CODE_ASC));
+                new WagonRegistryCriteria("SYN-0000", null, null, 0, 50, WagonRegistrySort.CODE_ASC));
         assertTrue(hit.totalElements() > 0);
         assertTrue(hit.content().stream().allMatch(i -> i.wagonCode().contains("SYN-0000")));
 
         WatchedWagonPage miss = adapter.findPage(
-                new WagonRegistryCriteria("NOMATCH", 0, 50, WagonRegistrySort.CODE_ASC));
+                new WagonRegistryCriteria("NOMATCH", null, null, 0, 50, WagonRegistrySort.CODE_ASC));
         assertEquals(0, miss.totalElements());
         assertEquals(0, miss.totalPages());
         assertTrue(miss.content().isEmpty());
@@ -88,11 +88,29 @@ class SyntheticWatchedWagonAdapterTest {
     @Test
     void passportFieldsPresent() {
         WatchedWagonPage page = adapter.findPage(
-                new WagonRegistryCriteria(null, 0, 1, WagonRegistrySort.CODE_ASC));
+                new WagonRegistryCriteria(null, null, null, 0, 1, WagonRegistrySort.CODE_ASC));
         var item = page.content().getFirst();
         assertEquals("SYN-00001", item.wagonCode());
         assertFalse(item.model().isBlank());
         assertFalse(item.wagonKind().isBlank());
         assertFalse(item.ownerName().isBlank());
+    }
+
+    @Test
+    void ownerAndKindFiltersAndWithSearch() {
+        WatchedWagonPage hit = adapter.findPage(
+                new WagonRegistryCriteria("SYN-0000", "SYN-OWN", "КРЫТЫЙ", 0, 50, WagonRegistrySort.CODE_ASC));
+        assertTrue(hit.totalElements() > 0);
+        assertTrue(hit.content().stream().allMatch(i ->
+                i.wagonCode().contains("SYN-0000")
+                        && i.ownerName().contains("SYN-OWN")
+                        && "КРЫТЫЙ".equals(i.wagonKind())));
+        assertEquals(WatchedMembershipSource.FIXTURE, hit.membershipSource());
+
+        WatchedWagonPage zero = adapter.findPage(
+                new WagonRegistryCriteria(null, "NOMATCH", "КРЫТЫЙ", 0, 50, WagonRegistrySort.CODE_ASC));
+        assertEquals(0, zero.totalElements());
+        assertTrue(zero.content().isEmpty());
+        assertEquals(0, zero.totalPages());
     }
 }

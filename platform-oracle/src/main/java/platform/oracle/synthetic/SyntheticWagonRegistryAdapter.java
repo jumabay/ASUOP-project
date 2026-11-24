@@ -39,16 +39,37 @@ public class SyntheticWagonRegistryAdapter implements WagonRegistryPort {
 
     @Override
     public WagonRegistryPage findPage(WagonRegistryCriteria criteria) {
-        Stream<String> stream = catalog.wagonCodes().stream();
         String search = criteria.search();
+        String owner = criteria.owner();
+        String kind = criteria.kind();
+        Comparator<String> codeOrder = criteria.sort() == WagonRegistrySort.CODE_DESC
+                ? Comparator.reverseOrder()
+                : Comparator.naturalOrder();
+
+        // Passport filters require mapping before page; otherwise keep pre-G code-only path.
+        if (owner != null || kind != null) {
+            Stream<WagonRegistryItem> items = catalog.wagonCodes().stream()
+                    .filter(code -> search == null || code.contains(search))
+                    .map(this::toItem);
+            if (owner != null) {
+                items = items.filter(item ->
+                        item.ownerName() != null && item.ownerName().contains(owner));
+            }
+            if (kind != null) {
+                items = items.filter(item ->
+                        item.wagonKind() != null && item.wagonKind().equals(kind));
+            }
+            List<WagonRegistryItem> filtered = items
+                    .sorted(Comparator.comparing(WagonRegistryItem::wagonCode, codeOrder))
+                    .toList();
+            return pageItems(filtered, criteria);
+        }
+
+        Stream<String> stream = catalog.wagonCodes().stream();
         if (search != null) {
             stream = stream.filter(code -> code.contains(search));
         }
-
-        Comparator<String> order = criteria.sort() == WagonRegistrySort.CODE_DESC
-                ? Comparator.reverseOrder()
-                : Comparator.naturalOrder();
-        List<String> filtered = stream.sorted(order).toList();
+        List<String> filtered = stream.sorted(codeOrder).toList();
 
         long total = filtered.size();
         int from = criteria.page() * criteria.size();
@@ -57,11 +78,28 @@ public class SyntheticWagonRegistryAdapter implements WagonRegistryPort {
             content = List.of();
         } else {
             int to = Math.min(from + criteria.size(), filtered.size());
-            content = filtered.subList(from, to).stream()
-                    .map(this::toItem)
-                    .toList();
+            content = filtered.subList(from, to).stream().map(this::toItem).toList();
         }
 
+        return new WagonRegistryPage(
+                content,
+                criteria.page(),
+                criteria.size(),
+                total,
+                WagonRegistryPage.computeTotalPages(total, criteria.size()));
+    }
+
+    private static WagonRegistryPage pageItems(
+            List<WagonRegistryItem> filtered, WagonRegistryCriteria criteria) {
+        long total = filtered.size();
+        int from = criteria.page() * criteria.size();
+        List<WagonRegistryItem> content;
+        if (from >= filtered.size()) {
+            content = List.of();
+        } else {
+            int to = Math.min(from + criteria.size(), filtered.size());
+            content = filtered.subList(from, to);
+        }
         return new WagonRegistryPage(
                 content,
                 criteria.page(),

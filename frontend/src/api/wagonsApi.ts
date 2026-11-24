@@ -11,13 +11,17 @@ async function parseError(response: Response): Promise<never> {
   throw new ApiError(response.status, body)
 }
 
-export async function fetchWagonRegistry(params: {
-  page?: number
-  size?: number
-  sort?: 'code,asc' | 'code,desc'
-  search?: string
-}): Promise<WagonRegistryPage> {
-  const query = new URLSearchParams()
+function appendListQuery(
+  query: URLSearchParams,
+  params: {
+    page?: number
+    size?: number
+    sort?: 'code,asc' | 'code,desc'
+    search?: string
+    owner?: string
+    kind?: string
+  },
+): void {
   if (params.page !== undefined) {
     query.set('page', String(params.page))
   }
@@ -30,6 +34,24 @@ export async function fetchWagonRegistry(params: {
   if (params.search !== undefined && params.search.trim() !== '') {
     query.set('search', params.search.trim())
   }
+  if (params.owner !== undefined && params.owner.trim() !== '') {
+    query.set('owner', params.owner.trim())
+  }
+  if (params.kind !== undefined && params.kind.trim() !== '') {
+    query.set('kind', params.kind.trim())
+  }
+}
+
+export async function fetchWagonRegistry(params: {
+  page?: number
+  size?: number
+  sort?: 'code,asc' | 'code,desc'
+  search?: string
+  owner?: string
+  kind?: string
+}): Promise<WagonRegistryPage> {
+  const query = new URLSearchParams()
+  appendListQuery(query, params)
   const qs = query.toString()
   const response = await fetch(`/api/v1/wagons${qs ? `?${qs}` : ''}`)
   if (!response.ok) {
@@ -43,20 +65,11 @@ export async function fetchWatchedWagons(params: {
   size?: number
   sort?: 'code,asc' | 'code,desc'
   search?: string
+  owner?: string
+  kind?: string
 }): Promise<WatchedWagonPage> {
   const query = new URLSearchParams()
-  if (params.page !== undefined) {
-    query.set('page', String(params.page))
-  }
-  if (params.size !== undefined) {
-    query.set('size', String(params.size))
-  }
-  if (params.sort) {
-    query.set('sort', params.sort)
-  }
-  if (params.search !== undefined && params.search.trim() !== '') {
-    query.set('search', params.search.trim())
-  }
+  appendListQuery(query, params)
   const qs = query.toString()
   const response = await fetch(`/api/v1/wagons/watched${qs ? `?${qs}` : ''}`)
   if (!response.ok) {

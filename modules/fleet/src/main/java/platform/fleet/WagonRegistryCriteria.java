@@ -4,6 +4,8 @@ import java.util.Objects;
 
 public record WagonRegistryCriteria(
         String search,
+        String owner,
+        String kind,
         int page,
         int size,
         WagonRegistrySort sort
@@ -20,8 +22,15 @@ public record WagonRegistryCriteria(
         if (size < 1 || size > MAX_SIZE) {
             throw new InvalidPageSizeException("size must be between 1 and " + MAX_SIZE);
         }
-        if (search != null && search.isBlank()) {
-            search = null;
+        search = blankToNull(search);
+        owner = blankToNull(owner);
+        kind = blankToNull(kind);
+    }
+
+    private static String blankToNull(String value) {
+        if (value != null && value.isBlank()) {
+            return null;
         }
+        return value;
     }
 }

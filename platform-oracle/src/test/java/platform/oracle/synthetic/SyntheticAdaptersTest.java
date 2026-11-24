@@ -81,7 +81,7 @@ class SyntheticAdaptersTest {
     @Test
     void registryItemsIncludePassportFields() {
         WagonRegistryPage page = registryAdapter.findPage(
-                new WagonRegistryCriteria("SYN-00001", 0, 10, WagonRegistrySort.CODE_ASC));
+                new WagonRegistryCriteria("SYN-00001", null, null, 0, 10, WagonRegistrySort.CODE_ASC));
         WagonRegistryItem item = page.content().stream()
                 .filter(i -> "SYN-00001".equals(i.wagonCode()))
                 .findFirst()

@@ -16,7 +16,7 @@ class RailDbWatchedWagonPortAdapterStubTest {
     @Test
     void returnsEmptyPendingG31WithoutInventingMembership() {
         WatchedWagonPage page = stub.findPage(
-                new WagonRegistryCriteria(null, 0, 50, WagonRegistrySort.CODE_ASC));
+                new WagonRegistryCriteria(null, null, null, 0, 50, WagonRegistrySort.CODE_ASC));
 
         assertTrue(page.content().isEmpty());
         assertEquals(0, page.totalElements());

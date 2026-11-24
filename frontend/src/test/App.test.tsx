@@ -417,12 +417,12 @@ describe('App R1/R2/R3 scenarios', () => {
   )
 
   it(
-    'restores list search/page/size/sort from URL on mount',
+    'restores list search/owner/kind/page/size/sort from URL on mount',
     async () => {
       window.history.replaceState(
         null,
         '',
-        '/?tab=registry&wagon=SYN-00001&date=2024-01-15&search=SYN&page=1&size=100&sort=code,desc',
+        '/?tab=registry&wagon=SYN-00001&date=2024-01-15&search=SYN&owner=SYN-OWN&kind=%D0%9A%D0%A0%D0%AB%D0%A2%D0%AB%D0%99&page=1&size=100&sort=code,desc',
       )
       mockApi()
       render(
@@ -439,6 +439,8 @@ describe('App R1/R2/R3 scenarios', () => {
       })
       const panel = screen.getByRole('tabpanel', { name: 'Реестр вагонов' })
       expect(within(panel).getByPlaceholderText('Поиск по номеру (contains)')).toHaveValue('SYN')
+      expect(within(panel).getByPlaceholderText('Собственник (contains)')).toHaveValue('SYN-OWN')
+      expect(within(panel).getByPlaceholderText('Род (equals)')).toHaveValue('КРЫТЫЙ')
       await waitFor(() => {
         expect(
           vi.mocked(fetch).mock.calls.some((c) => {
@@ -446,6 +448,8 @@ describe('App R1/R2/R3 scenarios', () => {
             return (
               url.includes('/api/v1/wagons?') &&
               url.includes('search=SYN') &&
+              url.includes('owner=SYN-OWN') &&
+              url.includes('kind=КРЫТЫЙ') &&
               url.includes('page=1') &&
               url.includes('size=100') &&
               url.includes('sort=code,desc')
@@ -457,6 +461,8 @@ describe('App R1/R2/R3 scenarios', () => {
         screen.getByTestId('deep-link-preview').textContent ?? '',
       )
       expect(preview).toContain('search=SYN')
+      expect(preview).toContain('owner=SYN-OWN')
+      expect(preview).toContain('kind=КРЫТЫЙ')
       expect(preview).toContain('page=1')
       expect(preview).toContain('size=100')
       expect(preview).toContain('sort=code,desc')

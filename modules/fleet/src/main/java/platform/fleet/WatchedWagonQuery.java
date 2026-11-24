@@ -12,20 +12,28 @@ public final class WatchedWagonQuery {
 
     public WatchedWagonPage search(
             String search,
+            String owner,
+            String kind,
             Integer page,
             Integer size,
             String sort) {
         int resolvedPage = page == null ? WagonRegistryCriteria.DEFAULT_PAGE : page;
         int resolvedSize = size == null ? WagonRegistryCriteria.DEFAULT_SIZE : size;
-        String normalizedSearch = search == null ? null : search.trim();
-        if (normalizedSearch != null && normalizedSearch.isEmpty()) {
-            normalizedSearch = null;
-        }
         WagonRegistryCriteria criteria = new WagonRegistryCriteria(
-                normalizedSearch,
+                normalizeOptional(search),
+                normalizeOptional(owner),
+                normalizeOptional(kind),
                 resolvedPage,
                 resolvedSize,
                 WagonRegistrySort.fromParam(sort));
         return port.findPage(criteria);
+    }
+
+    private static String normalizeOptional(String value) {
+        if (value == null) {
+            return null;
+        }
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 }

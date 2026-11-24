@@ -69,6 +69,10 @@ function applyListParamsToTab(
   setters: {
     setSearchInput: (v: string) => void
     setSearch: (v: string) => void
+    setOwnerInput: (v: string) => void
+    setOwner: (v: string) => void
+    setKindInput: (v: string) => void
+    setKind: (v: string) => void
     setSort: (v: ListSort) => void
     setPage: (v: number) => void
     setSize: (v: number) => void
@@ -76,6 +80,10 @@ function applyListParamsToTab(
 ) {
   setters.setSearchInput(link.search)
   setters.setSearch(link.search)
+  setters.setOwnerInput(link.owner)
+  setters.setOwner(link.owner)
+  setters.setKindInput(link.kind)
+  setters.setKind(link.kind)
   setters.setSort(link.sort)
   setters.setPage(link.page)
   setters.setSize(link.size)
@@ -102,6 +110,18 @@ export default function App() {
   const [registrySearch, setRegistrySearch] = useState(() =>
     boot.tab === 'registry' ? boot.search : '',
   )
+  const [registryOwnerInput, setRegistryOwnerInput] = useState(() =>
+    boot.tab === 'registry' ? boot.owner : '',
+  )
+  const [registryOwner, setRegistryOwner] = useState(() =>
+    boot.tab === 'registry' ? boot.owner : '',
+  )
+  const [registryKindInput, setRegistryKindInput] = useState(() =>
+    boot.tab === 'registry' ? boot.kind : '',
+  )
+  const [registryKind, setRegistryKind] = useState(() =>
+    boot.tab === 'registry' ? boot.kind : '',
+  )
   const [registrySort, setRegistrySort] = useState<ListSort>(() =>
     boot.tab === 'registry' ? boot.sort : 'code,asc',
   )
@@ -121,6 +141,18 @@ export default function App() {
   )
   const [watchedSearch, setWatchedSearch] = useState(() =>
     boot.tab === 'watched' ? boot.search : '',
+  )
+  const [watchedOwnerInput, setWatchedOwnerInput] = useState(() =>
+    boot.tab === 'watched' ? boot.owner : '',
+  )
+  const [watchedOwner, setWatchedOwner] = useState(() =>
+    boot.tab === 'watched' ? boot.owner : '',
+  )
+  const [watchedKindInput, setWatchedKindInput] = useState(() =>
+    boot.tab === 'watched' ? boot.kind : '',
+  )
+  const [watchedKind, setWatchedKind] = useState(() =>
+    boot.tab === 'watched' ? boot.kind : '',
   )
   const [watchedSort, setWatchedSort] = useState<ListSort>(() =>
     boot.tab === 'watched' ? boot.sort : 'code,asc',
@@ -143,6 +175,8 @@ export default function App() {
     if (activeTab === 'registry') {
       return {
         search: registrySearch,
+        owner: registryOwner,
+        kind: registryKind,
         page: registryPage,
         size: registrySize,
         sort: registrySort,
@@ -150,6 +184,8 @@ export default function App() {
     }
     return {
       search: watchedSearch,
+      owner: watchedOwner,
+      kind: watchedKind,
       page: watchedPage,
       size: watchedSize,
       sort: watchedSort,
@@ -157,10 +193,14 @@ export default function App() {
   }, [
     activeTab,
     registrySearch,
+    registryOwner,
+    registryKind,
     registryPage,
     registrySize,
     registrySort,
     watchedSearch,
+    watchedOwner,
+    watchedKind,
     watchedPage,
     watchedSize,
     watchedSort,
@@ -172,6 +212,8 @@ export default function App() {
       wagon: wagonCode.trim() || 'SYN-00001',
       date: date.format('YYYY-MM-DD'),
       search: activeListParams.search,
+      owner: activeListParams.owner,
+      kind: activeListParams.kind,
       page: activeListParams.page,
       size: activeListParams.size,
       sort: activeListParams.sort,
@@ -204,6 +246,10 @@ export default function App() {
       applyListParamsToTab(link, {
         setSearchInput: setRegistrySearchInput,
         setSearch: setRegistrySearch,
+        setOwnerInput: setRegistryOwnerInput,
+        setOwner: setRegistryOwner,
+        setKindInput: setRegistryKindInput,
+        setKind: setRegistryKind,
         setSort: setRegistrySort,
         setPage: setRegistryPage,
         setSize: setRegistrySize,
@@ -212,6 +258,10 @@ export default function App() {
       applyListParamsToTab(link, {
         setSearchInput: setWatchedSearchInput,
         setSearch: setWatchedSearch,
+        setOwnerInput: setWatchedOwnerInput,
+        setOwner: setWatchedOwner,
+        setKindInput: setWatchedKindInput,
+        setKind: setWatchedKind,
         setSort: setWatchedSort,
         setPage: setWatchedPage,
         setSize: setWatchedSize,
@@ -241,6 +291,30 @@ export default function App() {
   }, [registrySearchInput, registrySearch, scheduleUrlPush])
 
   useEffect(() => {
+    if (registryOwnerInput === registryOwner) {
+      return
+    }
+    const timer = window.setTimeout(() => {
+      setRegistryOwner(registryOwnerInput)
+      setRegistryPage(0)
+      scheduleUrlPush()
+    }, LIST_SEARCH_DEBOUNCE_MS)
+    return () => window.clearTimeout(timer)
+  }, [registryOwnerInput, registryOwner, scheduleUrlPush])
+
+  useEffect(() => {
+    if (registryKindInput === registryKind) {
+      return
+    }
+    const timer = window.setTimeout(() => {
+      setRegistryKind(registryKindInput)
+      setRegistryPage(0)
+      scheduleUrlPush()
+    }, LIST_SEARCH_DEBOUNCE_MS)
+    return () => window.clearTimeout(timer)
+  }, [registryKindInput, registryKind, scheduleUrlPush])
+
+  useEffect(() => {
     if (watchedSearchInput === watchedSearch) {
       return
     }
@@ -252,6 +326,30 @@ export default function App() {
     return () => window.clearTimeout(timer)
   }, [watchedSearchInput, watchedSearch, scheduleUrlPush])
 
+  useEffect(() => {
+    if (watchedOwnerInput === watchedOwner) {
+      return
+    }
+    const timer = window.setTimeout(() => {
+      setWatchedOwner(watchedOwnerInput)
+      setWatchedPage(0)
+      scheduleUrlPush()
+    }, LIST_SEARCH_DEBOUNCE_MS)
+    return () => window.clearTimeout(timer)
+  }, [watchedOwnerInput, watchedOwner, scheduleUrlPush])
+
+  useEffect(() => {
+    if (watchedKindInput === watchedKind) {
+      return
+    }
+    const timer = window.setTimeout(() => {
+      setWatchedKind(watchedKindInput)
+      setWatchedPage(0)
+      scheduleUrlPush()
+    }, LIST_SEARCH_DEBOUNCE_MS)
+    return () => window.clearTimeout(timer)
+  }, [watchedKindInput, watchedKind, scheduleUrlPush])
+
   const loadRegistry = useCallback(async () => {
     setRegistryLoading(true)
     setRegistryError(null)
@@ -261,6 +359,8 @@ export default function App() {
         size: registrySize,
         sort: registrySort,
         search: registrySearch,
+        owner: registryOwner,
+        kind: registryKind,
       })
       setRegistryRows(page.content)
       setRegistryTotal(page.totalElements)
@@ -275,7 +375,7 @@ export default function App() {
     } finally {
       setRegistryLoading(false)
     }
-  }, [registryPage, registrySize, registrySort, registrySearch])
+  }, [registryPage, registrySize, registrySort, registrySearch, registryOwner, registryKind])
 
   const loadWatched = useCallback(async () => {
     setWatchedLoading(true)
@@ -286,6 +386,8 @@ export default function App() {
         size: watchedSize,
         sort: watchedSort,
         search: watchedSearch,
+        owner: watchedOwner,
+        kind: watchedKind,
       })
       setWatchedRows(page.content)
       setWatchedTotal(page.totalElements)
@@ -300,7 +402,7 @@ export default function App() {
     } finally {
       setWatchedLoading(false)
     }
-  }, [watchedPage, watchedSize, watchedSort, watchedSearch])
+  }, [watchedPage, watchedSize, watchedSort, watchedSearch, watchedOwner, watchedKind])
 
   useEffect(() => {
     if (activeTab === 'registry') {
@@ -314,20 +416,40 @@ export default function App() {
     }
   }, [activeTab, loadWatched])
 
-  const applyRegistrySearch = useCallback(
-    (value: string) => {
-      setRegistrySearchInput(value)
-      setRegistrySearch(value)
+  const applyRegistryFilters = useCallback(
+    (next: { search?: string; owner?: string; kind?: string }) => {
+      if (next.search !== undefined) {
+        setRegistrySearchInput(next.search)
+        setRegistrySearch(next.search)
+      }
+      if (next.owner !== undefined) {
+        setRegistryOwnerInput(next.owner)
+        setRegistryOwner(next.owner)
+      }
+      if (next.kind !== undefined) {
+        setRegistryKindInput(next.kind)
+        setRegistryKind(next.kind)
+      }
       setRegistryPage(0)
       scheduleUrlPush()
     },
     [scheduleUrlPush],
   )
 
-  const applyWatchedSearch = useCallback(
-    (value: string) => {
-      setWatchedSearchInput(value)
-      setWatchedSearch(value)
+  const applyWatchedFilters = useCallback(
+    (next: { search?: string; owner?: string; kind?: string }) => {
+      if (next.search !== undefined) {
+        setWatchedSearchInput(next.search)
+        setWatchedSearch(next.search)
+      }
+      if (next.owner !== undefined) {
+        setWatchedOwnerInput(next.owner)
+        setWatchedOwner(next.owner)
+      }
+      if (next.kind !== undefined) {
+        setWatchedKindInput(next.kind)
+        setWatchedKind(next.kind)
+      }
       setWatchedPage(0)
       scheduleUrlPush()
     },
@@ -469,7 +591,7 @@ export default function App() {
                     Клик открывает карточку R1. Соответствие GetActiveWagonList не подтверждено.
                   </Paragraph>
                   <Row gutter={[12, 12]} align="middle">
-                    <Col xs={24} md={8}>
+                    <Col xs={24} md={6}>
                       <Input
                         size="large"
                         placeholder="Поиск по номеру (contains)"
@@ -477,16 +599,68 @@ export default function App() {
                         onChange={(e) => {
                           const value = e.target.value
                           if (value === '') {
-                            applyWatchedSearch('')
+                            applyWatchedFilters({ search: '' })
                           } else {
                             setWatchedSearchInput(value)
                           }
                         }}
-                        onPressEnter={() => applyWatchedSearch(watchedSearchInput)}
+                        onPressEnter={() =>
+                          applyWatchedFilters({
+                            search: watchedSearchInput,
+                            owner: watchedOwnerInput,
+                            kind: watchedKindInput,
+                          })
+                        }
                         allowClear
                       />
                     </Col>
                     <Col xs={24} md={5}>
+                      <Input
+                        size="large"
+                        placeholder="Собственник (contains)"
+                        value={watchedOwnerInput}
+                        onChange={(e) => {
+                          const value = e.target.value
+                          if (value === '') {
+                            applyWatchedFilters({ owner: '' })
+                          } else {
+                            setWatchedOwnerInput(value)
+                          }
+                        }}
+                        onPressEnter={() =>
+                          applyWatchedFilters({
+                            search: watchedSearchInput,
+                            owner: watchedOwnerInput,
+                            kind: watchedKindInput,
+                          })
+                        }
+                        allowClear
+                      />
+                    </Col>
+                    <Col xs={24} md={5}>
+                      <Input
+                        size="large"
+                        placeholder="Род (equals)"
+                        value={watchedKindInput}
+                        onChange={(e) => {
+                          const value = e.target.value
+                          if (value === '') {
+                            applyWatchedFilters({ kind: '' })
+                          } else {
+                            setWatchedKindInput(value)
+                          }
+                        }}
+                        onPressEnter={() =>
+                          applyWatchedFilters({
+                            search: watchedSearchInput,
+                            owner: watchedOwnerInput,
+                            kind: watchedKindInput,
+                          })
+                        }
+                        allowClear
+                      />
+                    </Col>
+                    <Col xs={24} md={4}>
                       <Select
                         size="large"
                         style={{ width: '100%' }}
@@ -502,24 +676,30 @@ export default function App() {
                         ]}
                       />
                     </Col>
-                    <Col xs={24} md={5}>
+                    <Col xs={12} md={2}>
                       <Button
                         type="primary"
                         size="large"
                         block
-                        onClick={() => applyWatchedSearch(watchedSearchInput)}
+                        onClick={() =>
+                          applyWatchedFilters({
+                            search: watchedSearchInput,
+                            owner: watchedOwnerInput,
+                            kind: watchedKindInput,
+                          })
+                        }
                       >
                         Найти
                       </Button>
                     </Col>
-                    <Col xs={24} md={6}>
+                    <Col xs={12} md={2}>
                       <Button
                         size="large"
                         block
                         loading={watchedLoading}
                         onClick={() => void loadWatched()}
                       >
-                        Обновить список
+                        Обновить
                       </Button>
                     </Col>
                   </Row>
@@ -567,11 +747,11 @@ export default function App() {
               children: (
                 <>
                   <Paragraph type="secondary" style={{ marginBottom: 16 }}>
-                    Серверная пагинация (до 200), поиск contains по номеру, сортировка по коду. Клик
-                    по строке открывает карточку R1.
+                    Серверная пагинация (до 200), фильтры search/owner/kind (AND), сортировка по коду.
+                    Клик по строке открывает карточку R1.
                   </Paragraph>
                   <Row gutter={[12, 12]} align="middle">
-                    <Col xs={24} md={8}>
+                    <Col xs={24} md={6}>
                       <Input
                         size="large"
                         placeholder="Поиск по номеру (contains)"
@@ -579,16 +759,68 @@ export default function App() {
                         onChange={(e) => {
                           const value = e.target.value
                           if (value === '') {
-                            applyRegistrySearch('')
+                            applyRegistryFilters({ search: '' })
                           } else {
                             setRegistrySearchInput(value)
                           }
                         }}
-                        onPressEnter={() => applyRegistrySearch(registrySearchInput)}
+                        onPressEnter={() =>
+                          applyRegistryFilters({
+                            search: registrySearchInput,
+                            owner: registryOwnerInput,
+                            kind: registryKindInput,
+                          })
+                        }
                         allowClear
                       />
                     </Col>
                     <Col xs={24} md={5}>
+                      <Input
+                        size="large"
+                        placeholder="Собственник (contains)"
+                        value={registryOwnerInput}
+                        onChange={(e) => {
+                          const value = e.target.value
+                          if (value === '') {
+                            applyRegistryFilters({ owner: '' })
+                          } else {
+                            setRegistryOwnerInput(value)
+                          }
+                        }}
+                        onPressEnter={() =>
+                          applyRegistryFilters({
+                            search: registrySearchInput,
+                            owner: registryOwnerInput,
+                            kind: registryKindInput,
+                          })
+                        }
+                        allowClear
+                      />
+                    </Col>
+                    <Col xs={24} md={5}>
+                      <Input
+                        size="large"
+                        placeholder="Род (equals)"
+                        value={registryKindInput}
+                        onChange={(e) => {
+                          const value = e.target.value
+                          if (value === '') {
+                            applyRegistryFilters({ kind: '' })
+                          } else {
+                            setRegistryKindInput(value)
+                          }
+                        }}
+                        onPressEnter={() =>
+                          applyRegistryFilters({
+                            search: registrySearchInput,
+                            owner: registryOwnerInput,
+                            kind: registryKindInput,
+                          })
+                        }
+                        allowClear
+                      />
+                    </Col>
+                    <Col xs={24} md={4}>
                       <Select
                         size="large"
                         style={{ width: '100%' }}
@@ -604,24 +836,30 @@ export default function App() {
                         ]}
                       />
                     </Col>
-                    <Col xs={24} md={5}>
+                    <Col xs={12} md={2}>
                       <Button
                         type="primary"
                         size="large"
                         block
-                        onClick={() => applyRegistrySearch(registrySearchInput)}
+                        onClick={() =>
+                          applyRegistryFilters({
+                            search: registrySearchInput,
+                            owner: registryOwnerInput,
+                            kind: registryKindInput,
+                          })
+                        }
                       >
                         Найти
                       </Button>
                     </Col>
-                    <Col xs={24} md={6}>
+                    <Col xs={12} md={2}>
                       <Button
                         size="large"
                         block
                         loading={registryLoading}
                         onClick={() => void loadRegistry()}
                       >
-                        Обновить реестр
+                        Обновить
                       </Button>
                     </Col>
                   </Row>

@@ -4,7 +4,9 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -185,6 +187,26 @@ class WagonControllerMockMvcTest {
     }
 
     @Test
+    void getRegistry_passesOwnerAndKindCriteria() throws Exception {
+        when(wagonRegistryPort.findPage(any())).thenReturn(new WagonRegistryPage(List.of(), 0, 50, 0, 0));
+
+        mockMvc.perform(get("/api/v1/wagons")
+                        .param("search", "SYN")
+                        .param("owner", "SYN-OWN")
+                        .param("kind", "КРЫТЫЙ"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(0)))
+                .andExpect(jsonPath("$.totalElements").value(0));
+
+        verify(wagonRegistryPort).findPage(argThat(c ->
+                "SYN".equals(c.search())
+                        && "SYN-OWN".equals(c.owner())
+                        && "КРЫТЫЙ".equals(c.kind())
+                        && c.page() == 0
+                        && c.size() == 50));
+    }
+
+    @Test
     void getRegistry_invalidPage() throws Exception {
         mockMvc.perform(get("/api/v1/wagons").param("page", "-1"))
                 .andExpect(status().isBadRequest())
@@ -236,6 +258,23 @@ class WagonControllerMockMvcTest {
                 .andExpect(jsonPath("$.totalElements").value(0))
                 .andExpect(jsonPath("$.totalPages").value(0))
                 .andExpect(jsonPath("$.membershipSource").value("FIXTURE"));
+    }
+
+    @Test
+    void getWatched_passesOwnerAndKindCriteria() throws Exception {
+        when(watchedWagonPort.findPage(any())).thenReturn(
+                WatchedWagonPage.of(List.of(), 0, 50, 0, 0, WatchedMembershipSource.FIXTURE));
+
+        mockMvc.perform(get("/api/v1/wagons/watched")
+                        .param("owner", "SYN-OWNER")
+                        .param("kind", "КРЫТЫЙ"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalElements").value(0));
+
+        verify(watchedWagonPort).findPage(argThat(c ->
+                c.search() == null
+                        && "SYN-OWNER".equals(c.owner())
+                        && "КРЫТЫЙ".equals(c.kind())));
     }
 
     @Test
