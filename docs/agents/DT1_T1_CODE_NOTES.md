@@ -2,6 +2,8 @@
 
 Дата: **2026-11-24**. APPROVALS: `DT1 time contract CODE (snapshotTime additive) / T1`.
 
+Merged on `main`: **`5fb1878`** (PR #35). Итоговый отчёт: [DT1_T1_COMPLETION_REPORT.md](DT1_T1_COMPLETION_REPORT.md).
+
 ## Delivered
 
 - Domain/API: `snapshotTime`; `dislocationTime` deprecated alias (= snapshot).
