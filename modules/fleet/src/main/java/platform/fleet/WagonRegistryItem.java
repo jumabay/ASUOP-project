@@ -12,7 +12,8 @@ public record WagonRegistryItem(
         String ownerName,
         String homeStationCode,
         String homeStationName,
-        boolean inventoryPark
+        /** Null = unknown. */
+        Boolean inventoryPark
 ) {
     public WagonRegistryItem {
         Objects.requireNonNull(wagonCode, "wagonCode");

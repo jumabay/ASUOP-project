@@ -5,6 +5,7 @@ import { Empty, Flex, Spin } from 'antd'
 import { useEffect, useMemo, useState } from 'react'
 import { fetchWatchedWagons } from '../api/wagonsApi'
 import type { WatchedMembershipSource, WatchedWagonItem } from '../types'
+import { displayBoolean } from '../utils/displayValue'
 import { WatchedMembershipBanner } from './WatchedMembershipBanner'
 import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-quartz.css'
@@ -78,16 +79,18 @@ export function WatchedWagonGrid({
         field: 'inventoryPark',
         headerName: 'Инв. парк',
         minWidth: 100,
-        valueFormatter: (p) => (p.value ? 'Да' : 'Нет'),
+        valueFormatter: (p) => displayBoolean(p.value as boolean | null | undefined),
       },
     ],
     [],
   )
 
   const emptyDescription =
-    source === 'EMPTY_PENDING_G31'
-      ? 'Подтверждённый источник слежения отсутствует (G31 OPEN). Список пуст.'
-      : 'По заданным условиям вагоны не найдены'
+    source === 'SOURCE_NOT_CONNECTED'
+      ? 'Источник не подключён'
+      : source === 'EMPTY_PENDING_G31'
+        ? 'Подтверждённый источник слежения отсутствует (G31 OPEN). Список пуст.'
+        : 'По заданным условиям вагоны не найдены'
 
   return (
     <div data-testid="watched-wagon-grid">
@@ -100,9 +103,11 @@ export function WatchedWagonGrid({
       {empty ? (
         <div
           data-testid={
-            source === 'EMPTY_PENDING_G31'
-              ? 'watched-empty-pending-g31'
-              : 'watched-empty-filter'
+            source === 'SOURCE_NOT_CONNECTED'
+              ? 'watched-empty-source-not-connected'
+              : source === 'EMPTY_PENDING_G31'
+                ? 'watched-empty-pending-g31'
+                : 'watched-empty-filter'
           }
         >
           <Empty description={emptyDescription} />

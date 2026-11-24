@@ -18,6 +18,8 @@ test.describe('P5-A shell + global search + URL list state', () => {
       'aria-disabled',
       'true',
     )
+    await expect(page.getByTestId('data-source-label')).toContainText(/Synthetic/)
+    await expect(page.getByText('R3 · synthetic')).toHaveCount(0)
   })
 
   test('global header search loads card without day history', async ({ page }) => {

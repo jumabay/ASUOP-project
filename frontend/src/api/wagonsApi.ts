@@ -1,4 +1,10 @@
-import type { StateReportDay, WagonCard, WagonRegistryPage, WatchedWagonPage } from '../types'
+import type {
+  PlatformRuntime,
+  StateReportDay,
+  WagonCard,
+  WagonRegistryPage,
+  WatchedWagonPage,
+} from '../types'
 import { ApiError, type ApiErrorBody } from '../types'
 
 async function parseError(response: Response): Promise<never> {
@@ -98,4 +104,13 @@ export async function fetchStateReports(
     await parseError(response)
   }
   return (await response.json()) as StateReportDay
+}
+
+/** Safe honesty endpoint — no JDBC URL / credentials. */
+export async function fetchPlatformRuntime(): Promise<PlatformRuntime> {
+  const response = await fetch('/api/v1/platform/runtime')
+  if (!response.ok) {
+    await parseError(response)
+  }
+  return (await response.json()) as PlatformRuntime
 }

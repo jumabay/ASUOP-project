@@ -35,7 +35,8 @@ export function StateReportGrid({
       { field: 'reportId', headerName: 'ID отчёта', width: 120, sortable: true },
       {
         field: 'dislocationTime',
-        headerName: 'Время дислокации',
+        // P5-E: GETTING_DATE day axis — slice/kit time, not verified factual LOCATION_DATE.
+        headerName: 'Время среза',
         flex: 1,
         minWidth: 180,
         sortable: true,

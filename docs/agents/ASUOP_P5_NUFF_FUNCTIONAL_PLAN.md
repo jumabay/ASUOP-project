@@ -207,7 +207,12 @@ flowchart LR
 **Wave 1 CODE — DONE (2026-11-24):** P5-A/B/D merged to `main` @ **`68564a5`**.  
 Evidence: [P5_WAVE1_COMPLETION_REPORT.md](P5_WAVE1_COMPLETION_REPORT.md) (Gradle smoke+watched, Vitest 37, Playwright T0+A/B/D 18/18).
 
-**По-прежнему DENIED:** P5-C/E/F/G/H; Create RAILDB TEST; Oracle JDBC/Flyway/live migrate; FTP/RWL live; writes/bulk/concurrency; auto-merge; самовольное изменение APPROVALS.  
+**Wave 2A CODE — DONE (2026-11-24):** P5-C + P5-G merged to `main` @ **`3f1739c`**.  
+Evidence: [P5_WAVE2A_COMPLETION_REPORT.md](P5_WAVE2A_COMPLETION_REPORT.md).
+
+**P5-E planning (docs):** [ASUOP_P5_E_JDBC_READ_PLAN.md](ASUOP_P5_E_JDBC_READ_PLAN.md) — без live JDBC.
+
+**По-прежнему DENIED:** P5-E/F/H (исполнение); Create RAILDB TEST; Oracle JDBC/Flyway/live migrate; FTP/RWL live; writes/bulk/concurrency; auto-merge; самовольное изменение APPROVALS на E/F/H.  
 NK1/DT1 **BLOCKED**; G31 **OPEN**; RAIL watched **empty** until G31.
 
 ---
@@ -215,6 +220,7 @@ NK1/DT1 **BLOCKED**; G31 **OPEN**; RAIL watched **empty** until G31.
 ## 9. Ссылки
 
 - Approvals: [APPROVALS_TEMPLATE.md](../architecture/APPROVALS_TEMPLATE.md)
+- P5-E plan: [ASUOP_P5_E_JDBC_READ_PLAN.md](ASUOP_P5_E_JDBC_READ_PLAN.md)
 - NUFF: [08_NUFF_ARCHITECTURE.md](../architecture/08_NUFF_ARCHITECTURE.md)
 - Active list evidence: [11-nuff-active-wagon-list.md](../analysis/11-nuff-active-wagon-list.md)
 - Storage: [40](../architecture/40_P4_0_RAILDB_STORAGE_CONTRACTS.md), [41](../architecture/41_P4_0_R1_R3_FIELD_MAPPING.md)

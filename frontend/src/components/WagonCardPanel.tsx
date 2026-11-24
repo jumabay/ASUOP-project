@@ -1,6 +1,6 @@
 import { Button, Descriptions, Empty, Flex, Space, Tag, Tooltip, Typography } from 'antd'
 import type { WagonCard } from '../types'
-import { displayValue } from '../utils/displayValue'
+import { displayBoolean, displayValue } from '../utils/displayValue'
 
 const { Text } = Typography
 
@@ -42,7 +42,7 @@ export function WagonCardPanel({ card, fromWatched = false }: Props) {
         <Descriptions.Item label="Род вагона">{displayValue(card.wagonKind)}</Descriptions.Item>
         <Descriptions.Item label="Собственник">{displayValue(card.ownerName)}</Descriptions.Item>
         <Descriptions.Item label="Инвентарный парк">
-          {card.inventoryPark ? 'Да' : 'Нет'}
+          {displayBoolean(card.inventoryPark)}
         </Descriptions.Item>
         <Descriptions.Item label="Станция приписки" span={2}>
           {displayValue(card.homeStationCode)} — {displayValue(card.homeStationName)}

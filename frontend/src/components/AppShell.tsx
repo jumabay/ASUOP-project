@@ -17,11 +17,19 @@ const STUB_TOOLTIP = 'Появится после утверждения мод�
 export interface AppShellProps {
   activeTab: ListTab
   onSelectFleetTab: (tab: ListTab) => void
+  /** Safe backend data-source label (no JDBC URL / credentials). */
+  dataSourceLabel?: string
   headerExtra?: ReactNode
   children: ReactNode
 }
 
-export function AppShell({ activeTab, onSelectFleetTab, headerExtra, children }: AppShellProps) {
+export function AppShell({
+  activeTab,
+  onSelectFleetTab,
+  dataSourceLabel,
+  headerExtra,
+  children,
+}: AppShellProps) {
   return (
     <Layout className="app-shell">
       <Sider
@@ -108,8 +116,12 @@ export function AppShell({ activeTab, onSelectFleetTab, headerExtra, children }:
               <Title level={4} className="header-title">
                 Реестр, слежение и карточка вагона
               </Title>
-              <Text type="secondary" className="header-meta">
-                R3 · synthetic
+              <Text
+                type="secondary"
+                className="header-meta"
+                data-testid="data-source-label"
+              >
+                {dataSourceLabel?.trim() ? dataSourceLabel : 'Источник…'}
               </Text>
             </div>
             {headerExtra}

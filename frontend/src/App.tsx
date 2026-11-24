@@ -17,6 +17,7 @@ import {
 import dayjs, { type Dayjs } from 'dayjs'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
+  fetchPlatformRuntime,
   fetchStateReports,
   fetchWagonCard,
   fetchWagonRegistry,
@@ -32,6 +33,7 @@ import { WagonRegistryGrid } from './components/WagonRegistryGrid'
 import { WatchedWagonGrid } from './components/WatchedWagonGrid'
 import {
   ApiError,
+  type PlatformRuntime,
   type StateReportDay,
   type WagonCard,
   type WagonRegistryItem,
@@ -167,9 +169,28 @@ export default function App() {
   const [watchedTotal, setWatchedTotal] = useState(0)
   const [watchedLoading, setWatchedLoading] = useState(false)
   const [watchedError, setWatchedError] = useState<string | null>(null)
+  const [platformRuntime, setPlatformRuntime] = useState<PlatformRuntime | null>(null)
 
   const urlWriteModeRef = useRef<DeepLinkWriteMode>('replace')
   const syncingFromUrlRef = useRef(false)
+
+  useEffect(() => {
+    let cancelled = false
+    void fetchPlatformRuntime()
+      .then((runtime) => {
+        if (!cancelled) {
+          setPlatformRuntime(runtime)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setPlatformRuntime(null)
+        }
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const activeListParams = useMemo(() => {
     if (activeTab === 'registry') {
@@ -568,6 +589,7 @@ export default function App() {
     <AppShell
       activeTab={activeTab}
       onSelectFleetTab={selectFleetTab}
+      dataSourceLabel={platformRuntime?.displayLabel}
       headerExtra={
         <GlobalWagonSearch
           initialCode={wagonCode}
@@ -587,8 +609,9 @@ export default function App() {
               children: (
                 <>
                   <Paragraph type="secondary" style={{ marginBottom: 16 }}>
-                    Synthetic-подмножество каталога (60 вагонов). Паспорт A2, серверная пагинация.
-                    Клик открывает карточку R1. Соответствие GetActiveWagonList не подтверждено.
+                    {platformRuntime && !platformRuntime.watchedConnected
+                      ? 'Источник не подключён. Пустой список не означает отсутствие вагонов. Карточка A1/A2 загружается отдельно.'
+                      : 'Synthetic-подмножество каталога (60 вагонов). Паспорт A2, серверная пагинация. Клик открывает карточку R1. Соответствие GetActiveWagonList не подтверждено.'}
                   </Paragraph>
                   <Row gutter={[12, 12]} align="middle">
                     <Col xs={24} md={6}>
@@ -717,6 +740,16 @@ export default function App() {
                         rows={watchedRows}
                         empty={watchedEmpty}
                         onSelect={(code) => void loadWagonCardOnly(code, true)}
+                        membershipSource={
+                          platformRuntime && !platformRuntime.watchedConnected
+                            ? 'SOURCE_NOT_CONNECTED'
+                            : undefined
+                        }
+                        membershipNote={
+                          platformRuntime && !platformRuntime.watchedConnected
+                            ? 'Источник не подключён. JDBC для списков registry/watched не утверждён. Пустой список не означает отсутствие вагонов.'
+                            : undefined
+                        }
                       />
                     )}
                     <Flex justify="end" style={{ marginTop: 12 }}>
@@ -747,8 +780,9 @@ export default function App() {
               children: (
                 <>
                   <Paragraph type="secondary" style={{ marginBottom: 16 }}>
-                    Серверная пагинация (до 200), фильтры search/owner/kind (AND), сортировка по коду.
-                    Клик по строке открывает карточку R1.
+                    {platformRuntime && !platformRuntime.registryConnected
+                      ? 'Источник не подключён. Пустой список не означает отсутствие вагонов. Карточка A1/A2 загружается отдельно.'
+                      : 'Серверная пагинация (до 200), фильтры search/owner/kind (AND), сортировка по коду. Клик по строке открывает карточку R1.'}
                   </Paragraph>
                   <Row gutter={[12, 12]} align="middle">
                     <Col xs={24} md={6}>
@@ -879,6 +913,11 @@ export default function App() {
                       <WagonRegistryGrid
                         rows={registryRows}
                         empty={registryEmpty}
+                        emptyDescription={
+                          platformRuntime && !platformRuntime.registryConnected
+                            ? 'Источник не подключён'
+                            : 'По заданным условиям вагоны не найдены'
+                        }
                         onSelect={(code) => void loadWagonCardOnly(code, false)}
                       />
                     )}

@@ -4,7 +4,7 @@ import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community'
 import { Empty } from 'antd'
 import { useMemo } from 'react'
 import type { WagonRegistryItem } from '../types'
-import { displayValue } from '../utils/displayValue'
+import { displayBoolean, displayValue } from '../utils/displayValue'
 import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-quartz.css'
 
@@ -14,6 +14,8 @@ interface Props {
   rows: WagonRegistryItem[]
   empty: boolean
   onSelect: (wagonCode: string) => void
+  /** When list JDBC is not wired (e.g. dbtc-ro). */
+  emptyDescription?: string
 }
 
 /** Exported for Vitest contract checks (AG Grid headers are unreliable in jsdom). */
@@ -66,16 +68,25 @@ export function buildRegistryColumnDefs(): ColDef<WagonRegistryItem>[] {
       field: 'inventoryPark',
       headerName: 'Инв. парк',
       minWidth: 100,
-      valueFormatter: (p) => (p.value == null ? displayValue(null) : p.value ? 'Да' : 'Нет'),
+      valueFormatter: (p) => displayBoolean(p.value as boolean | null | undefined),
     },
   ]
 }
 
-export function WagonRegistryGrid({ rows, empty, onSelect }: Props) {
+export function WagonRegistryGrid({
+  rows,
+  empty,
+  onSelect,
+  emptyDescription = 'По заданным условиям вагоны не найдены',
+}: Props) {
   const columnDefs = useMemo<ColDef<WagonRegistryItem>[]>(() => buildRegistryColumnDefs(), [])
 
   if (empty) {
-    return <Empty description="По заданным условиям вагоны не найдены" />
+    return (
+      <div data-testid="registry-empty">
+        <Empty description={emptyDescription} />
+      </div>
+    )
   }
 
   return (

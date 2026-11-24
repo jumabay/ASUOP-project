@@ -7,3 +7,11 @@ export function displayValue(value: string | null | undefined): string {
   }
   return value
 }
+
+/** Boolean with explicit unknown (null) — never invent Да/Нет. */
+export function displayBoolean(value: boolean | null | undefined): string {
+  if (value == null) {
+    return EMPTY_DISPLAY
+  }
+  return value ? 'Да' : 'Нет'
+}
