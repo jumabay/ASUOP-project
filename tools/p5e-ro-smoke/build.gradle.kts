@@ -19,7 +19,7 @@ dependencies {
 }
 
 application {
-    mainClass.set("platform.oracle.p5e.P5eRoSmoke")
+    mainClass.set(providers.gradleProperty("probeMain").orElse("platform.oracle.p5e.P5eRoSmoke"))
 }
 
 tasks.named<JavaExec>("run") {
