@@ -70,6 +70,9 @@ Wave 2A DONE @ `3f1739c`.
 
 До заполнения M1–M12 строка §7 остаётся **черновиком**; live = **BLOCKED**.
 
+Готовая заявка DBA / владельцу (текст + форма ответа):  
+[ASUOP_P5_E_DBA_CONNECTION_REQUEST.md](ASUOP_P5_E_DBA_CONNECTION_REQUEST.md).
+
 ---
 
 ## 2. Окончательный allow-list (минимальное разрешение)
