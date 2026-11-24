@@ -9,7 +9,7 @@ test.describe('P5-A shell + global search + URL list state', () => {
   })
 
   test('shell shows fleet nav enabled and module stubs disabled', async ({ page }) => {
-    await expect(page.getByRole('menuitem', { name: /Вагоны на слежении/ })).toBeVisible()
+    await expect(page.getByRole('menuitem', { name: /Инвентарный парк/ })).toBeVisible()
     await expect(page.getByRole('menuitem', { name: /Реестр/ })).toBeVisible()
     await expect(page.getByTestId('nav-stub-repairs')).toBeVisible()
     await expect(page.getByTestId('nav-stub-warehouse')).toBeVisible()
@@ -48,7 +48,7 @@ test.describe('P5-A shell + global search + URL list state', () => {
   })
 
   test('browser back restores previous fleet tab', async ({ page }) => {
-    await expect(page.getByRole('tab', { name: 'Вагоны на слежении' })).toHaveAttribute(
+    await expect(page.getByRole('tab', { name: 'Инвентарный парк' })).toHaveAttribute(
       'aria-selected',
       'true',
     )
@@ -61,7 +61,7 @@ test.describe('P5-A shell + global search + URL list state', () => {
     await expect(page).toHaveURL(/tab=registry/)
 
     await page.goBack()
-    await expect(page.getByRole('tab', { name: 'Вагоны на слежении' })).toHaveAttribute(
+    await expect(page.getByRole('tab', { name: 'Инвентарный парк' })).toHaveAttribute(
       'aria-selected',
       'true',
     )
