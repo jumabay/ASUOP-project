@@ -62,7 +62,8 @@ class SyntheticWagonApiIntegrationTest {
                 .andExpect(jsonPath("$.totalPages").value(2))
                 .andExpect(jsonPath("$.content", hasSize(50)))
                 .andExpect(jsonPath("$.content[0].wagonCode").value("SYN-00001"))
-                .andExpect(jsonPath("$.content[0].model").exists());
+                .andExpect(jsonPath("$.content[0].model").exists())
+                .andExpect(jsonPath("$.membershipSource").value("FIXTURE"));
 
         mockMvc.perform(get("/api/v1/wagons/watched").param("page", "1").param("size", "50"))
                 .andExpect(status().isOk())

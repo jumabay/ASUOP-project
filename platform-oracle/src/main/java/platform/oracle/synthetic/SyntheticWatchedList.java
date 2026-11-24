@@ -10,7 +10,9 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Synthetic watch-list membership: codes only. Not confirmed as Oracle GetActiveWagonList.
+ * Synthetic watch-list membership: codes only from classpath fixture.
+ * Labeled {@link platform.fleet.WatchedMembershipSource#FIXTURE} by the adapter —
+ * not confirmed as Oracle GetActiveWagonList (G31 OPEN).
  */
 final class SyntheticWatchedList {
 

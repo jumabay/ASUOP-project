@@ -65,6 +65,8 @@ class SyntheticRuntimeSmokeTest {
         mockMvc.perform(get("/api/v1/wagons/watched"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(greaterThanOrEqualTo(1))))
-                .andExpect(jsonPath("$.content[0].wagonCode").exists());
+                .andExpect(jsonPath("$.content[0].wagonCode").exists())
+                .andExpect(jsonPath("$.membershipSource").value("FIXTURE"))
+                .andExpect(jsonPath("$.membershipNote").exists());
     }
 }

@@ -129,7 +129,7 @@ test.describe('P1-4 synthetic UI smoke (offline)', () => {
     await row.click()
 
     await expect(page.getByText(`Карточка вагона ${SYN_WAGON}`, { exact: true })).toBeVisible()
-    await expect(page.getByTestId('wagon-card-watched-tag')).toHaveText('На слежении')
+    await expect(page.getByTestId('wagon-card-watched-tag')).toHaveText('Контекст: слежение')
     await expect(page.getByText(/История дислокации/)).toHaveCount(0)
     await expect(page).toHaveURL(/tab=watched/)
     await expect(page).toHaveURL(new RegExp(`wagon=${SYN_WAGON}`))

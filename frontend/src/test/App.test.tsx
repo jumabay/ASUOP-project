@@ -26,6 +26,9 @@ const emptyWatched = {
   size: 50,
   totalElements: 0,
   totalPages: 0,
+  membershipSource: 'FIXTURE' as const,
+  membershipNote:
+    'Демонстрационный synthetic-список (FIXTURE). Это не подтверждённый активный список слежения компании. G31 OPEN.',
 }
 
 const sampleCard = {
@@ -313,10 +316,18 @@ describe('App R1/R2/R3 scenarios', () => {
       await waitFor(() => {
         expect(screen.getByText('По заданным условиям вагоны не найдены')).toBeInTheDocument()
       })
+      await waitFor(() => {
+        expect(screen.getByTestId('watched-membership-banner')).toHaveAttribute(
+          'data-membership-source',
+          'FIXTURE',
+        )
+      })
 
       await user.click(cardFindButton())
       await waitFor(() => {
-        expect(screen.getByTestId('wagon-card-watched-tag')).toHaveTextContent('На слежении')
+        expect(screen.getByTestId('wagon-card-watched-tag')).toHaveTextContent(
+          'Контекст: слежение',
+        )
       })
       expect(screen.getByRole('button', { name: 'Ремонты' })).toBeDisabled()
       expect(screen.getByRole('button', { name: 'Склад' })).toBeDisabled()
