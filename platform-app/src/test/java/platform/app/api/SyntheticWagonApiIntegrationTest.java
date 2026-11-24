@@ -3,6 +3,7 @@ package platform.app.api;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -94,6 +95,36 @@ class SyntheticWagonApiIntegrationTest {
         assertTrue(dayJson.contains("\"stationCode\":\"6902\""));
         assertTrue(dayJson.contains("\"operationCode\":\"01\""));
         assertFalse(cardJson.contains("\"stationCode\":\"6902\""));
+    }
+
+    @Test
+    void currentStateIndependentOfSelectedDayAndEmptyDay() throws Exception {
+        String before = mockMvc.perform(get("/api/v1/wagons/SYN-00001"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentState.stationCode").value("7100"))
+                .andExpect(jsonPath("$.currentState.dislocationTime").value("2024-01-16T06:00:00"))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        mockMvc.perform(get("/api/v1/wagons/SYN-00001/state-reports").param("date", "2024-01-15"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.lines", hasSize(3)));
+        mockMvc.perform(get("/api/v1/wagons/SYN-00001/state-reports").param("date", "2024-01-16"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.lines", hasSize(0)));
+
+        String after = mockMvc.perform(get("/api/v1/wagons/SYN-00001"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentState.stationCode").value("7100"))
+                .andExpect(jsonPath("$.currentState.operationCode").value("05"))
+                .andExpect(jsonPath("$.currentState.dislocationTime").value("2024-01-16T06:00:00"))
+                .andExpect(jsonPath("$.currentState.trainIndex").value("TRN-DIFF"))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertEquals(before, after);
     }
 
     @Test

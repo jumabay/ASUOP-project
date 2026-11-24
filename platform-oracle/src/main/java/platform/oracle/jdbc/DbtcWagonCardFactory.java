@@ -2,6 +2,7 @@ package platform.oracle.jdbc;
 
 import java.math.BigDecimal;
 import platform.fleet.WagonCard;
+import platform.fleet.WagonCurrentState;
 
 /**
  * Builds {@link WagonCard} from DBTC columns. Inventory mapping: only raw {@code 1} →
@@ -19,7 +20,8 @@ public final class DbtcWagonCardFactory {
             Number inventoryParkRaw,
             String modelDisplay,
             String kindDisplay,
-            String ownerDisplay) {
+            String ownerDisplay,
+            WagonCurrentState currentState) {
         return new WagonCard(
                 wagonCode,
                 nullToEmpty(modelDisplay),
@@ -28,13 +30,12 @@ public final class DbtcWagonCardFactory {
                 nullToEmpty(homeStationCode),
                 nullToEmpty(homeStationName),
                 toInventoryBoolean(inventoryParkRaw),
-                null // currentState out of P5-E smoke
-        );
+                currentState);
     }
 
-    /** Without ref SELECT: only code + inventory raw; other passport empty. */
+    /** Without ref SELECT: only code + inventory raw; other passport empty; no current. */
     public static WagonCard coreOnly(String wagonCode, Number inventoryParkRaw) {
-        return fromCoreRow(wagonCode, "", "", inventoryParkRaw, "", "", "");
+        return fromCoreRow(wagonCode, "", "", inventoryParkRaw, "", "", "", null);
     }
 
     /**
@@ -59,8 +60,6 @@ public final class DbtcWagonCardFactory {
             return null;
         }
         if (raw.longValue() == 1L) {
-            // Reject non-integral 1 via double check for Float/Double already handled;
-            // for Integer/Long/BigInteger exact 1 is enough.
             return Boolean.TRUE;
         }
         return null;

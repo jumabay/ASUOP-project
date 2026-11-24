@@ -87,6 +87,35 @@ describe('P5-C WagonCardPanel current state', () => {
     expect(block).toHaveTextContent('05')
     expect(block).toHaveTextContent('2024-01-16T06:00:00')
     expect(block).toHaveTextContent('TRN-DIFF')
+    expect(screen.getByTestId('wagon-card-current-time-label')).toHaveTextContent('Время дислокации')
+  })
+
+  it('dbtc-ro uses source-position date label', () => {
+    render(
+      <ConfigProvider>
+        <WagonCardPanel
+          dataSourceKind="DBTC_RO"
+          card={{
+            wagonCode: '54787361',
+            model: '12-9796',
+            wagonKind: 'Полувагон',
+            ownerName: 'TОО ТрансКом',
+            homeStationCode: '68390',
+            homeStationName: 'HOME',
+            inventoryPark: true,
+            currentState: {
+              stationCode: '69260',
+              operationCode: '04',
+              dislocationTime: '2026-11-21T01:25:00',
+              trainIndex: null,
+            },
+          }}
+        />
+      </ConfigProvider>,
+    )
+    expect(screen.getByTestId('wagon-card-current-time-label')).toHaveTextContent(
+      'Дата положения по данным источника',
+    )
   })
 
   it('shows em dash when currentState is null', () => {

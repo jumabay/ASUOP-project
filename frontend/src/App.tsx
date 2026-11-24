@@ -1024,7 +1024,11 @@ export default function App() {
 
         {!cardLoading && card && (
           <Card>
-            <WagonCardPanel card={card} fromWatched={fromWatched} />
+            <WagonCardPanel
+              card={card}
+              fromWatched={fromWatched}
+              dataSourceKind={platformRuntime?.dataSourceKind}
+            />
           </Card>
         )}
 

@@ -25,7 +25,7 @@ public final class DbtcA1A2Sql {
 
     /**
      * Passport with home station codes (approved ref SELECT delta).
-     * Full passport with models/types/owners: see {@link DbtcJdbcWagonCardAdapter}.
+     * Full passport with models/types/owners + E-CUR current: see {@link DbtcJdbcWagonCardAdapter}.
      */
     public static final String WAGON_PASSPORT_WITH_HOME_STATION = """
             SELECT w.id AS wagon_id,
@@ -41,6 +41,34 @@ public final class DbtcA1A2Sql {
             LEFT JOIN dbtc.stations hs ON hs.id = w.homestation_id
             WHERE w.code = :wagon_code
             FETCH FIRST 1 ROW ONLY
+            """;
+
+    /**
+     * E-CUR: WAGON master current candidates (not day tape). LOCATIONDATE only for time.
+     * Soft joins for location station / operation; train not selected for mapping.
+     */
+    public static final String WAGON_CURRENT_STATE_MASTER = """
+            SELECT w.code AS wagon_code,
+                   ls.code AS location_station_code,
+                   op.idcode AS operation_idcode,
+                   op.code AS operation_code_raw,
+                   w.locationdate AS location_date,
+                   w.reportdate AS report_date
+            FROM dbtc.wagon w
+            LEFT JOIN dbtc.stations ls ON ls.id = w.locationstation_id
+            LEFT JOIN dbtc.operations op ON op.id = w.operation_id
+            WHERE w.code = :wagon_code
+            FETCH FIRST 1 ROW ONLY
+            """;
+
+    /** Metadata only — discovery of TRAIN* does not authorize mapping. */
+    public static final String WAGON_TRAIN_COLUMN_METADATA = """
+            SELECT column_name, data_type
+            FROM all_tab_columns
+            WHERE owner = 'DBTC'
+              AND table_name = 'WAGON'
+              AND column_name LIKE '%TRAIN%'
+            ORDER BY column_id
             """;
 
     /**

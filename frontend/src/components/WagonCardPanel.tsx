@@ -1,21 +1,34 @@
 import { Button, Descriptions, Empty, Flex, Space, Tag, Tooltip, Typography } from 'antd'
-import type { WagonCard } from '../types'
+import type { PlatformRuntime, WagonCard } from '../types'
 import { displayBoolean, displayValue } from '../utils/displayValue'
 
 const { Text } = Typography
+
+const CURRENT_TIME_LABEL_SYNTHETIC = 'Время дислокации'
+const CURRENT_TIME_LABEL_DBTC_RO = 'Дата положения по данным источника'
+const CURRENT_TIME_HINT_DBTC_RO =
+  'Значение из WAGON.LOCATIONDATE (источник Oracle). Назначение «факт дислокации» не подтверждено (G3/G4 / DT1 OPEN). Не ось суток GETTING_DATE.'
 
 interface Props {
   card: WagonCard | null
   /** Client navigation hint when card was opened from the watched tab — not G31 / Active membership. */
   fromWatched?: boolean
+  /** Runtime honesty; drives dbtc-ro current-time label. */
+  dataSourceKind?: PlatformRuntime['dataSourceKind'] | null
 }
 
-export function WagonCardPanel({ card, fromWatched = false }: Props) {
+export function currentStateTimeLabel(dataSourceKind?: string | null): string {
+  return dataSourceKind === 'DBTC_RO' ? CURRENT_TIME_LABEL_DBTC_RO : CURRENT_TIME_LABEL_SYNTHETIC
+}
+
+export function WagonCardPanel({ card, fromWatched = false, dataSourceKind = null }: Props) {
   if (!card) {
     return <Empty description="Карточка вагона не загружена" />
   }
 
   const current = card.currentState
+  const timeLabel = currentStateTimeLabel(dataSourceKind)
+  const dbtcRo = dataSourceKind === 'DBTC_RO'
 
   return (
     <Space orientation="vertical" size="middle" style={{ width: '100%' }}>
@@ -63,7 +76,17 @@ export function WagonCardPanel({ card, fromWatched = false }: Props) {
               <Descriptions.Item label="Операция">
                 {displayValue(current.operationCode)}
               </Descriptions.Item>
-              <Descriptions.Item label="Время дислокации">
+              <Descriptions.Item
+                label={
+                  dbtcRo ? (
+                    <Tooltip title={CURRENT_TIME_HINT_DBTC_RO}>
+                      <span data-testid="wagon-card-current-time-label">{timeLabel}</span>
+                    </Tooltip>
+                  ) : (
+                    <span data-testid="wagon-card-current-time-label">{timeLabel}</span>
+                  )
+                }
+              >
                 {displayValue(current.dislocationTime)}
               </Descriptions.Item>
               <Descriptions.Item label="Индекс поезда">
