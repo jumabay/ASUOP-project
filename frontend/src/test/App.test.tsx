@@ -55,6 +55,14 @@ function mockApi(handler?: (url: string) => Response | undefined) {
       return custom
     }
     const path = url.split('?')[0]
+    if (path.includes('/platform/runtime')) {
+      return jsonResponse({
+        dataSourceKind: 'SYNTHETIC',
+        displayLabel: 'Synthetic (offline)',
+        registryConnected: true,
+        watchedConnected: true,
+      })
+    }
     if (path.includes('/state-reports')) {
       return jsonResponse({
         wagonCode: 'SYN-00001',

@@ -44,7 +44,7 @@ Probe: `tools/p5e-ro-smoke` → `P5eMappingProbe` (dictionary + CONTROL dates; *
 | `ownerName` | `OWNER_ID` | → **`OWNERS.ID`** (не `WAGONOWNERS`) | `OWNERS` | **`NAME`** | FK + display **CONFIRMED** (CONTROL) |
 | `homeStationCode` | `HOMESTATION_ID` | → `STATIONS.ID` | `STATIONS` | `CODE` | FK + SELECT **CONFIRMED** |
 | `homeStationName` | `HOMESTATION_ID` | → `STATIONS.ID` | `STATIONS` | `NAME` | same |
-| `inventoryPark` | `IN_INVENTORY_PARK` | none | — | NUMBER | column **CONFIRMED**; CONTROL raw=`1`→`true`; **PROVISIONAL** (не глобальное доказательство) |
+| `inventoryPark` | `IN_INVENTORY_PARK` | none | — | NUMBER | only **`1→true` CONFIRMED**; null/0/other → API `null` (unknown); global semantics **OPEN** |
 
 **Нет DB FK** на `WAGON.LOCATIONSTATION_ID` / `WAGON.OPERATION_ID` (soft refs) — для `currentState` (вне smoke).
 

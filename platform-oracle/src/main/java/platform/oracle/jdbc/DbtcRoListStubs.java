@@ -17,12 +17,14 @@ public class DbtcRoListStubs {
 
     @Bean
     WagonRegistryPort dbtcRoRegistryStub() {
+        // Empty content + FE uses platform runtime registryConnected=false
+        // → «Источник не подключён» (not “no wagons match filter”).
         return criteria -> new WagonRegistryPage(
                 java.util.List.of(), criteria.page(), criteria.size(), 0, 0);
     }
 
     @Bean
     WatchedWagonPort dbtcRoWatchedStub() {
-        return criteria -> WatchedWagonPage.emptyPendingG31(criteria.page(), criteria.size());
+        return criteria -> WatchedWagonPage.emptySourceNotConnected(criteria.page(), criteria.size());
     }
 }

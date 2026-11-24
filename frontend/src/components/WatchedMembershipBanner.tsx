@@ -7,8 +7,7 @@ interface Props {
 }
 
 /**
- * Honesty banner for watched membership (P5-D). Lives inside watched UI —
- * does not require App.tsx changes when the grid resolves source itself.
+ * Honesty banner for watched membership (P5-D / P5-E stubs).
  */
 export function WatchedMembershipBanner({ source, note }: Props) {
   if (source === 'FIXTURE') {
@@ -23,6 +22,23 @@ export function WatchedMembershipBanner({ source, note }: Props) {
         description={
           note ||
           'Synthetic fixture — не подтверждённый активный список слежения компании. G31 OPEN.'
+        }
+      />
+    )
+  }
+
+  if (source === 'SOURCE_NOT_CONNECTED') {
+    return (
+      <Alert
+        type="warning"
+        showIcon
+        data-testid="watched-membership-banner"
+        data-membership-source="SOURCE_NOT_CONNECTED"
+        style={{ marginBottom: 12 }}
+        title="Источник не подключён"
+        description={
+          note ||
+          'JDBC для списков registry/watched не утверждён. Пустой список не означает отсутствие вагонов.'
         }
       />
     )

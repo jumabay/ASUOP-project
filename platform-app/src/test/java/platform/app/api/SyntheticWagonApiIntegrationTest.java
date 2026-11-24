@@ -25,6 +25,19 @@ class SyntheticWagonApiIntegrationTest {
     MockMvc mockMvc;
 
     @Test
+    void syntheticPlatformRuntimeIsSafeHonestyLabel() throws Exception {
+        mockMvc.perform(get("/api/v1/platform/runtime"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.dataSourceKind").value("SYNTHETIC"))
+                .andExpect(jsonPath("$.displayLabel").value("Synthetic (offline)"))
+                .andExpect(jsonPath("$.registryConnected").value(true))
+                .andExpect(jsonPath("$.watchedConnected").value(true))
+                .andExpect(jsonPath("$.jdbcUrl").doesNotExist())
+                .andExpect(jsonPath("$.password").doesNotExist())
+                .andExpect(jsonPath("$.username").doesNotExist());
+    }
+
+    @Test
     void syntheticCardAndDayFixtures() throws Exception {
         mockMvc.perform(get("/api/v1/wagons/SYN-00001"))
                 .andExpect(status().isOk())

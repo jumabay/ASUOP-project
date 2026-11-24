@@ -28,7 +28,8 @@ public class DbtcJdbcStateReportDayAdapter implements StateReportDayPort {
                    :wagon_code AS wagon_code,
                    r.getting_date AS getting_date,
                    NVL(st.code, '') AS station_code,
-                   NVL(NVL(op.idcode, op.code), '') AS operation_code
+                   op.idcode AS operation_idcode,
+                   op.code AS operation_code_raw
             FROM dbtc.statereportrecords r
             LEFT JOIN dbtc.stations st ON st.id = r.location_station_id
             LEFT JOIN dbtc.operations op ON op.id = r.operation_id
@@ -66,12 +67,16 @@ public class DbtcJdbcStateReportDayAdapter implements StateReportDayPort {
                 .query((rs, n) -> {
                     Timestamp getting = rs.getTimestamp("getting_date");
                     LocalDateTime gettingLdt = getting == null ? null : getting.toLocalDateTime();
+                    // getString only — never numeric getters (preserve IDCODE leading zeros).
+                    String operationCode = DbtcOperationCode.resolve(
+                            rs.getString("operation_idcode"),
+                            rs.getString("operation_code_raw"));
                     return DbtcStateReportLineFactory.fromGettingAxis(
                             rs.getLong("report_id"),
                             rs.getString("wagon_code"),
                             gettingLdt,
                             rs.getString("station_code"),
-                            rs.getString("operation_code"));
+                            operationCode);
                 })
                 .list();
     }

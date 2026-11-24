@@ -7,6 +7,6 @@ public record WatchedWagonItemDto(
         String ownerName,
         String homeStationCode,
         String homeStationName,
-        boolean inventoryPark
+        Boolean inventoryPark
 ) {
 }

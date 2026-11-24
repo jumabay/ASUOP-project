@@ -12,7 +12,8 @@ export interface WagonCard {
   ownerName: string
   homeStationCode: string
   homeStationName: string
-  inventoryPark: boolean
+  /** Null = unknown inventory flag. */
+  inventoryPark: boolean | null
   /** Optional P5-C block; null when synthetic current fixture is absent. */
   currentState?: WagonCurrentState | null
 }
@@ -24,7 +25,7 @@ export interface WagonRegistryItem {
   ownerName: string
   homeStationCode: string
   homeStationName: string
-  inventoryPark: boolean
+  inventoryPark: boolean | null
 }
 
 export interface WagonRegistryPage {
@@ -42,11 +43,14 @@ export interface WatchedWagonItem {
   ownerName: string
   homeStationCode: string
   homeStationName: string
-  inventoryPark: boolean
+  inventoryPark: boolean | null
 }
 
-/** Additive P5-D honesty label; FIXTURE ≠ company Active / G31. */
-export type WatchedMembershipSource = 'FIXTURE' | 'EMPTY_PENDING_G31'
+/** Additive honesty label; FIXTURE ≠ company Active / G31. */
+export type WatchedMembershipSource =
+  | 'FIXTURE'
+  | 'EMPTY_PENDING_G31'
+  | 'SOURCE_NOT_CONNECTED'
 
 export interface WatchedWagonPage {
   content: WatchedWagonItem[]
@@ -54,9 +58,16 @@ export interface WatchedWagonPage {
   size: number
   totalElements: number
   totalPages: number
-  /** Additive (P5-D); synthetic returns FIXTURE, RAIL returns EMPTY_PENDING_G31. */
+  /** Additive; synthetic FIXTURE, stubs EMPTY_PENDING_G31 / SOURCE_NOT_CONNECTED. */
   membershipSource: WatchedMembershipSource
   membershipNote: string
+}
+
+export interface PlatformRuntime {
+  dataSourceKind: 'SYNTHETIC' | 'DBTC_RO' | 'RAILDB_TEST' | string
+  displayLabel: string
+  registryConnected: boolean
+  watchedConnected: boolean
 }
 
 export interface StateReportLine {

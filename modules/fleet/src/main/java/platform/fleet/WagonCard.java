@@ -12,7 +12,8 @@ public record WagonCard(
         String ownerName,
         String homeStationCode,
         String homeStationName,
-        boolean inventoryPark,
+        /** Null = unknown (no proven mapping for the raw value). */
+        Boolean inventoryPark,
         WagonCurrentState currentState
 ) {
     public WagonCard {

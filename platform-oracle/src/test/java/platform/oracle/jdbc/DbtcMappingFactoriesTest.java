@@ -1,10 +1,10 @@
 package platform.oracle.jdbc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import platform.dislocation.StateReportLine;
@@ -13,10 +13,10 @@ import platform.fleet.WagonCard;
 class DbtcMappingFactoriesTest {
 
     @Test
-    void passportCoreOnly_mapsCodeAndInventory_leavesRefsEmpty() {
+    void passportCoreOnly_mapsCodeAndInventoryOne_leavesRefsEmpty() {
         WagonCard card = DbtcWagonCardFactory.coreOnly("54787361", 1);
         assertEquals("54787361", card.wagonCode());
-        assertTrue(card.inventoryPark());
+        assertEquals(Boolean.TRUE, card.inventoryPark());
         assertEquals("", card.model());
         assertEquals("", card.wagonKind());
         assertEquals("", card.ownerName());
@@ -26,10 +26,26 @@ class DbtcMappingFactoriesTest {
     }
 
     @Test
-    void inventoryPark_nullAndZeroAreFalse() {
-        assertFalse(DbtcWagonCardFactory.toInventoryBoolean(null));
-        assertFalse(DbtcWagonCardFactory.toInventoryBoolean(0));
-        assertTrue(DbtcWagonCardFactory.toInventoryBoolean(1));
+    void inventoryPark_onlyOneIsTrue_nullAndOthersUnknown() {
+        assertNull(DbtcWagonCardFactory.toInventoryBoolean(null));
+        assertNull(DbtcWagonCardFactory.toInventoryBoolean(0));
+        assertNull(DbtcWagonCardFactory.toInventoryBoolean(2));
+        assertNull(DbtcWagonCardFactory.toInventoryBoolean(BigDecimal.ZERO));
+        assertNull(DbtcWagonCardFactory.toInventoryBoolean(new BigDecimal("1.5")));
+        assertEquals(Boolean.TRUE, DbtcWagonCardFactory.toInventoryBoolean(1));
+        assertEquals(Boolean.TRUE, DbtcWagonCardFactory.toInventoryBoolean(BigDecimal.ONE));
+        assertEquals(Boolean.TRUE, DbtcWagonCardFactory.toInventoryBoolean(1L));
+    }
+
+    @Test
+    void operationCode_prefersIdCode_asString_keepsLeadingZeros() {
+        assertEquals("04", DbtcOperationCode.resolve("04", "4"));
+        assertEquals("04", DbtcOperationCode.resolve("04", null));
+        assertEquals("81", DbtcOperationCode.resolve("81", "очи"));
+        assertEquals("ABC", DbtcOperationCode.resolve(null, "ABC"));
+        assertEquals("ABC", DbtcOperationCode.resolve("  ", " ABC "));
+        assertEquals("", DbtcOperationCode.resolve(null, null));
+        assertEquals("", DbtcOperationCode.resolve("", "  "));
     }
 
     @Test

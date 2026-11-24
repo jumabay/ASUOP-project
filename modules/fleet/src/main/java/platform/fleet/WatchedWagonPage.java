@@ -51,6 +51,16 @@ public record WatchedWagonPage(
                 WatchedMembershipSource.EMPTY_PENDING_G31);
     }
 
+    public static WatchedWagonPage emptySourceNotConnected(int page, int size) {
+        return of(
+                List.of(),
+                page,
+                size,
+                0,
+                0,
+                WatchedMembershipSource.SOURCE_NOT_CONNECTED);
+    }
+
     public static int computeTotalPages(long totalElements, int size) {
         return WagonRegistryPage.computeTotalPages(totalElements, size);
     }
