@@ -1,7 +1,7 @@
 # 55. DT1 — контракт времени A1 (`snapshotTime` / `locationTime`)
 
 Дата: **2026-11-24**.  
-Статус: **PROPOSED (docs-only)** — согласование владельцем; **код API/UI не менять** до отдельной строки APPROVALS.  
+Статус: **T1 APPROVED (CODE)** — `snapshotTime` additive; **T2 DENIED** until BODY or file↔Oracle.  
 База: `main` после P5-E (`ad1b8e7`).  
 Скоуп: семантика `GETTING_DATE` / `LOCATION_DATE` + REST/UI контракт для **суток (A1)**.  
 **Вне скоупа:** `currentState`, registry/watched, импорт/writer, Create RAILDB, расширение RO allow-list, live-пробы.
@@ -201,31 +201,32 @@ disl_kz*.txt field[3] «dislocationDate»
 | ID | Запрос / артефакт | Зачем | Уже есть черновик |
 | --- | --- | --- | --- |
 | **DT1-A** | `ALL_TAB_COLUMNS` для `STATEREPORTRECORDS.LOCATION_DATE` / `GETTING_DATE` (DATA_TYPE, DATA_SCALE) | точность, DATE vs TIMESTAMP | dictionary; уточнить если не в CSV |
-| **DT1-B** | `ALL_ARGUMENTS` / SPEC `ImportPkg.SaveStateReportLineKz` — имена параметров дат | доказательство bind `dislocationDate`→какая колонка | [38](38_P3C0_DBA_PACKAGE_SOURCE_REQUEST.md); сейчас 0 visibility у RO |
+| **DT1-B** | `ALL_ARGUMENTS` / SPEC `ImportPkg.SaveStateReportLineKz` — имена/типы параметров дат | **только сигнатура** (имена входа); **не** доказательство INSERT в `LOCATION_DATE` | [38](38_P3C0_DBA_PACKAGE_SOURCE_REQUEST.md); сейчас 0 visibility у RO |
+| **DT1-B2** | **BODY** `SaveStateReportLineKz` (или эквивалент export) | доказательство записи параметра → колонка | отдельный DBA grant / file-share |
 | **DT1-C** | Bounded hour sample: EQUAL / WITHIN_1H / GT_24H / NULL_SIDE (≤5000) | распределение, не proof purpose | [sql/dba/p4-2/DT1_tape_date_axis_probes.sql](sql/dba/p4-2/DT1_tape_date_axis_probes.sql) |
 | **DT1-D** | Join `STATEREPORTS`↔tape: same_hour_as_report | GETTING = kit hour | DT1.3 в том же SQL |
-| **DT1-E** | Сверка одного импортированного файла: field[3] ↔ `LOCATION_DATE` (копия / offline fixture) | закрыть INFERRED mapping | нужен образец `disl_kz*.txt` + REPORT_ID |
+| **DT1-E** | Сверка одного импортированного файла: field[3] ↔ `LOCATION_DATE` строки Oracle (по `REPORT_ID` / kit) | закрыть INFERRED mapping **без** BODY | образец `disl_kz*.txt` + REPORT_ID |
 | **DT1-F** | Что показывает legacy НУВ в колонке времени суток (`GetWagonStateReports` cursor cols) | UI «факт» vs срез | Remoting/UI research; пакет text OPEN |
 
-**Не требуется для утверждения T1 (`snapshotTime`):** DT1-C…F можно отложить; T1 опирается на уже CONFIRMED ось GETTING.
+**T1 (`snapshotTime`) — APPROVED CODE:** ось GETTING CONFIRMED; live Oracle re-run не нужен.
 
-**Требуется для T2 (`locationTime` = факт):** минимум DT1-B **или** DT1-E + бизнес-подтверждение ярлыка.
+**T2 (`locationTime` = факт):** SPEC/`ALL_ARGUMENTS` **недостаточно** — подтверждает сигнатуру, не маппинг параметра в колонку. Нужен **BODY** (DT1-B2) **или** сверка исходного файла с соответствующей строкой Oracle (DT1-E), плюс бизнес-ярлык «факт».
 
 ---
 
-## 8. Out of scope / не делать в этом PR
+## 8. Out of scope для T1 CODE
 
-- Правки Java/React/SQL adapters
+- `locationTime` / confidence / UI «Время дислокации»
 - Live Oracle / повтор CONTROL
 - Смена day axis на LOCATION
-- Закрытие статуса DT1 → CLOSED в журналах без §7
+- Закрытие DT1 / R1-Q-TZ → CLOSED
 - `currentState`, registry, watched, import writer
 
 ---
 
-## 9. Следующий gate
+## 9. Gates
 
-1. Владелец: **принять** этот контракт (T1 обязательно; T2 — после evidence).
-2. Строка APPROVALS: `DT1 time contract CODE (snapshotTime additive)` — synthetic + опционально `dbtc-ro` без расширения allow-list.
-3. Отдельный CODE PR; затем `/qa` + `/qa-test-runner`.
-4. T2 только после DT1-B/E и явного «location = факт».
+| Gate | Status |
+| --- | --- |
+| T1 docs + CODE (`snapshotTime` additive) | **APPROVED** (см. APPROVALS) |
+| T2 CODE (`locationTime` as fact) | **DENIED** until BODY or file↔Oracle |

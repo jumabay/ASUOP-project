@@ -11,8 +11,8 @@ import platform.dislocation.StateReportDayPort;
 import platform.dislocation.StateReportLine;
 
 /**
- * A1 day lines: filter on GETTING_DATE (slice axis). Maps dislocationTime from getting_date
- * (PROVISIONAL — UI labels as «Время среза», not verified fact LOCATION_DATE).
+ * A1 day lines: filter on GETTING_DATE (slice axis). Maps snapshotTime (and alias
+ * dislocationTime) from getting_date — slice time, not verified fact LOCATION_DATE.
  * operationCode from OPERATIONS.IDCODE to preserve leading zeros; stationCode from STATIONS.CODE.
  */
 @Component

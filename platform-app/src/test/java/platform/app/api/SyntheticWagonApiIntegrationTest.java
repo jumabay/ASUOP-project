@@ -52,11 +52,26 @@ class SyntheticWagonApiIntegrationTest {
                 .andExpect(jsonPath("$.lines", hasSize(greaterThanOrEqualTo(2))))
                 .andExpect(jsonPath("$.lines[2].stationCode").value("6902"))
                 .andExpect(jsonPath("$.lines[2].operationCode").value("01"))
+                .andExpect(jsonPath("$.lines[2].snapshotTime").value("2024-01-15T23:59:59.5"))
                 .andExpect(jsonPath("$.lines[2].dislocationTime").value("2024-01-15T23:59:59.5"));
 
         mockMvc.perform(get("/api/v1/wagons/SYN-00001/state-reports").param("date", "2024-01-16"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.lines", hasSize(0)));
+    }
+
+    @Test
+    void dayLineSnapshotTimeEqualsDeprecatedDislocationTimeAlias() throws Exception {
+        String json = mockMvc.perform(get("/api/v1/wagons/SYN-00001/state-reports").param("date", "2024-01-15"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.lines", hasSize(greaterThanOrEqualTo(1))))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        // Alias contract: every line carries both fields with identical ISO values
+        assertTrue(json.contains("\"snapshotTime\""));
+        assertTrue(json.contains("\"dislocationTime\""));
+        assertFalse(json.contains("\"locationTime\""));
     }
 
     @Test

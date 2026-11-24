@@ -73,6 +73,9 @@ export interface PlatformRuntime {
 export interface StateReportLine {
   reportId: number
   wagonCode: string
+  /** Day/slice axis (GETTING_DATE). Preferred for UI «Время среза». */
+  snapshotTime?: string | null
+  /** @deprecated Alias of snapshotTime; kept for older backends. */
   dislocationTime: string
   stationCode: string
   operationCode: string

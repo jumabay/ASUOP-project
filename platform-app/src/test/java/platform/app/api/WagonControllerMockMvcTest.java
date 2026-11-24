@@ -101,7 +101,28 @@ class WagonControllerMockMvcTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.wagonCode").value("SYN-00001"))
                 .andExpect(jsonPath("$.date").value("2024-01-15"))
-                .andExpect(jsonPath("$.lines", hasSize(2)));
+                .andExpect(jsonPath("$.lines", hasSize(2)))
+                .andExpect(jsonPath("$.lines[0].snapshotTime").value("2024-01-15T08:00:00"))
+                .andExpect(jsonPath("$.lines[0].dislocationTime").value("2024-01-15T08:00:00"))
+                .andExpect(jsonPath("$.lines[1].snapshotTime").value("2024-01-15T14:30:00"))
+                .andExpect(jsonPath("$.lines[1].dislocationTime").value("2024-01-15T14:30:00"))
+                .andExpect(jsonPath("$.lines[0].locationTime").doesNotExist());
+    }
+
+    @Test
+    void getStateReports_retainsTwoLinesWithSameSnapshotTime() throws Exception {
+        LocalDateTime same = LocalDateTime.of(2024, 1, 15, 8, 0);
+        when(wagonCardPort.findByCode("SYN-00001")).thenReturn(Optional.of(sampleCard()));
+        when(stateReportDayPort.findLinesForDay(eq("SYN-00001"), eq(LocalDate.of(2024, 1, 15))))
+                .thenReturn(List.of(
+                        new StateReportLine(1, "SYN-00001", same, "6900", "01"),
+                        new StateReportLine(2, "SYN-00001", same, "6901", "03")));
+
+        mockMvc.perform(get("/api/v1/wagons/SYN-00001/state-reports").param("date", "2024-01-15"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.lines", hasSize(2)))
+                .andExpect(jsonPath("$.lines[0].snapshotTime").value("2024-01-15T08:00:00"))
+                .andExpect(jsonPath("$.lines[1].snapshotTime").value("2024-01-15T08:00:00"));
     }
 
     @Test

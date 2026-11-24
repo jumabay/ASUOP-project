@@ -71,6 +71,7 @@ function mockApi(handler?: (url: string) => Response | undefined) {
           {
             reportId: 1001,
             wagonCode: 'SYN-00001',
+            snapshotTime: '2024-01-15T08:00:00',
             dislocationTime: '2024-01-15T08:00:00',
             stationCode: '6900',
             operationCode: '01',

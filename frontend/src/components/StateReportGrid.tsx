@@ -3,6 +3,7 @@ import type { ColDef } from 'ag-grid-community'
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community'
 import { Empty, Space } from 'antd'
 import { useMemo } from 'react'
+import { sliceTimeDisplay } from '../sliceTime'
 import type { StateReportLine } from '../types'
 import { DAY_LINE_MAX, DayReportStatus } from './DayReportStatus'
 import 'ag-grid-community/styles/ag-grid.css'
@@ -34,12 +35,13 @@ export function StateReportGrid({
     () => [
       { field: 'reportId', headerName: 'ID отчёта', width: 120, sortable: true },
       {
-        field: 'dislocationTime',
-        // P5-E: GETTING_DATE day axis — slice/kit time, not verified factual LOCATION_DATE.
+        colId: 'snapshotTime',
+        // T1: prefer snapshotTime; fallback dislocationTime for old backends. Raw string — no Date TZ shift.
         headerName: 'Время среза',
         flex: 1,
         minWidth: 180,
         sortable: true,
+        valueGetter: (p) => (p.data ? sliceTimeDisplay(p.data) : ''),
       },
       { field: 'stationCode', headerName: 'Станция', width: 120, sortable: true },
       { field: 'operationCode', headerName: 'Операция', width: 120, sortable: true },

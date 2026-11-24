@@ -4,9 +4,9 @@ import java.time.LocalDateTime;
 import platform.dislocation.StateReportLine;
 
 /**
- * A1 line factory. {@code dislocationTime} is taken from GETTING_DATE (day axis) —
- * PROVISIONAL, not verified as factual LOCATION_DATE (DT1 OPEN).
- * Never put numeric station/operation ids into code fields.
+ * A1 line factory. {@code snapshotTime} (and deprecated alias {@code dislocationTime})
+ * come from {@code GETTING_DATE} (day/slice axis). Not factual {@code LOCATION_DATE}
+ * (DT1 / T2 still OPEN).
  */
 public final class DbtcStateReportLineFactory {
 
@@ -19,7 +19,7 @@ public final class DbtcStateReportLineFactory {
             String stationCode,
             String operationCode) {
         if (gettingDate == null) {
-            throw new IllegalArgumentException("gettingDate required for provisional dislocationTime");
+            throw new IllegalArgumentException("gettingDate required for snapshotTime");
         }
         return new StateReportLine(
                 reportId,

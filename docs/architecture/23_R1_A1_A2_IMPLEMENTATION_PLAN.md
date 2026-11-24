@@ -30,7 +30,7 @@
 
 ### A1 — сутки среза
 
-Ключи строки: `reportId`, `wagonCode`, `dislocationTime`, `stationCode`, `operationCode`.  
+Ключи строки: `reportId`, `wagonCode`, `snapshotTime` (+ deprecated alias `dislocationTime` = snapshot), `stationCode`, `operationCode`. См. [55](55_DT1_TIME_CONTRACT.md) T1.  
 Пустой день: `lines: []`. Порядок не сравнивается.  
 Будущий Oracle: `StateReportPackage.GetWagonStateReports`.
 
@@ -43,7 +43,7 @@ A2 не требует равенства со станцией последне
 ```text
 beginInclusive = D 00:00:00
 endExclusive   = (D + 1 day) 00:00:00
-входит ⇔ beginInclusive <= dislocationTime < endExclusive
+входит ⇔ beginInclusive <= snapshotTime < endExclusive
 ```
 
 Не использовать `BETWEEN … 23:59:59`. Дроби секунды до `endExclusive` входят в день `D`.
@@ -137,7 +137,7 @@ React → REST → fleet/dislocation Query
 
 ### StateReportLineDto / StateReportDayDto (A1)
 
-Line: `reportId`, `wagonCode`, `dislocationTime`, `stationCode`, `operationCode`  
+Line: `reportId`, `wagonCode`, `snapshotTime`, `dislocationTime` (alias = snapshotTime), `stationCode`, `operationCode`  
 Day: `wagonCode`, `date`, `lines[]`
 
 ### REST

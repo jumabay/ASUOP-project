@@ -1,5 +1,6 @@
 package platform.app.api;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import platform.app.api.dto.StateReportDayDto;
 import platform.app.api.dto.StateReportLineDto;
@@ -50,10 +51,12 @@ final class WagonApiMapper {
     }
 
     private static StateReportLineDto toDto(StateReportLine line) {
+        LocalDateTime snapshot = line.snapshotTime();
         return new StateReportLineDto(
                 line.reportId(),
                 line.wagonCode(),
-                line.dislocationTime(),
+                snapshot,
+                snapshot, // deprecated alias — always equal to snapshotTime (T1)
                 line.stationCode(),
                 line.operationCode());
     }

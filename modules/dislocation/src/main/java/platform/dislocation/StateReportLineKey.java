@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 public record StateReportLineKey(
         long reportId,
         String wagonCode,
-        LocalDateTime dislocationTime,
+        LocalDateTime snapshotTime,
         String stationCode,
         String operationCode
 ) {
