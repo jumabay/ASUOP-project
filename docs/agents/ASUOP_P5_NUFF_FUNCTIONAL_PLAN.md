@@ -202,12 +202,13 @@ flowchart LR
 
 ## 8. Stop line / Wave 1 gate
 
-**Planning (PR #20):** MERGED в `main` @ `8e490c4`.
+**Planning (PR #20):** MERGED. **APPROVALS wave 1 (PR #21):** MERGED.
 
-**Owner decision (2026-11-20):** волна 1 = **P5-A + P5-B + P5-D** → строки `APPROVED WITH CONSTRAINTS` в [APPROVALS_TEMPLATE.md](../architecture/APPROVALS_TEMPLATE.md) (отдельный docs-only approval PR).  
-**CODE A/B/D** — только после **ручного merge** того approval PR; каждый срез = своя ветка/worktree + PR + Independent QA Test Runner.  
+**Wave 1 CODE — DONE (2026-11-24):** P5-A/B/D merged to `main` @ **`68564a5`**.  
+Evidence: [P5_WAVE1_COMPLETION_REPORT.md](P5_WAVE1_COMPLETION_REPORT.md) (Gradle smoke+watched, Vitest 37, Playwright T0+A/B/D 18/18).
+
 **По-прежнему DENIED:** P5-C/E/F/G/H; Create RAILDB TEST; Oracle JDBC/Flyway/live migrate; FTP/RWL live; writes/bulk/concurrency; auto-merge; самовольное изменение APPROVALS.  
-NK1/DT1 **BLOCKED**; G31 **OPEN**; watched в реальном/RAIL режиме **пуст**.
+NK1/DT1 **BLOCKED**; G31 **OPEN**; RAIL watched **empty** until G31.
 
 ---
 
