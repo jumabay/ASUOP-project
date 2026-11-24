@@ -41,16 +41,16 @@ test.describe('P1-4 synthetic UI smoke (offline)', () => {
   })
 
   test('watched list loads and filters by synthetic code', async ({ page }) => {
-    await expect(page.getByRole('tab', { name: 'Вагоны на слежении' })).toHaveAttribute(
+    await expect(page.getByRole('tab', { name: 'Инвентарный парк' })).toHaveAttribute(
       'aria-selected',
       'true',
     )
 
-    await applyListSearch(page, 'Вагоны на слежении', SYN_WAGON)
-    const panel = page.getByRole('tabpanel', { name: 'Вагоны на слежении' })
+    await applyListSearch(page, 'Инвентарный парк', SYN_WAGON)
+    const panel = page.getByRole('tabpanel', { name: 'Инвентарный парк' })
     await expect(panel.getByRole('gridcell', { name: SYN_WAGON, exact: true })).toBeVisible()
 
-    await applyListSearch(page, 'Вагоны на слежении', 'NOMATCH')
+    await applyListSearch(page, 'Инвентарный парк', 'NOMATCH')
     await expect(page.getByText('По заданным условиям вагоны не найдены')).toBeVisible()
 
     await page.screenshot({
@@ -122,14 +122,14 @@ test.describe('P1-4 synthetic UI smoke (offline)', () => {
   })
 
   test('watched row opens card only; deep-link updates URL', async ({ page }) => {
-    await applyListSearch(page, 'Вагоны на слежении', SYN_WAGON)
-    const panel = page.getByRole('tabpanel', { name: 'Вагоны на слежении' })
+    await applyListSearch(page, 'Инвентарный парк', SYN_WAGON)
+    const panel = page.getByRole('tabpanel', { name: 'Инвентарный парк' })
     const row = panel.getByRole('row', { name: new RegExp(SYN_WAGON) })
     await expect(row).toBeVisible()
     await row.click()
 
     await expect(page.getByText(`Карточка вагона ${SYN_WAGON}`, { exact: true })).toBeVisible()
-    await expect(page.getByTestId('wagon-card-watched-tag')).toHaveText('Контекст: слежение')
+    await expect(page.getByTestId('wagon-card-watched-tag')).toHaveText('Контекст: инвентарный парк')
     await expect(page.getByText(/История дислокации/)).toHaveCount(0)
     await expect(page).toHaveURL(/tab=watched/)
     await expect(page).toHaveURL(new RegExp(`wagon=${SYN_WAGON}`))

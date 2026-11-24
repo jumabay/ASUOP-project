@@ -16,7 +16,7 @@ test.describe('P5-D watched membership honesty (synthetic)', () => {
   })
 
   test('FIXTURE banner states demo-only, not company Active list', async ({ page }) => {
-    await expect(page.getByRole('tab', { name: 'Вагоны на слежении' })).toHaveAttribute(
+    await expect(page.getByRole('tab', { name: 'Инвентарный парк' })).toHaveAttribute(
       'aria-selected',
       'true',
     )
@@ -35,14 +35,14 @@ test.describe('P5-D watched membership honesty (synthetic)', () => {
   })
 
   test('card tag from watched is navigation context only', async ({ page }) => {
-    await applyListSearch(page, 'Вагоны на слежении', SYN_WAGON)
-    const panel = page.getByRole('tabpanel', { name: 'Вагоны на слежении' })
+    await applyListSearch(page, 'Инвентарный парк', SYN_WAGON)
+    const panel = page.getByRole('tabpanel', { name: 'Инвентарный парк' })
     const row = panel.getByRole('row', { name: new RegExp(SYN_WAGON) })
     await expect(row).toBeVisible()
     await row.click()
 
     const tag = page.getByTestId('wagon-card-watched-tag')
-    await expect(tag).toHaveText('Контекст: слежение')
+    await expect(tag).toHaveText('Контекст: инвентарный парк')
     await expect(tag).not.toHaveText('На слежении')
   })
 
@@ -59,7 +59,7 @@ test.describe('P5-D watched membership honesty (synthetic)', () => {
           totalPages: 0,
           membershipSource: 'EMPTY_PENDING_G31',
           membershipNote:
-            'Подтверждённый источник членства слежения отсутствует (G31 OPEN). Список пуст.',
+            'Подтверждённый источник членства инвентарного парка отсутствует (G31 OPEN). Список пуст.',
         }),
       })
     })

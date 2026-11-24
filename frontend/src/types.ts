@@ -46,11 +46,12 @@ export interface WatchedWagonItem {
   inventoryPark: boolean | null
 }
 
-/** Additive honesty label; FIXTURE ≠ company Active / G31. */
+/** Additive honesty label; FIXTURE ≠ inventory park / Active. */
 export type WatchedMembershipSource =
   | 'FIXTURE'
   | 'EMPTY_PENDING_G31'
   | 'SOURCE_NOT_CONNECTED'
+  | 'DBTC_ACTIVE_INVENTORY_PARK'
 
 export interface WatchedWagonPage {
   content: WatchedWagonItem[]

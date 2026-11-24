@@ -89,8 +89,19 @@ export function WatchedWagonGrid({
     source === 'SOURCE_NOT_CONNECTED'
       ? 'Источник не подключён'
       : source === 'EMPTY_PENDING_G31'
-        ? 'Подтверждённый источник слежения отсутствует (G31 OPEN). Список пуст.'
-        : 'По заданным условиям вагоны не найдены'
+        ? 'Подтверждённый источник инвентарного парка отсутствует (G31 OPEN). Список пуст.'
+        : source === 'DBTC_ACTIVE_INVENTORY_PARK'
+          ? 'По заданным условиям вагоны инвентарного парка не найдены'
+          : 'По заданным условиям вагоны не найдены'
+
+  const emptyTestId =
+    source === 'SOURCE_NOT_CONNECTED'
+      ? 'watched-empty-source-not-connected'
+      : source === 'EMPTY_PENDING_G31'
+        ? 'watched-empty-pending-g31'
+        : source === 'DBTC_ACTIVE_INVENTORY_PARK'
+          ? 'watched-empty-inventory-park'
+          : 'watched-empty-filter'
 
   return (
     <div data-testid="watched-wagon-grid">
@@ -101,15 +112,7 @@ export function WatchedWagonGrid({
       )}
       {source && <WatchedMembershipBanner source={source} note={note} />}
       {empty ? (
-        <div
-          data-testid={
-            source === 'SOURCE_NOT_CONNECTED'
-              ? 'watched-empty-source-not-connected'
-              : source === 'EMPTY_PENDING_G31'
-                ? 'watched-empty-pending-g31'
-                : 'watched-empty-filter'
-          }
-        >
+        <div data-testid={emptyTestId}>
           <Empty description={emptyDescription} />
         </div>
       ) : (

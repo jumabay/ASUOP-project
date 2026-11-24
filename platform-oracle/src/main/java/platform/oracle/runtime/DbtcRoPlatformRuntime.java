@@ -14,6 +14,6 @@ public class DbtcRoPlatformRuntime {
                 PlatformRuntimeView.KIND_DBTC_RO,
                 "DBTC read-only (time-boxed)",
                 false,
-                false);
+                true);
     }
 }

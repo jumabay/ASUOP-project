@@ -28,7 +28,7 @@ const emptyWatched = {
   totalPages: 0,
   membershipSource: 'FIXTURE' as const,
   membershipNote:
-    'Демонстрационный synthetic-список (FIXTURE). Это не подтверждённый активный список слежения компании. G31 OPEN.',
+    'Демонстрационный synthetic-список (FIXTURE). Не инвентарный парк Oracle и не персональное слежение. G31 OPEN.',
 }
 
 const sampleCard = {
@@ -121,12 +121,14 @@ describe('App R1/R2/R3 scenarios', () => {
       )
 
       await waitFor(() => {
-        expect(screen.getByRole('tab', { name: 'Вагоны на слежении' })).toHaveAttribute(
+        expect(screen.getByRole('tab', { name: 'Инвентарный парк' })).toHaveAttribute(
           'aria-selected',
           'true',
         )
       })
-      expect(screen.getByText('По заданным условиям вагоны не найдены')).toBeInTheDocument()
+      await waitFor(() => {
+        expect(screen.getByText('По заданным условиям вагоны не найдены')).toBeInTheDocument()
+      })
 
       await user.click(cardFindButton())
 
@@ -341,7 +343,7 @@ describe('App R1/R2/R3 scenarios', () => {
       await user.click(cardFindButton())
       await waitFor(() => {
         expect(screen.getByTestId('wagon-card-watched-tag')).toHaveTextContent(
-          'Контекст: слежение',
+          'Контекст: инвентарный парк',
         )
       })
       expect(screen.getByRole('button', { name: 'Ремонты' })).toBeDisabled()
@@ -384,7 +386,7 @@ describe('App R1/R2/R3 scenarios', () => {
       await waitFor(() => {
         expect(screen.getByTestId('app-sider-brand')).toBeInTheDocument()
       })
-      expect(screen.getByRole('menuitem', { name: /Слежение/ })).toBeInTheDocument()
+      expect(screen.getByRole('menuitem', { name: /Инвентарный парк/ })).toBeInTheDocument()
       expect(screen.getByRole('menuitem', { name: /Реестр/ })).toBeInTheDocument()
       expect(screen.getByTestId('nav-stub-repairs')).toBeInTheDocument()
       expect(screen.getByTestId('nav-stub-warehouse')).toBeInTheDocument()
@@ -491,7 +493,7 @@ describe('App R1/R2/R3 scenarios', () => {
       )
 
       await waitFor(() => {
-        expect(screen.getByRole('tab', { name: 'Вагоны на слежении' })).toHaveAttribute(
+        expect(screen.getByRole('tab', { name: 'Инвентарный парк' })).toHaveAttribute(
           'aria-selected',
           'true',
         )
@@ -508,7 +510,7 @@ describe('App R1/R2/R3 scenarios', () => {
 
       window.history.back()
       await waitFor(() => {
-        expect(screen.getByRole('tab', { name: 'Вагоны на слежении' })).toHaveAttribute(
+        expect(screen.getByRole('tab', { name: 'Инвентарный парк' })).toHaveAttribute(
           'aria-selected',
           'true',
         )

@@ -1,3 +1,5 @@
+import { WATCHED_LIST_MAX_SIZE } from './listPaging'
+
 export type ListTab = 'registry' | 'watched'
 
 export type ListSort = 'code,asc' | 'code,desc'
@@ -62,11 +64,15 @@ function parseNonNegativeInt(value: string | null | undefined, fallback: number)
   return n
 }
 
-function clampSize(size: number): number {
+function maxSizeForTab(tab: ListTab): number {
+  return tab === 'watched' ? WATCHED_LIST_MAX_SIZE : DEEP_LINK_MAX_SIZE
+}
+
+function clampSize(size: number, tab: ListTab): number {
   if (size <= 0) {
     return DEFAULT_SIZE
   }
-  return Math.min(size, DEEP_LINK_MAX_SIZE)
+  return Math.min(size, maxSizeForTab(tab))
 }
 
 export function readDeepLinkFromSearch(search: string): DeepLinkState {
@@ -76,15 +82,16 @@ export function readDeepLinkFromSearch(search: string): DeepLinkState {
   const listSearch = (params.get('search') ?? DEFAULT_SEARCH).trim()
   const owner = (params.get('owner') ?? DEFAULT_OWNER).trim()
   const kind = (params.get('kind') ?? DEFAULT_KIND).trim()
+  const tab = parseListTab(params.get('tab'))
   return {
-    tab: parseListTab(params.get('tab')),
+    tab,
     wagon,
     date,
     search: listSearch,
     owner,
     kind,
     page: parseNonNegativeInt(params.get('page'), DEFAULT_PAGE),
-    size: clampSize(parseNonNegativeInt(params.get('size'), DEFAULT_SIZE)),
+    size: clampSize(parseNonNegativeInt(params.get('size'), DEFAULT_SIZE), tab),
     sort: parseListSort(params.get('sort')),
   }
 }
@@ -113,7 +120,7 @@ export function buildDeepLinkSearch(state: DeepLinkState): string {
     params.set('kind', trimmedKind)
   }
   params.set('page', String(Math.max(0, state.page)))
-  params.set('size', String(clampSize(state.size)))
+  params.set('size', String(clampSize(state.size, state.tab)))
   params.set('sort', parseListSort(state.sort))
   return `?${params.toString()}`
 }

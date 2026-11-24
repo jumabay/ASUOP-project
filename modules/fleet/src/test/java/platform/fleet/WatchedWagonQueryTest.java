@@ -64,13 +64,31 @@ class WatchedWagonQueryTest {
     @Test
     void invalidSizeRejected() {
         assertThrows(InvalidPageSizeException.class, () ->
-                query.search(null, null, null, 0, 201, null));
+                query.search(null, null, null, 0, 101, null));
+    }
+
+    @Test
+    void maxWatchedPageSizeAccepted() {
+        WatchedWagonQuery q = new WatchedWagonQuery(criteria -> {
+            assertEquals(100, criteria.size());
+            return WatchedWagonPage.of(List.of(), 0, 100, 0, 0, WatchedMembershipSource.FIXTURE);
+        });
+        q.search(null, null, null, 0, 100, null);
     }
 
     @Test
     void invalidSortRejected() {
         assertThrows(InvalidSortException.class, () ->
                 query.search(null, null, null, 0, 50, "model,asc"));
+    }
+
+    @Test
+    void dbtcInventoryParkMembershipNote() {
+        WatchedWagonPage page = WatchedWagonPage.of(
+                List.of(), 0, 50, 0, 0, WatchedMembershipSource.DBTC_ACTIVE_INVENTORY_PARK);
+        assertEquals(WatchedMembershipSource.DBTC_ACTIVE_INVENTORY_PARK, page.membershipSource());
+        assertTrue(page.membershipNote().toLowerCase().contains("инвентарный парк"));
+        assertTrue(page.membershipNote().contains("На слежении"));
     }
 
     @Test

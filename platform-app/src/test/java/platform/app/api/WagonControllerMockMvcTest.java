@@ -318,6 +318,31 @@ class WagonControllerMockMvcTest {
     }
 
     @Test
+    void getWatched_invalidSize() throws Exception {
+        mockMvc.perform(get("/api/v1/wagons/watched").param("size", "101"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("INVALID_SIZE"));
+    }
+
+    @Test
+    void getWatched_dbtcInventoryParkMembershipSource() throws Exception {
+        when(watchedWagonPort.findPage(any())).thenReturn(WatchedWagonPage.of(
+                List.of(new WatchedWagonItem("54787361", "M", "T", "O", "", "", true)),
+                0,
+                50,
+                1,
+                1,
+                WatchedMembershipSource.DBTC_ACTIVE_INVENTORY_PARK));
+
+        mockMvc.perform(get("/api/v1/wagons/watched"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.membershipSource").value("DBTC_ACTIVE_INVENTORY_PARK"))
+                .andExpect(jsonPath("$.membershipNote", containsString("Инвентарный парк")))
+                .andExpect(jsonPath("$.content[0].homeStationCode").value(""))
+                .andExpect(jsonPath("$.content[0].inventoryPark").value(true));
+    }
+
+    @Test
     void watchedLiteralDoesNotShadowCard() throws Exception {
         when(wagonCardPort.findByCode("SYN-00001")).thenReturn(Optional.of(sampleCard()));
 

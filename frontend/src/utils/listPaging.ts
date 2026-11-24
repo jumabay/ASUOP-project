@@ -1,8 +1,13 @@
 /** Default debounce for registry / watched list search (P0: 250–400 ms). */
 export const LIST_SEARCH_DEBOUNCE_MS = 300
 
-/** Max page size offered in UI; must stay ≤ server MAX_SIZE (200). */
+/** Max page size offered in UI; must stay ≤ registry server MAX_SIZE (200). */
 export const LIST_PAGE_SIZE_OPTIONS = [50, 100, 200] as const
+
+/** Watched / inventory-park list: server max 100 (P5-G31). */
+export const WATCHED_LIST_MAX_SIZE = 100
+
+export const WATCHED_PAGE_SIZE_OPTIONS = [50, 100] as const
 
 export function totalPages(totalElements: number, pageSize: number): number {
   if (pageSize <= 0) {
