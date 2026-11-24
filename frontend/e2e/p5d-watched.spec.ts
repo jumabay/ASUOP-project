@@ -59,7 +59,7 @@ test.describe('P5-D watched membership honesty (synthetic)', () => {
           totalPages: 0,
           membershipSource: 'EMPTY_PENDING_G31',
           membershipNote:
-            'Подтверждённый источник членства слежения отсутствует (G31 OPEN). Список пуст.',
+            'Подтверждённый источник членства инвентарного парка отсутствует (G31 OPEN). Список пуст.',
         }),
       })
     })

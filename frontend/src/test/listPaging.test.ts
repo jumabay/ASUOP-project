@@ -5,6 +5,8 @@ import {
   LIST_PAGE_SIZE_OPTIONS,
   LIST_SEARCH_DEBOUNCE_MS,
   totalPages,
+  WATCHED_LIST_MAX_SIZE,
+  WATCHED_PAGE_SIZE_OPTIONS,
 } from '../utils/listPaging'
 
 describe('listPaging UX math', () => {
@@ -16,6 +18,12 @@ describe('listPaging UX math', () => {
   it('does not offer page sizes above server MAX_SIZE 200', () => {
     expect(LIST_PAGE_SIZE_OPTIONS).toEqual([50, 100, 200])
     expect(Math.max(...LIST_PAGE_SIZE_OPTIONS)).toBe(200)
+  })
+
+  it('caps watched / inventory-park page size at 100', () => {
+    expect(WATCHED_PAGE_SIZE_OPTIONS).toEqual([50, 100])
+    expect(WATCHED_LIST_MAX_SIZE).toBe(100)
+    expect(Math.max(...WATCHED_PAGE_SIZE_OPTIONS)).toBeLessThanOrEqual(WATCHED_LIST_MAX_SIZE)
   })
 
   it('computes page count for 18k registry at size 50', () => {

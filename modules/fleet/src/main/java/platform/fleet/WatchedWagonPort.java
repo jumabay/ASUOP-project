@@ -5,6 +5,7 @@ package platform.fleet;
  * Synthetic membership is fixture-based ({@link WatchedMembershipSource#FIXTURE});
  * Oracle GetActiveWagonList parity is not confirmed (G31 OPEN).
  * RAIL path returns empty with {@link WatchedMembershipSource#EMPTY_PENDING_G31}.
+ * {@code dbtc-ro} uses {@link WatchedMembershipSource#DBTC_ACTIVE_INVENTORY_PARK} (Gate 1; not old-screen parity).
  */
 public interface WatchedWagonPort {
 

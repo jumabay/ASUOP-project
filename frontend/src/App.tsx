@@ -37,6 +37,7 @@ import {
   type StateReportDay,
   type WagonCard,
   type WagonRegistryItem,
+  type WatchedMembershipSource,
   type WatchedWagonItem,
 } from './types'
 import {
@@ -54,10 +55,62 @@ import {
   formatListShowTotal,
   LIST_PAGE_SIZE_OPTIONS,
   LIST_SEARCH_DEBOUNCE_MS,
+  WATCHED_LIST_MAX_SIZE,
+  WATCHED_PAGE_SIZE_OPTIONS,
 } from './utils/listPaging'
 import './App.css'
 
 const { Paragraph, Text } = Typography
+
+const WATCHED_TAB_LABEL_SYNTHETIC = 'Инвентарный парк'
+const WATCHED_TAB_LABEL_INVENTORY = 'Инвентарный парк'
+
+/** P5-G31: fleet tab is always «Инвентарный парк», not legacy «слежение». */
+export function isInventoryParkExperience(
+  _platformRuntime: PlatformRuntime | null | undefined,
+  _membershipSource: WatchedMembershipSource | null,
+): boolean {
+  return true
+}
+
+function watchedListDisconnectedBlurb(): string {
+  return 'Источник не подключён. Пустой список не означает отсутствие вагонов. Карточка A1/A2 загружается отдельно.'
+}
+
+function watchedTabBlurb(
+  watchedConnected: boolean | undefined,
+  membershipSource: WatchedMembershipSource | null,
+): string {
+  if (watchedConnected === false) {
+    return watchedListDisconnectedBlurb()
+  }
+  if (membershipSource === 'FIXTURE') {
+    return 'Synthetic-подмножество каталога (60 вагонов). Паспорт A2, серверная пагинация. Клик открывает карточку R1. Соответствие GetActiveWagonList не подтверждено.'
+  }
+  if (membershipSource === 'EMPTY_PENDING_G31') {
+    return 'Подтверждённый источник членства слежения отсутствует (G31 OPEN). Список может быть пуст при подключённом JDBC.'
+  }
+  return 'Synthetic FIXTURE — демо-подмножество, не персональное слежение. Соответствие GetActiveWagonList / старому экрану «На слежении» не подтверждено.'
+}
+
+function inventoryParkTabBlurb(
+  watchedConnected: boolean | undefined,
+  membershipSource: WatchedMembershipSource | null,
+): string {
+  if (watchedConnected === false) {
+    return watchedListDisconnectedBlurb()
+  }
+  if (membershipSource === 'DBTC_ACTIVE_INVENTORY_PARK') {
+    return 'Членство инвентарного парка (Active / GetActiveWagonList, dbtc-ro). Не персональное слежение; UI-паритет со старым экраном «На слежении» не подтверждён. Серверная пагинация до 100 строк.'
+  }
+  if (membershipSource === 'FIXTURE') {
+    return 'Synthetic FIXTURE — демо-подмножество, не инвентарный парк из Oracle и не персональное слежение. Паспорт A2, серверная пагинация. Соответствие GetActiveWagonList / старому экрану не подтверждено.'
+  }
+  if (membershipSource === 'EMPTY_PENDING_G31') {
+    return 'Источник членства инвентарного парка не подтверждён (G31 OPEN). Список может быть пуст при подключённом JDBC.'
+  }
+  return 'Инвентарный парк (G31): членство по Active / GetActiveWagonList, не персональное слежение. Паритет legacy-экрана «На слежении» не заявляется. Карточка R1 по клику.'
+}
 
 function initialDeepLink(): DeepLinkState {
   if (typeof window === 'undefined') {
@@ -163,12 +216,15 @@ export default function App() {
     boot.tab === 'watched' ? boot.page : 0,
   )
   const [watchedSize, setWatchedSize] = useState(() =>
-    boot.tab === 'watched' ? boot.size : 50,
+    Math.min(boot.tab === 'watched' ? boot.size : 50, WATCHED_LIST_MAX_SIZE),
   )
   const [watchedRows, setWatchedRows] = useState<WatchedWagonItem[]>([])
   const [watchedTotal, setWatchedTotal] = useState(0)
   const [watchedLoading, setWatchedLoading] = useState(false)
   const [watchedError, setWatchedError] = useState<string | null>(null)
+  const [watchedMembershipSource, setWatchedMembershipSource] =
+    useState<WatchedMembershipSource | null>(null)
+  const [watchedMembershipNote, setWatchedMembershipNote] = useState('')
   const [platformRuntime, setPlatformRuntime] = useState<PlatformRuntime | null>(null)
 
   const urlWriteModeRef = useRef<DeepLinkWriteMode>('replace')
@@ -412,13 +468,17 @@ export default function App() {
       })
       setWatchedRows(page.content)
       setWatchedTotal(page.totalElements)
+      setWatchedMembershipSource(page.membershipSource)
+      setWatchedMembershipNote(page.membershipNote ?? '')
     } catch (err) {
       setWatchedRows([])
       setWatchedTotal(0)
       if (err instanceof ApiError) {
         setWatchedError(err.message)
       } else {
-        setWatchedError(err instanceof Error ? err.message : 'Ошибка загрузки списка слежения')
+        setWatchedError(
+          err instanceof Error ? err.message : 'Ошибка загрузки инвентарного парка',
+        )
       }
     } finally {
       setWatchedLoading(false)
@@ -436,6 +496,12 @@ export default function App() {
       void loadWatched()
     }
   }, [activeTab, loadWatched])
+
+  useEffect(() => {
+    if (watchedSize > WATCHED_LIST_MAX_SIZE) {
+      setWatchedSize(WATCHED_LIST_MAX_SIZE)
+    }
+  }, [watchedSize])
 
   const applyRegistryFilters = useCallback(
     (next: { search?: string; owner?: string; kind?: string }) => {
@@ -583,13 +649,26 @@ export default function App() {
   const emptyDay = Boolean(day && day.lines.length === 0 && !dayError)
   const registryEmpty = !registryLoading && registryRows.length === 0 && !registryError
   const watchedEmpty = !watchedLoading && watchedRows.length === 0 && !watchedError
-  const pageSizeOptions = LIST_PAGE_SIZE_OPTIONS.map(String)
+  const registryPageSizeOptions = LIST_PAGE_SIZE_OPTIONS.map(String)
+  const watchedPageSizeOptions = WATCHED_PAGE_SIZE_OPTIONS.map(String)
+  const inventoryParkUi = isInventoryParkExperience(platformRuntime, watchedMembershipSource)
+  const watchedTabLabel = inventoryParkUi
+    ? WATCHED_TAB_LABEL_INVENTORY
+    : WATCHED_TAB_LABEL_SYNTHETIC
+  const watchedTabBlurbText = inventoryParkUi
+    ? inventoryParkTabBlurb(platformRuntime?.watchedConnected, watchedMembershipSource)
+    : watchedTabBlurb(platformRuntime?.watchedConnected, watchedMembershipSource)
+  const watchedLoadingLabel = inventoryParkUi
+    ? 'Загрузка инвентарного парка…'
+    : 'Загрузка слежения…'
 
   return (
     <AppShell
       activeTab={activeTab}
       onSelectFleetTab={selectFleetTab}
       dataSourceLabel={platformRuntime?.displayLabel}
+      watchedNavLabel={watchedTabLabel}
+      headerFleetSubtitle={inventoryParkUi ? 'инвентарный парк' : 'слежение'}
       headerExtra={
         <GlobalWagonSearch
           initialCode={wagonCode}
@@ -605,13 +684,11 @@ export default function App() {
           items={[
             {
               key: 'watched',
-              label: 'Вагоны на слежении',
+              label: watchedTabLabel,
               children: (
                 <>
                   <Paragraph type="secondary" style={{ marginBottom: 16 }}>
-                    {platformRuntime && !platformRuntime.watchedConnected
-                      ? 'Источник не подключён. Пустой список не означает отсутствие вагонов. Карточка A1/A2 загружается отдельно.'
-                      : 'Synthetic-подмножество каталога (60 вагонов). Паспорт A2, серверная пагинация. Клик открывает карточку R1. Соответствие GetActiveWagonList не подтверждено.'}
+                    {watchedTabBlurbText}
                   </Paragraph>
                   <Row gutter={[12, 12]} align="middle">
                     <Col xs={24} md={6}>
@@ -729,7 +806,7 @@ export default function App() {
                   <div style={{ marginTop: 16 }}>
                     {watchedLoading && (
                       <Flex justify="center" style={{ padding: 24 }}>
-                        <Spin size="large" description="Загрузка слежения…" />
+                        <Spin size="large" description={watchedLoadingLabel} />
                       </Flex>
                     )}
                     {watchedError && (
@@ -743,12 +820,12 @@ export default function App() {
                         membershipSource={
                           platformRuntime && !platformRuntime.watchedConnected
                             ? 'SOURCE_NOT_CONNECTED'
-                            : undefined
+                            : watchedMembershipSource ?? undefined
                         }
                         membershipNote={
                           platformRuntime && !platformRuntime.watchedConnected
                             ? 'Источник не подключён. JDBC для списков registry/watched не утверждён. Пустой список не означает отсутствие вагонов.'
-                            : undefined
+                            : watchedMembershipNote || undefined
                         }
                       />
                     )}
@@ -759,14 +836,14 @@ export default function App() {
                         total={watchedTotal}
                         showSizeChanger
                         showQuickJumper
-                        pageSizeOptions={pageSizeOptions}
+                        pageSizeOptions={watchedPageSizeOptions}
                         showTotal={(total, range) =>
                           formatListShowTotal(total, range, watchedPage, watchedSize)
                         }
                         onChange={(page, pageSize) => {
                           scheduleUrlPush()
                           setWatchedPage(page - 1)
-                          setWatchedSize(pageSize)
+                          setWatchedSize(Math.min(pageSize, WATCHED_LIST_MAX_SIZE))
                         }}
                       />
                     </Flex>
@@ -928,7 +1005,7 @@ export default function App() {
                         total={registryTotal}
                         showSizeChanger
                         showQuickJumper
-                        pageSizeOptions={pageSizeOptions}
+                        pageSizeOptions={registryPageSizeOptions}
                         showTotal={(total, range) =>
                           formatListShowTotal(total, range, registryPage, registrySize)
                         }

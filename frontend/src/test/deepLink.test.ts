@@ -97,10 +97,15 @@ describe('deepLink query string', () => {
     })
   })
 
-  it('clamps size to 200 and rejects negative page', () => {
-    expect(readDeepLinkFromSearch('?size=500&page=-3')).toMatchObject({
+  it('clamps size to tab max and rejects negative page', () => {
+    expect(readDeepLinkFromSearch('?tab=registry&size=500&page=-3')).toMatchObject({
+      tab: 'registry',
       size: 200,
       page: 0,
+    })
+    expect(readDeepLinkFromSearch('?tab=watched&size=500')).toMatchObject({
+      tab: 'watched',
+      size: 100,
     })
   })
 

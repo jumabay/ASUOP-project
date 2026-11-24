@@ -18,6 +18,21 @@ afterEach(() => {
 })
 
 describe('P5-D watched membership honesty', () => {
+  it('renders DBTC_ACTIVE_INVENTORY_PARK banner', () => {
+    render(
+      <ConfigProvider>
+        <WatchedMembershipBanner
+          source="DBTC_ACTIVE_INVENTORY_PARK"
+          note="Active membership from dbtc-ro."
+        />
+      </ConfigProvider>,
+    )
+    const banner = screen.getByTestId('watched-membership-banner')
+    expect(banner).toHaveAttribute('data-membership-source', 'DBTC_ACTIVE_INVENTORY_PARK')
+    expect(banner).toHaveTextContent(/Инвентарный парк/)
+    expect(banner).toHaveTextContent(/GetActiveWagonList/)
+  })
+
   it('renders FIXTURE demo banner', () => {
     render(
       <ConfigProvider>
@@ -115,11 +130,12 @@ describe('P5-D watched membership honesty', () => {
     })
   })
 
-  it('wagon card tag is navigation context, not Active membership', () => {
+  it('wagon card tag is navigation context, not Active membership (synthetic)', () => {
     render(
       <ConfigProvider>
         <WagonCardPanel
           fromWatched
+          dataSourceKind="SYNTHETIC"
           card={{
             wagonCode: 'SYN-00001',
             model: '12-132',
@@ -132,7 +148,32 @@ describe('P5-D watched membership honesty', () => {
         />
       </ConfigProvider>,
     )
-    expect(screen.getByTestId('wagon-card-watched-tag')).toHaveTextContent('Контекст: слежение')
+    expect(screen.getByTestId('wagon-card-watched-tag')).toHaveTextContent(
+      'Контекст: инвентарный парк',
+    )
     expect(screen.queryByText('На слежении')).not.toBeInTheDocument()
+  })
+
+  it('wagon card tag shows inventory park context for DBTC_RO', () => {
+    render(
+      <ConfigProvider>
+        <WagonCardPanel
+          fromWatched
+          dataSourceKind="DBTC_RO"
+          card={{
+            wagonCode: '10000001',
+            model: '12-132',
+            wagonKind: 'КРЫТЫЙ',
+            ownerName: 'OWNER',
+            homeStationCode: '6900',
+            homeStationName: 'STATION',
+            inventoryPark: true,
+          }}
+        />
+      </ConfigProvider>,
+    )
+    expect(screen.getByTestId('wagon-card-watched-tag')).toHaveTextContent(
+      'Контекст: инвентарный парк',
+    )
   })
 })

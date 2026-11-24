@@ -7,7 +7,7 @@ interface Props {
 }
 
 /**
- * Honesty banner for watched membership (P5-D / P5-E stubs).
+ * Honesty banner for inventory-park membership (P5-G31 / stubs).
  */
 export function WatchedMembershipBanner({ source, note }: Props) {
   if (source === 'FIXTURE') {
@@ -18,10 +18,27 @@ export function WatchedMembershipBanner({ source, note }: Props) {
         data-testid="watched-membership-banner"
         data-membership-source="FIXTURE"
         style={{ marginBottom: 12 }}
-        title="Демо-список слежения (FIXTURE)"
+        title="Демо-список (FIXTURE)"
         description={
           note ||
-          'Synthetic fixture — не подтверждённый активный список слежения компании. G31 OPEN.'
+          'Synthetic fixture — не инвентарный парк из Oracle, не персональное слежение. G31 OPEN.'
+        }
+      />
+    )
+  }
+
+  if (source === 'DBTC_ACTIVE_INVENTORY_PARK') {
+    return (
+      <Alert
+        type="success"
+        showIcon
+        data-testid="watched-membership-banner"
+        data-membership-source="DBTC_ACTIVE_INVENTORY_PARK"
+        style={{ marginBottom: 12 }}
+        title="Инвентарный парк (Active / GetActiveWagonList membership)"
+        description={
+          note ||
+          'Членство инвентарного парка (dbtc-ro). Не персональное слежение; UI-паритет со старым экраном «На слежении» не подтверждён.'
         }
       />
     )
@@ -51,10 +68,10 @@ export function WatchedMembershipBanner({ source, note }: Props) {
       data-testid="watched-membership-banner"
       data-membership-source="EMPTY_PENDING_G31"
       style={{ marginBottom: 12 }}
-      title="Источник слежения не подтверждён (G31 OPEN)"
+      title="Источник инвентарного парка не подтверждён (G31 OPEN)"
       description={
         note ||
-        'Подтверждённый источник членства отсутствует. Список пуст до утверждения источника.'
+        'Подтверждённый источник членства инвентарного парка отсутствует. Список пуст до утверждения источника.'
       }
     />
   )

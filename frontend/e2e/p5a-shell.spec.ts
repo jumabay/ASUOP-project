@@ -9,7 +9,7 @@ test.describe('P5-A shell + global search + URL list state', () => {
   })
 
   test('shell shows fleet nav enabled and module stubs disabled', async ({ page }) => {
-    await expect(page.getByRole('menuitem', { name: /Слежение/ })).toBeVisible()
+    await expect(page.getByRole('menuitem', { name: /Вагоны на слежении/ })).toBeVisible()
     await expect(page.getByRole('menuitem', { name: /Реестр/ })).toBeVisible()
     await expect(page.getByTestId('nav-stub-repairs')).toBeVisible()
     await expect(page.getByTestId('nav-stub-warehouse')).toBeVisible()

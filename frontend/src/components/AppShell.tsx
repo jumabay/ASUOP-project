@@ -19,6 +19,10 @@ export interface AppShellProps {
   onSelectFleetTab: (tab: ListTab) => void
   /** Safe backend data-source label (no JDBC URL / credentials). */
   dataSourceLabel?: string
+  /** Sidebar + consistency with fleet tab label (synthetic vs inventory park). */
+  watchedNavLabel?: string
+  /** Short phrase in header title between commas, e.g. «слежение» | «инвентарный парк». */
+  headerFleetSubtitle?: string
   headerExtra?: ReactNode
   children: ReactNode
 }
@@ -27,6 +31,8 @@ export function AppShell({
   activeTab,
   onSelectFleetTab,
   dataSourceLabel,
+  watchedNavLabel = 'Инвентарный парк',
+  headerFleetSubtitle = 'инвентарный парк',
   headerExtra,
   children,
 }: AppShellProps) {
@@ -60,7 +66,7 @@ export function AppShell({
                 {
                   key: 'watched',
                   icon: <EyeOutlined />,
-                  label: 'Слежение',
+                  label: watchedNavLabel,
                 },
                 {
                   key: 'registry',
@@ -114,7 +120,7 @@ export function AppShell({
           <div className="app-header-row">
             <div>
               <Title level={4} className="header-title">
-                Реестр, слежение и карточка вагона
+                Реестр, {headerFleetSubtitle} и карточка вагона
               </Title>
               <Text
                 type="secondary"
