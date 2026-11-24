@@ -1,27 +1,79 @@
 export type ListTab = 'registry' | 'watched'
 
+export type ListSort = 'code,asc' | 'code,desc'
+
 export interface DeepLinkState {
   tab: ListTab
   wagon: string
   date: string
+  /** Active list contains-search; omitted from URL when empty. */
+  search: string
+  /** 0-based page index. */
+  page: number
+  size: number
+  sort: ListSort
 }
 
 const DEFAULT_TAB: ListTab = 'watched'
 const DEFAULT_WAGON = 'SYN-00001'
 const DEFAULT_DATE = '2024-01-15'
+const DEFAULT_SEARCH = ''
+const DEFAULT_PAGE = 0
+const DEFAULT_SIZE = 50
+const DEFAULT_SORT: ListSort = 'code,asc'
+
+/** Server / UI max page size (R2/R3). */
+export const DEEP_LINK_MAX_SIZE = 200
+
+export const DEFAULT_DEEP_LINK: DeepLinkState = {
+  tab: DEFAULT_TAB,
+  wagon: DEFAULT_WAGON,
+  date: DEFAULT_DATE,
+  search: DEFAULT_SEARCH,
+  page: DEFAULT_PAGE,
+  size: DEFAULT_SIZE,
+  sort: DEFAULT_SORT,
+}
 
 export function parseListTab(value: string | null | undefined): ListTab {
   return value === 'registry' ? 'registry' : DEFAULT_TAB
+}
+
+export function parseListSort(value: string | null | undefined): ListSort {
+  return value === 'code,desc' ? 'code,desc' : DEFAULT_SORT
+}
+
+function parseNonNegativeInt(value: string | null | undefined, fallback: number): number {
+  if (value == null || value.trim() === '') {
+    return fallback
+  }
+  const n = Number.parseInt(value, 10)
+  if (!Number.isFinite(n) || n < 0) {
+    return fallback
+  }
+  return n
+}
+
+function clampSize(size: number): number {
+  if (size <= 0) {
+    return DEFAULT_SIZE
+  }
+  return Math.min(size, DEEP_LINK_MAX_SIZE)
 }
 
 export function readDeepLinkFromSearch(search: string): DeepLinkState {
   const params = new URLSearchParams(search.startsWith('?') ? search.slice(1) : search)
   const wagon = (params.get('wagon') ?? DEFAULT_WAGON).trim() || DEFAULT_WAGON
   const date = (params.get('date') ?? DEFAULT_DATE).trim() || DEFAULT_DATE
+  const listSearch = (params.get('search') ?? DEFAULT_SEARCH).trim()
   return {
     tab: parseListTab(params.get('tab')),
     wagon,
     date,
+    search: listSearch,
+    page: parseNonNegativeInt(params.get('page'), DEFAULT_PAGE),
+    size: clampSize(parseNonNegativeInt(params.get('size'), DEFAULT_SIZE)),
+    sort: parseListSort(params.get('sort')),
   }
 }
 
@@ -36,10 +88,22 @@ export function buildDeepLinkSearch(state: DeepLinkState): string {
   params.set('tab', state.tab)
   params.set('wagon', state.wagon)
   params.set('date', state.date)
+  const trimmedSearch = state.search.trim()
+  if (trimmedSearch) {
+    params.set('search', trimmedSearch)
+  }
+  params.set('page', String(Math.max(0, state.page)))
+  params.set('size', String(clampSize(state.size)))
+  params.set('sort', parseListSort(state.sort))
   return `?${params.toString()}`
 }
 
-export function writeDeepLinkToUrl(state: DeepLinkState): void {
+export type DeepLinkWriteMode = 'replace' | 'push'
+
+export function writeDeepLinkToUrl(
+  state: DeepLinkState,
+  mode: DeepLinkWriteMode = 'replace',
+): void {
   if (typeof window === 'undefined') {
     return
   }
@@ -47,5 +111,10 @@ export function writeDeepLinkToUrl(state: DeepLinkState): void {
   if (window.location.search === next) {
     return
   }
-  window.history.replaceState(null, '', `${window.location.pathname}${next}`)
+  const url = `${window.location.pathname}${next}`
+  if (mode === 'push') {
+    window.history.pushState(null, '', url)
+  } else {
+    window.history.replaceState(null, '', url)
+  }
 }
