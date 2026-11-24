@@ -5,9 +5,12 @@
 Evidence Wave 2A: [P5_WAVE2A_COMPLETION_REPORT.md](P5_WAVE2A_COMPLETION_REPORT.md).
 
 **Тип документа:** PLAN / RESEARCH (документация и анализ кода).  
+**Операционный prep к ограниченному TEST RO smoke:** [ASUOP_P5_E_TEST_RO_SMOKE_PREP.md](ASUOP_P5_E_TEST_RO_SMOKE_PREP.md) (allow-list, STOP, черновик одной строки APPROVALS §7).  
+**Сужение исполнения (prep):** A2 один CONTROL; A1 один вагон / одни сутки; `JdbcParityIT`; **без** JDBC registry/watched; **`currentState` OFF** до подтверждения источников; **без** автоматического `EXECUTE`; **без** `EXPLAIN PLAN` без отдельной строки.  
 **Не делает:** live Oracle/JDBC, снятие `@Disabled` с `JdbcParityIT`, Flyway/Create RAILDB, live FTP/RWL, writes, auto-merge.  
 **Не меняет статусы:** `P5-E`, `P5-F`, `P5-H`, `R1 JDBC against TEST Oracle` остаются **DENIED UNTIL APPROVED** до отдельного решения владельца.  
-Секреты, пароли, полные connect-string с credentials — **не** включать в документ и логи.
+Секреты, пароли, полные connect-string с credentials — **не** включать в документ и логи.  
+**TEST identity в репо:** service/PDB/`SESSION_USER` **не заданы** — см. prep §1 (M1–M12).
 
 Журнал: [APPROVALS_TEMPLATE.md](../architecture/APPROVALS_TEMPLATE.md).  
 Контракты A1/A2: [23_R1_A1_A2_IMPLEMENTATION_PLAN.md](../architecture/23_R1_A1_A2_IMPLEMENTATION_PLAN.md).  
@@ -25,10 +28,10 @@ Mapping REST→RAIL_*: [41_P4_0_R1_R3_FIELD_MAPPING.md](../architecture/41_P4_0_
 
 | ID | Операция | REST / экран |
 | --- | --- | --- |
-| **E-A2** | Чтение паспорта вагона | `GET /api/v1/wagons/{wagonCode}` → UI `WagonCardPanel` |
-| **E-CUR** | Чтение `currentState` (отдельный источник) | тот же endpoint, блок «Текущее состояние» |
-| **E-A1** | Чтение строк суток | `GET /api/v1/wagons/{wagonCode}/state-reports?date=` → UI `StateReportGrid` |
-| **E-IT** | Включить и наполнить `JdbcParityIT` под gate TEST | только CI/local с env credentials |
+| **E-A2** | Паспорт **одного** CONTROL-вагона | `GET /api/v1/wagons/{wagonCode}` → UI `WagonCardPanel` |
+| **E-A1** | История **одного** вагона за **одни** сутки | `GET /api/v1/wagons/{wagonCode}/state-reports?date=` → UI `StateReportGrid` |
+| **E-IT** | `JdbcParityIT` под gate TEST | только CI/local с env credentials |
+| **E-CUR** | `currentState` | **Отложено** — только после подтверждения источников (prep §4); не в минимальном smoke |
 
 ### Out of scope для P5-E (отдельные gates)
 
@@ -85,8 +88,8 @@ Mapping REST→RAIL_*: [41_P4_0_R1_R3_FIELD_MAPPING.md](../architecture/41_P4_0_
 | Реестр (вне E) | `WagonPackage.GetWagonList` | ≠ Active |
 | Слежение (вне E) | `GetActiveWagonList` | G31 OPEN; UI call-site в НУВ не найден |
 
-**Предпочтительный путь parity:** `EXECUTE` только на два read-члена пакетов (если DBA даст).  
-**Fallback:** bind `SELECT` по таблицам ниже — с пометкой **PROVISIONAL**, пока SPEC/BODY не подтвердит курсор.
+**Минимальный путь smoke (prep):** bind **SELECT-only** по allow-list; `EXECUTE` **не** включать, пока BODY/attestation не подтвердит отсутствие побочных эффектов ([prep §3](ASUOP_P5_E_TEST_RO_SMOKE_PREP.md)).  
+SPEC: имена read-членов CONFIRMED; BODY historically **недоступен** RO → side effects **UNKNOWN**.
 
 ---
 
@@ -349,26 +352,16 @@ P5-E evidence label: **`SMOKE_PASS` / `SMOKE_FAIL` / `SKIPPED_UNKNOWN_MAPPING`**
 
 ## 9. Проект строк APPROVALS
 
-### 9.1 Этот PR (docs-only) — к добавлению как APPROVED
+### 9.1 Docs-only planning
 
-См. фактическую строку в [APPROVALS_TEMPLATE.md](../architecture/APPROVALS_TEMPLATE.md):  
-**«P5-E planning after Wave 2A (docs-only)»**.
+См. [APPROVALS_TEMPLATE.md](../architecture/APPROVALS_TEMPLATE.md): **«P5-E planning after Wave 2A (docs-only)»** = APPROVED.
 
-### 9.2 Проект будущей строки исполнения (остаётся DENIED до решения владельца)
+### 9.2 Строка исполнения (одна, конкретная)
 
-```text
-| P5-E JDBC read A1/A2 on TEST Oracle | APPROVED WITH CONSTRAINTS | Owner: dedicated TEST DBTC read-only;
-  WagonPackage.GetWagonByCode + StateReportPackage.GetWagonStateReports and/or SELECT allow-list
-  (WAGON, STATEREPORTRECORDS, STATEREPORTS, STATIONS, OPERATIONS, passport refs);
-  currentState from WAGON master path — NOT last day line; day axis GETTING_DATE half-open;
-  FETCH 501 / 30s timeout / STOP on FULL SCAN; enable JdbcParityIT under oracle-test only;
-  CONTROL-1..3 Oracle→API→UI smoke. Does NOT close G31/NK1/DT1/R1-Q-TZ; no watched JDBC truth;
-  no registry LIKE parity; no Production allow-list; no Create RAILDB/Flyway/writes/FTP/RWL;
-  no auto-merge. Plan: ASUOP_P5_E_JDBC_READ_PLAN.md. Requires companion row or same text for
-  «R1 JDBC against TEST Oracle» with TEST service name (no secrets in git). | <date> |
-```
+Актуальный черновик с target/user/objects/CONTROL/сроком и плейсхолдерами M1–M12:  
+**[ASUOP_P5_E_TEST_RO_SMOKE_PREP.md](ASUOP_P5_E_TEST_RO_SMOKE_PREP.md) §7**.
 
-До утверждения владельцем строки **P5-E** и **R1 JDBC against TEST Oracle** в журнале остаются **DENIED UNTIL APPROVED**.
+До заполнения M1–M12 и явного APPROVED владельцем строки **P5-E** / companion **R1 JDBC** остаются **DENIED UNTIL APPROVED**. Live не запускать.
 
 ### 9.3 Отдельные будущие строки (не смешивать с P5-E)
 
