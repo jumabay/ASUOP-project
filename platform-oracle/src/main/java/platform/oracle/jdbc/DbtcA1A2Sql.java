@@ -44,7 +44,7 @@ public final class DbtcA1A2Sql {
             """;
 
     /**
-     * Day lines on GETTING_DATE axis (PROVISIONAL dislocationTime — not verified as fact).
+     * Day lines on GETTING_DATE axis (snapshotTime / alias dislocationTime — not fact LOCATION).
      * Station/operation codes empty without joins.
      */
     public static final String STATE_REPORT_DAY_CORE = """
@@ -64,7 +64,7 @@ public final class DbtcA1A2Sql {
 
     /**
      * Day lines with business codes. REQUIRES SELECT on STATIONS + OPERATIONS.
-     * Still maps dislocationTime from GETTING_DATE (provisional / DT1 OPEN).
+     * Still maps snapshotTime from GETTING_DATE (T1; DT1/T2 LOCATION fact OPEN).
      */
     public static final String STATE_REPORT_DAY_WITH_CODES = """
             SELECT r.report_id AS report_id,

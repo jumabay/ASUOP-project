@@ -9,6 +9,7 @@ const sampleLines: StateReportLine[] = [
   {
     reportId: 1001,
     wagonCode: 'SYN-00001',
+    snapshotTime: '2024-01-15T08:00:00',
     dislocationTime: '2024-01-15T08:00:00',
     stationCode: '6900',
     operationCode: '01',
@@ -16,6 +17,7 @@ const sampleLines: StateReportLine[] = [
   {
     reportId: 1002,
     wagonCode: 'SYN-00001',
+    snapshotTime: '2024-01-15T09:00:00',
     dislocationTime: '2024-01-15T09:00:00',
     stationCode: '6901',
     operationCode: '02',

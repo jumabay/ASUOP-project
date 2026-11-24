@@ -66,7 +66,8 @@ public class SyntheticStateReportDayAdapter implements StateReportDayPort {
 
         List<StateReportLine> result = new ArrayList<>();
         for (JsonNode line : root.withArray("lines")) {
-            LocalDateTime time = LocalDateTime.parse(line.get("dislocationTime").asText());
+            // Prefer snapshotTime; fixtures may still carry dislocationTime as the line clock.
+            LocalDateTime time = parseSnapshotTime(line);
             if (!interval.contains(time)) {
                 continue;
             }
@@ -78,6 +79,13 @@ public class SyntheticStateReportDayAdapter implements StateReportDayPort {
                     line.get("operationCode").asText()));
         }
         return List.copyOf(result);
+    }
+
+    static LocalDateTime parseSnapshotTime(JsonNode line) {
+        if (line.hasNonNull("snapshotTime") && !line.get("snapshotTime").asText().isBlank()) {
+            return LocalDateTime.parse(line.get("snapshotTime").asText());
+        }
+        return LocalDateTime.parse(line.get("dislocationTime").asText());
     }
 
     private JsonNode readOptional(String path) {

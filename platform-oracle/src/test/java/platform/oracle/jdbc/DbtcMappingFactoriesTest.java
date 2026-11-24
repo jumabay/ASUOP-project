@@ -54,7 +54,8 @@ class DbtcMappingFactoriesTest {
         StateReportLine line = DbtcStateReportLineFactory.coreOnly(588503L, "54787361", getting);
         assertEquals(588503L, line.reportId());
         assertEquals("54787361", line.wagonCode());
-        assertEquals(getting, line.dislocationTime());
+        assertEquals(getting, line.snapshotTime());
+        assertEquals(line.snapshotTime(), line.dislocationTime());
         assertEquals("", line.stationCode());
         assertEquals("", line.operationCode());
     }
@@ -66,7 +67,8 @@ class DbtcMappingFactoriesTest {
                 588541L, "54787361", getting, "6900", "04");
         assertEquals("6900", line.stationCode());
         assertEquals("04", line.operationCode());
-        assertEquals(getting, line.dislocationTime());
+        assertEquals(getting, line.snapshotTime());
+        assertEquals(line.snapshotTime(), line.dislocationTime());
     }
 
     @Test

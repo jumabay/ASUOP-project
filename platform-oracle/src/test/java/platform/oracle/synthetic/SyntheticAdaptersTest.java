@@ -67,7 +67,8 @@ class SyntheticAdaptersTest {
         StateReportLine last = lines.getLast();
         assertEquals("6902", last.stationCode());
         assertEquals("01", last.operationCode());
-        assertEquals("2024-01-15T23:59:59.500", last.dislocationTime().toString());
+        assertEquals("2024-01-15T23:59:59.500", last.snapshotTime().toString());
+        assertEquals(last.snapshotTime(), last.dislocationTime());
 
         assertEquals("7100", current.stationCode());
         assertEquals("05", current.operationCode());

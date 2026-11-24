@@ -56,7 +56,8 @@ SQL stub: [sql/raildb/read/wagon_card_by_code.sql](sql/raildb/read/wagon_card_by
 | --- | --- | --- | --- |
 | `reportId` | `rail_disl_event.legacy_report_id` | Альтернатива: derive from `kit_id` — **PROVISIONAL**; NULL orphan → **UNKNOWN** display | **PROVISIONAL** |
 | `wagonCode` | `rail_disl_event.wagon_code` (denorm) или join `rail_wagon` | Prefer denorm for tape rows | **INTENDED** |
-| `dislocationTime` | `rail_disl_event.dislocation_ts` | ≡ **getting_ts** until **DT1** closes; DTO = `LocalDateTime` naive | **OPEN** (DT1 + R1-Q-TZ) |
+| `snapshotTime` | `rail_disl_event.dislocation_ts` / getting | A1 T1: ≡ **GETTING_DATE** / getting_ts; DTO naive `LocalDateTime` | **INTENDED** (T1); R1-Q-TZ **OPEN** |
+| `dislocationTime` | same as `snapshotTime` | **Deprecated alias** — must equal `snapshotTime`; never LOCATION | **INTENDED** (T1 compat) |
 | `stationCode` | `rail_disl_event.station_code` | | **INTENDED** |
 | `operationCode` | `rail_disl_event.operation_code` | | **INTENDED** |
 

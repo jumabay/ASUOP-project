@@ -43,6 +43,7 @@ async function stubBaseApi(page: Page) {
           {
             reportId: 1001,
             wagonCode: SYN_WAGON,
+            snapshotTime: '2024-01-15T08:00:00',
             dislocationTime: '2024-01-15T08:00:00',
             stationCode: '6900',
             operationCode: '01',
@@ -137,6 +138,7 @@ test.describe('P5-B day UX (loading / empty / error / retry)', () => {
             {
               reportId: 1001,
               wagonCode: SYN_WAGON,
+              // intentional: no snapshotTime — UI falls back to dislocationTime
               dislocationTime: '2024-01-15T08:00:00',
               stationCode: '6900',
               operationCode: '01',
