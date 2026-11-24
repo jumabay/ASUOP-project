@@ -50,12 +50,12 @@ No invented passport joins.
 | samples | report_id `588495`@00:00, `588498`@01:00, `588503`@02:00 |
 | `reportId` | **MAPPED** `REPORT_ID` |
 | `wagonCode` | **MAPPED** |
-| `dislocationTime` | **MAPPED** `GETTING_DATE` |
-| `stationCode` | `SKIPPED_UNKNOWN_MAPPING` |
-| `operationCode` | `SKIPPED_UNKNOWN_MAPPING` |
+| `dislocationTime` | **PROVISIONAL** day-axis `GETTING_DATE` — **not VERIFIED** as fact (`LOCATION_DATE` differs on CONTROL; see [P5_E_MAPPING_FOLLOWUP.md](P5_E_MAPPING_FOLLOWUP.md)) |
+| `stationCode` | `SKIPPED_UNKNOWN_MAPPING` (FK→`STATIONS` confirmed; need SELECT grant; ID≠code) |
+| `operationCode` | `SKIPPED_UNKNOWN_MAPPING` (FK→`OPERATIONS` confirmed; need SELECT grant; ID≠code) |
 | overflow | no |
 
-**Verdict:** `SMOKE_COMPLETE` (exit 0). Success on `CODE`/`GETTING_DATE` **≠** full A2/A1 parity.
+**Verdict:** `SMOKE_COMPLETE` (exit 0). Success on `CODE`/`GETTING_DATE` **≠** full A2/A1 parity. Follow-up mapping: [P5_E_MAPPING_FOLLOWUP.md](P5_E_MAPPING_FOLLOWUP.md).
 
 ## Forbidden (not used)
 
