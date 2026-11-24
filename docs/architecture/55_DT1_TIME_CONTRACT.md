@@ -202,7 +202,7 @@ disl_kz*.txt field[3] «dislocationDate»
 | --- | --- | --- | --- |
 | **DT1-A** | `ALL_TAB_COLUMNS` для `STATEREPORTRECORDS.LOCATION_DATE` / `GETTING_DATE` (DATA_TYPE, DATA_SCALE) | точность, DATE vs TIMESTAMP | dictionary; уточнить если не в CSV |
 | **DT1-B** | `ALL_ARGUMENTS` / SPEC `ImportPkg.SaveStateReportLineKz` — имена/типы параметров дат | **только сигнатура** (имена входа); **не** доказательство INSERT в `LOCATION_DATE` | [38](38_P3C0_DBA_PACKAGE_SOURCE_REQUEST.md); сейчас 0 visibility у RO |
-| **DT1-B2** | **BODY** `SaveStateReportLineKz` (или эквивалент export) | доказательство записи параметра → колонка | отдельный DBA grant / file-share |
+| **DT1-B2** | **BODY** `SaveStateReportLineKz` (или эквивалент export) | доказательство записи параметра → колонка | заявка [DT1_T2_DBA_BODY_REQUEST.md](../agents/DT1_T2_DBA_BODY_REQUEST.md) |
 | **DT1-C** | Bounded hour sample: EQUAL / WITHIN_1H / GT_24H / NULL_SIDE (≤5000) | распределение, не proof purpose | [sql/dba/p4-2/DT1_tape_date_axis_probes.sql](sql/dba/p4-2/DT1_tape_date_axis_probes.sql) |
 | **DT1-D** | Join `STATEREPORTS`↔tape: same_hour_as_report | GETTING = kit hour | DT1.3 в том же SQL |
 | **DT1-E** | Сверка одного импортированного файла: field[3] ↔ `LOCATION_DATE` строки Oracle (по `REPORT_ID` / kit) | закрыть INFERRED mapping **без** BODY | образец `disl_kz*.txt` + REPORT_ID |
