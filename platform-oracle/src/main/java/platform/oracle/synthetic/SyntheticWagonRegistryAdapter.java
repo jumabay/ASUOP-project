@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import platform.fleet.WagonCardPort;
 import platform.fleet.WagonRegistryCriteria;
 import platform.fleet.WagonRegistryItem;
 import platform.fleet.WagonRegistryPage;
@@ -18,15 +19,22 @@ import platform.fleet.WagonRegistrySort;
 public class SyntheticWagonRegistryAdapter implements WagonRegistryPort {
 
     private final SyntheticCatalog catalog;
+    private final WagonCardPort wagonCardPort;
 
     @Autowired
-    public SyntheticWagonRegistryAdapter(SyntheticCatalog catalog) {
+    public SyntheticWagonRegistryAdapter(SyntheticCatalog catalog, WagonCardPort wagonCardPort) {
         this.catalog = catalog;
+        this.wagonCardPort = wagonCardPort;
     }
 
     /** Test / non-Spring helper: builds T0 classpath catalog. */
     SyntheticWagonRegistryAdapter(ObjectMapper mapper) {
-        this(SyntheticCatalog.classpath(mapper));
+        this(SyntheticCatalog.classpath(mapper), new SyntheticWagonCardAdapter(mapper));
+    }
+
+    /** Scale / catalog-only helper: reuses stub passport via card adapter. */
+    SyntheticWagonRegistryAdapter(SyntheticCatalog catalog) {
+        this(catalog, new SyntheticWagonCardAdapter(new ObjectMapper(), catalog));
     }
 
     @Override
@@ -49,7 +57,9 @@ public class SyntheticWagonRegistryAdapter implements WagonRegistryPort {
             content = List.of();
         } else {
             int to = Math.min(from + criteria.size(), filtered.size());
-            content = filtered.subList(from, to).stream().map(WagonRegistryItem::new).toList();
+            content = filtered.subList(from, to).stream()
+                    .map(this::toItem)
+                    .toList();
         }
 
         return new WagonRegistryPage(
@@ -58,5 +68,12 @@ public class SyntheticWagonRegistryAdapter implements WagonRegistryPort {
                 criteria.size(),
                 total,
                 WagonRegistryPage.computeTotalPages(total, criteria.size()));
+    }
+
+    private WagonRegistryItem toItem(String wagonCode) {
+        return wagonCardPort.findByCode(wagonCode)
+                .map(WagonRegistryItem::fromCard)
+                .orElseThrow(() -> new IllegalStateException(
+                        "Registry wagon missing passport data: " + wagonCode));
     }
 }

@@ -29,6 +29,6 @@ class WagonCardQueryTest {
     }
 
     private static WagonCard sample(String code) {
-        return new WagonCard(code, "12-132", "КРЫТЫЙ", "SYN-OWNER", "6900", "SYN-STATION", true);
+        return new WagonCard(code, "12-132", "КРЫТЫЙ", "SYN-OWNER", "6900", "SYN-STATION", true, null);
     }
 }

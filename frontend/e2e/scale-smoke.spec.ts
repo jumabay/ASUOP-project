@@ -1,5 +1,8 @@
 import { expect, test } from '@playwright/test'
 
+/** Keep in sync with REGISTRY_COLUMN_FIELDS in WagonRegistryGrid.tsx (P5-C passport). */
+const REGISTRY_PASSPORT_COLUMN_COUNT = 7
+
 /**
  * Scale UX smoke with mocked totalElements ≥ 18k.
  * Does not require a live 18k backend fixture; REST contract shape unchanged.
@@ -46,8 +49,9 @@ test.describe('P4-1 @scale pagination UX (mocked totalElements)', () => {
     await jumper.press('Enter')
     await expect(page.getByText(/из 18000 · стр\. 360 из 360/)).toBeVisible()
 
-    // Grid still holds only the current page rows (server-page model), not 18k.
+    // Server-page model: one last-page row × passport columns (P5-C), not 18k client rows.
+    // Pre-P5-C grid had 1 column → toHaveCount(1); now 7 columns → 7 cells for that single row.
     const cells = page.getByRole('tabpanel', { name: 'Реестр вагонов' }).getByRole('gridcell')
-    await expect(cells).toHaveCount(1)
+    await expect(cells).toHaveCount(REGISTRY_PASSPORT_COLUMN_COUNT)
   })
 })

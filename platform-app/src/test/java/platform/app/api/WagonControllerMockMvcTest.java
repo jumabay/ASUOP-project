@@ -2,6 +2,7 @@ package platform.app.api;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -24,6 +25,7 @@ import platform.dislocation.StateReportDayPort;
 import platform.dislocation.StateReportLine;
 import platform.fleet.WagonCard;
 import platform.fleet.WagonCardPort;
+import platform.fleet.WagonCurrentState;
 import platform.fleet.WagonRegistryItem;
 import platform.fleet.WagonRegistryPage;
 import platform.fleet.WagonRegistryPort;
@@ -59,7 +61,21 @@ class WagonControllerMockMvcTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.wagonCode").value("SYN-00001"))
                 .andExpect(jsonPath("$.model").value("12-132"))
-                .andExpect(jsonPath("$.inventoryPark").value(true));
+                .andExpect(jsonPath("$.inventoryPark").value(true))
+                .andExpect(jsonPath("$.currentState.stationCode").value("7100"))
+                .andExpect(jsonPath("$.currentState.operationCode").value("05"))
+                .andExpect(jsonPath("$.currentState.dislocationTime").value("2024-01-16T06:00:00"))
+                .andExpect(jsonPath("$.currentState.trainIndex").value("TRN-DIFF"));
+    }
+
+    @Test
+    void getWagonCard_nullCurrentState() throws Exception {
+        when(wagonCardPort.findByCode("SYN-00002")).thenReturn(Optional.of(sampleCardWithoutCurrent("SYN-00002")));
+
+        mockMvc.perform(get("/api/v1/wagons/SYN-00002"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.wagonCode").value("SYN-00002"))
+                .andExpect(jsonPath("$.currentState").value(nullValue()));
     }
 
     @Test
@@ -138,7 +154,7 @@ class WagonControllerMockMvcTest {
     @Test
     void getRegistry_ok() throws Exception {
         when(wagonRegistryPort.findPage(any())).thenReturn(new WagonRegistryPage(
-                List.of(new WagonRegistryItem("SYN-00001"), new WagonRegistryItem("SYN-00002")),
+                List.of(sampleRegistry("SYN-00001"), sampleRegistry("SYN-00002")),
                 0,
                 50,
                 2,
@@ -151,7 +167,10 @@ class WagonControllerMockMvcTest {
                 .andExpect(jsonPath("$.size").value(50))
                 .andExpect(jsonPath("$.totalElements").value(2))
                 .andExpect(jsonPath("$.totalPages").value(1))
-                .andExpect(jsonPath("$.content[0].wagonCode").value("SYN-00001"));
+                .andExpect(jsonPath("$.content[0].wagonCode").value("SYN-00001"))
+                .andExpect(jsonPath("$.content[0].model").value("12-132"))
+                .andExpect(jsonPath("$.content[0].ownerName").value("SYN-OWNER"))
+                .andExpect(jsonPath("$.content[0].inventoryPark").value(true));
     }
 
     @Test
@@ -250,7 +269,22 @@ class WagonControllerMockMvcTest {
 
     private static WagonCard sampleCard() {
         return new WagonCard(
-                "SYN-00001", "12-132", "КРЫТЫЙ", "SYN-OWNER", "6900", "SYN-STATION", true);
+                "SYN-00001",
+                "12-132",
+                "КРЫТЫЙ",
+                "SYN-OWNER",
+                "6900",
+                "SYN-STATION",
+                true,
+                new WagonCurrentState("7100", "05", "2024-01-16T06:00:00", "TRN-DIFF"));
+    }
+
+    private static WagonCard sampleCardWithoutCurrent(String code) {
+        return new WagonCard(code, "12-132", "КРЫТЫЙ", "SYN-OWNER", "6900", "SYN-STATION", true, null);
+    }
+
+    private static WagonRegistryItem sampleRegistry(String code) {
+        return new WagonRegistryItem(code, "12-132", "КРЫТЫЙ", "SYN-OWNER", "6900", "SYN-STATION", true);
     }
 
     private static WatchedWagonItem sampleWatched(String code) {

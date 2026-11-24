@@ -4,6 +4,7 @@ import java.util.List;
 import platform.app.api.dto.StateReportDayDto;
 import platform.app.api.dto.StateReportLineDto;
 import platform.app.api.dto.WagonCardDto;
+import platform.app.api.dto.WagonCurrentStateDto;
 import platform.app.api.dto.WagonRegistryItemDto;
 import platform.app.api.dto.WagonRegistryPageDto;
 import platform.app.api.dto.WatchedWagonItemDto;
@@ -11,6 +12,7 @@ import platform.app.api.dto.WatchedWagonPageDto;
 import platform.dislocation.StateReportDay;
 import platform.dislocation.StateReportLine;
 import platform.fleet.WagonCard;
+import platform.fleet.WagonCurrentState;
 import platform.fleet.WagonRegistryPage;
 import platform.fleet.WatchedWagonPage;
 
@@ -27,7 +29,19 @@ final class WagonApiMapper {
                 card.ownerName(),
                 card.homeStationCode(),
                 card.homeStationName(),
-                card.inventoryPark());
+                card.inventoryPark(),
+                toDto(card.currentState()));
+    }
+
+    private static WagonCurrentStateDto toDto(WagonCurrentState current) {
+        if (current == null) {
+            return null;
+        }
+        return new WagonCurrentStateDto(
+                current.stationCode(),
+                current.operationCode(),
+                current.dislocationTime(),
+                current.trainIndex());
     }
 
     static StateReportDayDto toDto(StateReportDay day) {
@@ -46,7 +60,14 @@ final class WagonApiMapper {
 
     static WagonRegistryPageDto toDto(WagonRegistryPage page) {
         List<WagonRegistryItemDto> content = page.content().stream()
-                .map(item -> new WagonRegistryItemDto(item.wagonCode()))
+                .map(item -> new WagonRegistryItemDto(
+                        item.wagonCode(),
+                        item.model(),
+                        item.wagonKind(),
+                        item.ownerName(),
+                        item.homeStationCode(),
+                        item.homeStationName(),
+                        item.inventoryPark()))
                 .toList();
         return new WagonRegistryPageDto(
                 content,

@@ -1,3 +1,10 @@
+export interface WagonCurrentState {
+  stationCode: string | null
+  operationCode: string | null
+  dislocationTime: string | null
+  trainIndex: string | null
+}
+
 export interface WagonCard {
   wagonCode: string
   model: string
@@ -6,10 +13,18 @@ export interface WagonCard {
   homeStationCode: string
   homeStationName: string
   inventoryPark: boolean
+  /** Optional P5-C block; null when synthetic current fixture is absent. */
+  currentState?: WagonCurrentState | null
 }
 
 export interface WagonRegistryItem {
   wagonCode: string
+  model: string
+  wagonKind: string
+  ownerName: string
+  homeStationCode: string
+  homeStationName: string
+  inventoryPark: boolean
 }
 
 export interface WagonRegistryPage {
