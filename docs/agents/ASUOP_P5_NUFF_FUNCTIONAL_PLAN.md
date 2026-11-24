@@ -207,7 +207,8 @@ flowchart LR
 **Wave 1 CODE — DONE (2026-11-24):** P5-A/B/D merged to `main` @ **`68564a5`**.  
 Evidence: [P5_WAVE1_COMPLETION_REPORT.md](P5_WAVE1_COMPLETION_REPORT.md) (Gradle smoke+watched, Vitest 37, Playwright T0+A/B/D 18/18).
 
-**По-прежнему DENIED:** P5-C/E/F/G/H; Create RAILDB TEST; Oracle JDBC/Flyway/live migrate; FTP/RWL live; writes/bulk/concurrency; auto-merge; самовольное изменение APPROVALS.  
+**Wave 2 proposal (docs):** [ASUOP_P5_WAVE2_PROPOSAL.md](ASUOP_P5_WAVE2_PROPOSAL.md) — recommend synthetic **P5-C + P5-G**; optional F; E after TEST JDBC; H out.  
+**По-прежнему DENIED until APPROVED:** P5-C/E/F/G/H CODE; Create RAILDB TEST; Oracle JDBC/Flyway/live migrate; FTP/RWL live; writes/bulk; auto-merge.  
 NK1/DT1 **BLOCKED**; G31 **OPEN**; RAIL watched **empty** until G31.
 
 ---
